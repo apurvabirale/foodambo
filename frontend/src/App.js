@@ -1,53 +1,103 @@
-import { useEffect } from "react";
-import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { LocationProvider } from './context/LocationContext';
+import { Toaster } from './components/ui/sonner';
+import Login from './pages/Login';
+import Home from './pages/Home';
+import ProductDetail from './pages/ProductDetail';
+import StoreProfile from './pages/StoreProfile';
+import CreateListing from './pages/CreateListing';
+import MyListings from './pages/MyListings';
+import MyOrders from './pages/MyOrders';
+import Inbox from './pages/Inbox';
+import Profile from './pages/Profile';
+import Wallet from './pages/Wallet';
+import BottomNav from './components/BottomNav';
+import './App.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const PrivateRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-foreground">Loading...</div>
+      </div>
+    );
+  }
+  
+  return isAuthenticated ? children : <Navigate to="/login" />;
+};
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
-
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
+function AppContent() {
+  const { isAuthenticated } = useAuth();
+  
   return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
+    <div className="App">
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={
+          <PrivateRoute>
+            <Home />
+          </PrivateRoute>
+        } />
+        <Route path="/product/:id" element={
+          <PrivateRoute>
+            <ProductDetail />
+          </PrivateRoute>
+        } />
+        <Route path="/store/:id" element={
+          <PrivateRoute>
+            <StoreProfile />
+          </PrivateRoute>
+        } />
+        <Route path="/create-listing" element={
+          <PrivateRoute>
+            <CreateListing />
+          </PrivateRoute>
+        } />
+        <Route path="/my-listings" element={
+          <PrivateRoute>
+            <MyListings />
+          </PrivateRoute>
+        } />
+        <Route path="/my-orders" element={
+          <PrivateRoute>
+            <MyOrders />
+          </PrivateRoute>
+        } />
+        <Route path="/inbox" element={
+          <PrivateRoute>
+            <Inbox />
+          </PrivateRoute>
+        } />
+        <Route path="/profile" element={
+          <PrivateRoute>
+            <Profile />
+          </PrivateRoute>
+        } />
+        <Route path="/wallet" element={
+          <PrivateRoute>
+            <Wallet />
+          </PrivateRoute>
+        } />
+      </Routes>
+      {isAuthenticated && <BottomNav />}
+      <Toaster />
     </div>
   );
-};
+}
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <BrowserRouter>
+      <AuthProvider>
+        <LocationProvider>
+          <AppContent />
+        </LocationProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
