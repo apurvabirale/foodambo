@@ -311,7 +311,7 @@ async def google_auth(req: GoogleAuthRequest):
             if response.status_code != 200:
                 raise HTTPException(status_code=400, detail="Invalid session ID")
             data = response.json()
-            user_doc = await db.users.find_one({"email": data["email"]})
+            user_doc = await db.users.find_one({"email": data["email"]}, {"_id": 0})
             if not user_doc:
                 user = User(email=data["email"], name=data["name"], profile_picture=data.get("picture"), auth_method="google")
                 user_dict = user.model_dump()
