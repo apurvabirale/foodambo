@@ -629,7 +629,7 @@ async def create_review(review_data: ReviewCreate, current_user: User = Depends(
 
 @api_router.get("/reviews/store/{store_id}")
 async def get_store_reviews(store_id: str):
-    reviews = await db.reviews.find({"store_id": store_id}).sort("created_at", -1).to_list(1000)
+    reviews = await db.reviews.find({"store_id": store_id}, {"_id": 0}).sort("created_at", -1).to_list(1000)
     return reviews
 
 @api_router.post("/wallet/transactions")
