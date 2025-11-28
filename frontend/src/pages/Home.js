@@ -5,7 +5,7 @@ import { productAPI, authAPI } from '../utils/api';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
 import { toast } from 'sonner';
-import { MapPin, Star, Plus } from 'lucide-react';
+import { MapPin, Star, Plus, Search } from 'lucide-react';
 
 const categories = [
   { id: 'fresh_food', label: 'Fresh Food', image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400', color: '#D9534F' },
@@ -27,12 +27,13 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState(['fresh_food', 'pickles', 'organic_veggies', 'art_handmade']);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (location) {
       fetchProducts();
     }
-  }, [location, selectedCategories]);
+  }, [location, selectedCategories, searchQuery]);
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -46,6 +47,7 @@ const Home = () => {
         categories: selectedCategories.join(','),
         radius_km: 2,
         exclude_seller_id: currentUserId,
+        search: searchQuery,
       });
       setProducts(response.data);
     } catch (error) {
@@ -82,6 +84,21 @@ const Home = () => {
           {location && (
             <p className="text-sm text-foreground-muted">Finding delights within 2 km</p>
           )}
+        </div>
+      </div>
+
+      {/* Search Bar */}
+      <div className="p-4 bg-white border-b border-border">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search for dishes, pickles, veggies..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-3 pl-10 rounded-full border border-border focus:outline-none focus:ring-2 focus:ring-primary"
+            data-testid="search-input"
+          />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
         </div>
       </div>
 
