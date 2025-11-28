@@ -520,7 +520,7 @@ async def delete_product(product_id: str, current_user: User = Depends(get_curre
 
 @api_router.post("/orders")
 async def create_order(order_data: OrderCreate, current_user: User = Depends(get_current_user)):
-    product = await db.products.find_one({"id": order_data.product_id})
+    product = await db.products.find_one({"id": order_data.product_id}, {"_id": 0})
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     
