@@ -602,7 +602,7 @@ async def create_review(review_data: ReviewCreate, current_user: User = Depends(
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     
-    product = await db.products.find_one({"id": order["product_id"]})
+    product = await db.products.find_one({"id": order["product_id"]}, {"_id": 0})
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     
