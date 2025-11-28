@@ -144,13 +144,17 @@ const Home = () => {
       {/* Become a Seller CTA - Only show if user doesn't have a store */}
       {!hasStore && (
         <div className="p-4">
-          <Card 
-            className="relative overflow-hidden cursor-pointer border-2 border-primary hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]"
-            onClick={() => navigate('/create-listing')}
-            data-testid="become-seller-cta"
-          >
-          <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/20 rounded-full -mr-16 -mt-16"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent/20 rounded-full -ml-12 -mb-12"></div>
+          <div className="relative">
+            {/* Glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-secondary/20 to-accent/20 blur-xl animate-pulse"></div>
+            
+            <Card 
+              className="relative overflow-hidden cursor-pointer border-2 border-primary shadow-2xl hover:shadow-primary/30 transition-all duration-300 hover:scale-[1.02] animate-in fade-in slide-in-from-bottom-4"
+              onClick={() => navigate('/create-listing')}
+              data-testid="become-seller-cta"
+            >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/20 rounded-full -mr-16 -mt-16"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent/20 rounded-full -ml-12 -mb-12"></div>
           
           <div className="relative p-6">
             <div className="flex items-start justify-between mb-3">
@@ -202,12 +206,13 @@ const Home = () => {
               </div>
             </div>
             
-            <Button className="w-full btn-primary h-12 rounded-full text-base font-bold shadow-lg">
+            <Button className="w-full btn-primary h-12 rounded-full text-base font-bold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all">
               🚀 Create Your Store Now
             </Button>
           </div>
-        </Card>
-      </div>
+          </Card>
+          </div>
+        </div>
       )}
 
       {/* Trending Dishes */}
