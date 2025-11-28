@@ -598,7 +598,7 @@ async def get_messages(order_id: str, current_user: User = Depends(get_current_u
 
 @api_router.post("/reviews")
 async def create_review(review_data: ReviewCreate, current_user: User = Depends(get_current_user)):
-    order = await db.orders.find_one({"id": review_data.order_id, "buyer_id": current_user.id})
+    order = await db.orders.find_one({"id": review_data.order_id, "buyer_id": current_user.id}, {"_id": 0})
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     
