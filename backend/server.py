@@ -551,7 +551,7 @@ async def create_order(order_data: OrderCreate, current_user: User = Depends(get
 
 @api_router.get("/orders/my")
 async def get_my_orders(current_user: User = Depends(get_current_user)):
-    orders = await db.orders.find({"buyer_id": current_user.id}).to_list(1000)
+    orders = await db.orders.find({"buyer_id": current_user.id}, {"_id": 0}).to_list(1000)
     return orders
 
 @api_router.get("/orders/seller")
