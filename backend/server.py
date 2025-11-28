@@ -593,7 +593,7 @@ async def send_message(msg_data: ChatMessageCreate, current_user: User = Depends
 
 @api_router.get("/chat/messages/{order_id}")
 async def get_messages(order_id: str, current_user: User = Depends(get_current_user)):
-    messages = await db.chat_messages.find({"order_id": order_id}).sort("timestamp", 1).to_list(1000)
+    messages = await db.chat_messages.find({"order_id": order_id}, {"_id": 0}).sort("timestamp", 1).to_list(1000)
     return messages
 
 @api_router.post("/reviews")
