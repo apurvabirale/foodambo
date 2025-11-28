@@ -102,6 +102,67 @@ const Home = () => {
         </div>
       </div>
 
+      {/* Become a Seller CTA */}
+      <div className="p-4">
+        <Card 
+          className="relative overflow-hidden cursor-pointer border-2 border-primary hover:shadow-2xl transition-all duration-300"
+          onClick={() => navigate('/create-listing')}
+          data-testid="become-seller-cta"
+        >
+          <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/20 rounded-full -mr-16 -mt-16"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent/20 rounded-full -ml-12 -mb-12"></div>
+          
+          <div className="relative p-6">
+            <div className="flex items-start justify-between mb-3">
+              <div>
+                <div className="inline-flex items-center gap-2 bg-secondary/10 text-secondary px-3 py-1 rounded-full mb-2">
+                  <span className="text-xs font-bold">LIMITED TIME</span>
+                </div>
+                <h3 className="text-2xl font-bold text-foreground mb-1">Start Selling Today!</h3>
+                <p className="text-foreground-muted text-sm">Turn your passion into income 💰</p>
+              </div>
+              <div className="text-5xl">🏪</div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="bg-white rounded-lg p-3 border border-border">
+                <p className="text-xs text-foreground-muted mb-1">One-time Setup</p>
+                <p className="text-2xl font-bold text-primary">₹199</p>
+              </div>
+              <div className="bg-white rounded-lg p-3 border border-border">
+                <p className="text-xs text-foreground-muted mb-1">Monthly Fee</p>
+                <p className="text-2xl font-bold text-primary">₹499</p>
+              </div>
+            </div>
+            
+            <div className="space-y-2 mb-4">
+              <div className="flex items-center gap-2 text-sm">
+                <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-xs">✓</span>
+                </div>
+                <span className="font-medium">Zero Commission - Keep 100% earnings</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-xs">✓</span>
+                </div>
+                <span className="font-medium">Reach customers within 2 km</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-xs">✓</span>
+                </div>
+                <span className="font-medium">Build your permanent brand</span>
+              </div>
+            </div>
+            
+            <Button className="w-full btn-primary h-12 rounded-full text-base font-bold shadow-lg">
+              🚀 Create Your Store Now
+            </Button>
+          </div>
+        </Card>
+      </div>
+
       {/* Trending Dishes */}
       <div className="p-4">
         <h2 className="text-xl font-semibold mb-3">Trending Now</h2>
