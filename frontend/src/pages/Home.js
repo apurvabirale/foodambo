@@ -119,17 +119,25 @@ const Home = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="p-4 bg-white border-b border-border">
+      <div className="p-4 bg-gradient-to-b from-white to-gray-50">
         <div className="relative">
           <input
             type="text"
-            placeholder="Search for dishes, pickles, veggies..."
+            placeholder="🔍 Search for dishes, pickles, veggies..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-3 pl-10 rounded-full border border-border focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-4 py-3.5 pl-12 rounded-full border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm hover:shadow-md transition-shadow"
             data-testid="search-input"
           />
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primary" />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+          )}
         </div>
       </div>
 
