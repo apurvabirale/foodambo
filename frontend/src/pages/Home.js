@@ -86,20 +86,23 @@ const Home = () => {
     <div className="min-h-screen bg-background pb-20" data-testid="home-page">
       {/* Header */}
       <div className="bg-white border-b border-border sticky top-0 z-10 backdrop-blur-lg bg-white/80">
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-2">
+        <div className="py-4 px-4">
+          {/* Logo - Centered and Prominent */}
+          <div className="flex flex-col items-center mb-3">
             <img 
               src="https://customer-assets.emergentagent.com/job_fresh-neighborhood/artifacts/vv7vq469_Logo1.png" 
               alt="Foodambo" 
-              className="h-8"
+              className="h-12 mb-2"
             />
-            <Button variant="ghost" size="icon" data-testid="location-btn">
-              <MapPin className="w-5 h-5 text-primary" />
-            </Button>
+            {location && (
+              <div className="flex items-center gap-1.5 bg-primary/5 px-3 py-1.5 rounded-full">
+                <MapPin className="w-4 h-4 text-primary" />
+                <p className="text-sm font-medium text-primary">
+                  Discovering fresh delights within 2 km
+                </p>
+              </div>
+            )}
           </div>
-          {location && (
-            <p className="text-sm text-foreground-muted">Finding delights within 2 km</p>
-          )}
         </div>
       </div>
 
