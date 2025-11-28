@@ -463,7 +463,7 @@ async def get_products(
 ):
     query = {"active": True}
     
-    products = await db.products.find(query).to_list(1000)
+    products = await db.products.find(query, {"_id": 0}).to_list(1000)
     
     if latitude and longitude:
         products_with_distance = []
