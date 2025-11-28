@@ -32,10 +32,22 @@ const Home = () => {
 
   useEffect(() => {
     checkStore();
+  }, []);
+
+  useEffect(() => {
     if (location) {
       fetchProducts();
     }
-  }, [location, selectedCategories, searchQuery]);
+  }, [location, selectedCategories]);
+
+  useEffect(() => {
+    if (location) {
+      const timeoutId = setTimeout(() => {
+        fetchProducts();
+      }, 500);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [searchQuery]);
 
   const checkStore = async () => {
     try {
