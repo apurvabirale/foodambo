@@ -305,7 +305,11 @@ const Home = () => {
                       )}
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-primary">₹{product.price}</p>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-sm font-semibold text-primary">₹</span>
+                        <p className="text-2xl font-bold text-primary">{product.price}</p>
+                        <span className="text-xs text-foreground-muted font-medium">INR</span>
+                      </div>
                       {product.details?.weight && (
                         <p className="text-xs text-foreground-muted">{product.details.weight}</p>
                       )}
