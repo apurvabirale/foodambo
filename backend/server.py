@@ -386,7 +386,7 @@ async def create_store(store_data: StoreCreate, current_user: User = Depends(get
 
 @api_router.get("/stores/me")
 async def get_my_store(current_user: User = Depends(get_current_user)):
-    store = await db.stores.find_one({"user_id": current_user.id})
+    store = await db.stores.find_one({"user_id": current_user.id}, {"_id": 0})
     if not store:
         raise HTTPException(status_code=404, detail="Store not found")
     return store
@@ -403,7 +403,7 @@ async def upload_fssai(data: FSSAIUpload, current_user: User = Depends(get_curre
     if not EMERGENT_LLM_KEY:
         raise HTTPException(status_code=500, detail="FSSAI verification not configured")
     
-    store = await db.stores.find_one({"user_id": current_user.id})
+    store = await db.stores.find_one({"user_id": current_user.id}, {"_id": 0})
     if not store:
         raise HTTPException(status_code=404, detail="Store not found")
     
@@ -439,7 +439,7 @@ async def upload_fssai(data: FSSAIUpload, current_user: User = Depends(get_curre
 
 @api_router.post("/products")
 async def create_product(product_data: ProductCreate, current_user: User = Depends(get_current_user)):
-    store = await db.stores.find_one({"user_id": current_user.id})
+    store = await db.stores.find_one({"user_id": current_user.id}, {"_id": 0})
     if not store:
         raise HTTPException(status_code=404, detail="Store not found")
     
