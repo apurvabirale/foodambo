@@ -490,7 +490,7 @@ async def get_products(
 
 @api_router.get("/products/my")
 async def get_my_products(current_user: User = Depends(get_current_user)):
-    products = await db.products.find({"seller_id": current_user.id}).to_list(1000)
+    products = await db.products.find({"seller_id": current_user.id}, {"_id": 0}).to_list(1000)
     return products
 
 @api_router.get("/products/{product_id}")
