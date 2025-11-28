@@ -5,10 +5,34 @@ import { Home, ShoppingBag, MessageSquare, User } from 'lucide-react';
 const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [hasStore, setHasStore] = React.useState(false);
+
+  React.useEffect(() => {
+    checkStore();
+  }, []);
+
+  const checkStore = async () => {
+    try {
+      const token = localStorage.getItem('foodambo_token');
+      if (!token) return;
+      
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stores/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setHasStore(response.ok);
+    } catch (error) {
+      setHasStore(false);
+    }
+  };
 
   const isActive = (path) => location.pathname === path;
 
-  const navItems = [
+  const navItems = hasStore ? [
+    { path: '/', icon: Home, label: 'Home' },
+    { path: '/my-store-front', icon: ShoppingBag, label: 'My Store' },
+    { path: '/inbox', icon: MessageSquare, label: 'Inbox' },
+    { path: '/profile', icon: User, label: 'Profile' },
+  ] : [
     { path: '/', icon: Home, label: 'Home' },
     { path: '/my-orders', icon: ShoppingBag, label: 'Orders' },
     { path: '/inbox', icon: MessageSquare, label: 'Inbox' },
