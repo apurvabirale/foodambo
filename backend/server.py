@@ -478,11 +478,18 @@ async def get_products(
     longitude: Optional[float] = None,
     categories: Optional[str] = None,
     radius_km: float = 2.0,
-    exclude_seller_id: Optional[str] = None
+    exclude_seller_id: Optional[str] = None,
+    search: Optional[str] = None
 ):
     query = {"active": True}
     if exclude_seller_id:
         query["seller_id"] = {"$ne": exclude_seller_id}
+    
+    if search:
+        query["$or"] = [
+            {"title": {"$regex": search, "$options": "i"}},
+            {"description": {"$regex": search, "$options": "i"}}
+        ]
     
     products = await db.products.find(query, {"_id": 0}).to_list(1000)
     
