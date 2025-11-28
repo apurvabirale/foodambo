@@ -8,6 +8,8 @@ import Home from './pages/Home';
 import ProductDetail from './pages/ProductDetail';
 import StoreProfile from './pages/StoreProfile';
 import CreateListing from './pages/CreateListing';
+import EditListing from './pages/EditListing';
+import EditStore from './pages/EditStore';
 import MyListings from './pages/MyListings';
 import MyOrders from './pages/MyOrders';
 import Inbox from './pages/Inbox';

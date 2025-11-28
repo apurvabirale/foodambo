@@ -18,6 +18,15 @@ const categories = [
   { value: 'art_handmade', label: 'Art & Handmade' },
 ];
 
+const spiceLevels = [
+  { value: 'mild', label: 'Mild' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'hot', label: 'Hot' },
+  { value: 'extra_hot', label: 'Extra Hot' },
+];
+
+const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
 const CreateListing = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -38,6 +47,11 @@ const CreateListing = () => {
   const [price, setPrice] = useState('');
   const [photos, setPhotos] = useState([]);
   const [productType, setProductType] = useState('fresh_food');
+  const [isVeg, setIsVeg] = useState(true);
+  const [spiceLevel, setSpiceLevel] = useState('');
+  const [availabilityDays, setAvailabilityDays] = useState(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+  const [startTime, setStartTime] = useState('09:00');
+  const [endTime, setEndTime] = useState('21:00');
   const [minQuantity, setMinQuantity] = useState('1');
   const [deliveryAvailable, setDeliveryAvailable] = useState(false);
   const [pickupAvailable, setPickupAvailable] = useState(true);
@@ -96,9 +110,11 @@ const CreateListing = () => {
         price: parseFloat(price),
         photos,
         product_type: productType,
+        is_veg: isVeg,
+        spice_level: spiceLevel,
         details: {},
-        availability_days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        availability_times: { start: '09:00', end: '21:00' },
+        availability_days: availabilityDays,
+        availability_times: { start: startTime, end: endTime },
         min_quantity: parseInt(minQuantity),
         delivery_available: deliveryAvailable,
         pickup_available: pickupAvailable,

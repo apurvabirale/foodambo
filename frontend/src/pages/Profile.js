@@ -17,6 +17,7 @@ const Profile = () => {
   };
 
   const menuItems = [
+    { icon: Store, label: 'My Store', path: '/edit-store', testId: 'my-store-link' },
     { icon: Store, label: 'My Listings', path: '/my-listings', testId: 'my-listings-link' },
     { icon: Wallet, label: 'Wallet', path: '/wallet', testId: 'wallet-link' },
     { icon: FileText, label: 'My Orders', path: '/my-orders', testId: 'my-orders-link' },

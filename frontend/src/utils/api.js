@@ -34,6 +34,7 @@ export const storeAPI = {
   create: (data) => api.post('/stores', data),
   getMy: () => api.get('/stores/me'),
   get: (id) => api.get(`/stores/${id}`),
+  update: (data) => api.put('/stores/me', data),
   uploadFSSAI: (image_base64) => api.post('/fssai/upload', { image_base64 }),
 };
 
