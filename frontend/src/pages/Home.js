@@ -28,12 +28,28 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState(['fresh_food', 'pickles', 'organic_veggies', 'art_handmade']);
   const [searchQuery, setSearchQuery] = useState('');
+  const [hasStore, setHasStore] = useState(false);
 
   useEffect(() => {
+    checkStore();
     if (location) {
       fetchProducts();
     }
   }, [location, selectedCategories, searchQuery]);
+
+  const checkStore = async () => {
+    try {
+      await authAPI.getMe();
+      const storeResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stores/me`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('foodambo_token')}` }
+      });
+      if (storeResponse.ok) {
+        setHasStore(true);
+      }
+    } catch (error) {
+      setHasStore(false);
+    }
+  };
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -102,13 +118,14 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Become a Seller CTA */}
-      <div className="p-4">
-        <Card 
-          className="relative overflow-hidden cursor-pointer border-2 border-primary hover:shadow-2xl transition-all duration-300"
-          onClick={() => navigate('/create-listing')}
-          data-testid="become-seller-cta"
-        >
+      {/* Become a Seller CTA - Only show if user doesn't have a store */}
+      {!hasStore && (
+        <div className="p-4">
+          <Card 
+            className="relative overflow-hidden cursor-pointer border-2 border-primary hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]"
+            onClick={() => navigate('/create-listing')}
+            data-testid="become-seller-cta"
+          >
           <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/20 rounded-full -mr-16 -mt-16"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent/20 rounded-full -ml-12 -mb-12"></div>
           
@@ -162,6 +179,7 @@ const Home = () => {
           </div>
         </Card>
       </div>
+      )}
 
       {/* Trending Dishes */}
       <div className="p-4">
