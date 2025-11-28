@@ -521,6 +521,35 @@ async def get_products(
 
 @api_router.get("/products/my")
 async def get_my_products(current_user: User = Depends(get_current_user)):
+
+@api_router.post("/orders/{order_id}/cancel")
+async def cancel_order(order_id: str, current_user: User = Depends(get_current_user)):
+    order = await db.orders.find_one({"id": order_id}, {"_id": 0})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    if order["buyer_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    if order["status"] not in ["pending", "accepted"]:
+        raise HTTPException(status_code=400, detail="Order cannot be cancelled")
+    
+    # Calculate cancellation charge
+    cancellation_charge = 0.0
+    if order["status"] == "accepted":
+        cancellation_charge = 50.0
+    
+    await db.orders.update_one(
+        {"id": order_id},
+        {"$set": {
+            "status": "cancelled",
+            "cancelled_at": datetime.now(timezone.utc).isoformat(),
+            "cancellation_charge": cancellation_charge
+        }}
+    )
+    
+    return {"success": True, "cancellation_charge": cancellation_charge}
+
     products = await db.products.find({"seller_id": current_user.id}, {"_id": 0}).to_list(1000)
     return products
 
@@ -604,11 +633,37 @@ async def create_order(order_data: OrderCreate, current_user: User = Depends(get
 @api_router.get("/orders/my")
 async def get_my_orders(current_user: User = Depends(get_current_user)):
     orders = await db.orders.find({"buyer_id": current_user.id}, {"_id": 0}).to_list(1000)
+    
+    # Auto-expire pending orders
+    now = datetime.now(timezone.utc)
+    for order in orders:
+        if order["status"] == "pending" and order.get("expires_at"):
+            expires_at = datetime.fromisoformat(order["expires_at"].replace('Z', '+00:00'))
+            if now > expires_at:
+                await db.orders.update_one(
+                    {"id": order["id"]},
+                    {"$set": {"status": "expired"}}
+                )
+                order["status"] = "expired"
+    
     return orders
 
 @api_router.get("/orders/seller")
 async def get_seller_orders(current_user: User = Depends(get_current_user)):
     orders = await db.orders.find({"seller_id": current_user.id}, {"_id": 0}).to_list(1000)
+    
+    # Auto-expire pending orders
+    now = datetime.now(timezone.utc)
+    for order in orders:
+        if order["status"] == "pending" and order.get("expires_at"):
+            expires_at = datetime.fromisoformat(order["expires_at"].replace('Z', '+00:00'))
+            if now > expires_at:
+                await db.orders.update_one(
+                    {"id": order["id"]},
+                    {"$set": {"status": "expired"}}
+                )
+                order["status"] = "expired"
+    
     return orders
 
 @api_router.put("/orders/{order_id}/status")
