@@ -88,7 +88,12 @@ const Login = () => {
     <div className="auth-container">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold text-foreground mb-2" data-testid="app-title">Foodambo</h1>
+          <img 
+            src="https://customer-assets.emergentagent.com/job_fresh-neighborhood/artifacts/vv7vq469_Logo1.png" 
+            alt="Foodambo" 
+            className="w-48 mx-auto mb-4"
+            data-testid="app-logo"
+          />
           <p className="text-foreground-muted text-lg">Fresh & Homemade, Delivered Local</p>
         </div>
 

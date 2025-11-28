@@ -66,7 +66,11 @@ const Home = () => {
       <div className="bg-white border-b border-border sticky top-0 z-10 backdrop-blur-lg bg-white/80">
         <div className="p-4">
           <div className="flex items-center justify-between mb-2">
-            <h1 className="text-2xl font-bold text-foreground">Foodambo</h1>
+            <img 
+              src="https://customer-assets.emergentagent.com/job_fresh-neighborhood/artifacts/vv7vq469_Logo1.png" 
+              alt="Foodambo" 
+              className="h-8"
+            />
             <Button variant="ghost" size="icon" data-testid="location-btn">
               <MapPin className="w-5 h-5 text-primary" />
             </Button>
