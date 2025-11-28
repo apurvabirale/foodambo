@@ -365,7 +365,7 @@ async def get_me(current_user: User = Depends(get_current_user)):
 
 @api_router.post("/stores")
 async def create_store(store_data: StoreCreate, current_user: User = Depends(get_current_user)):
-    existing_store = await db.stores.find_one({"user_id": current_user.id})
+    existing_store = await db.stores.find_one({"user_id": current_user.id}, {"_id": 0})
     if existing_store:
         raise HTTPException(status_code=400, detail="Store already exists")
     
