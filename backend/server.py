@@ -103,7 +103,7 @@ class Product(BaseModel):
     spice_level: Optional[str] = None
     details: Dict[str, Any] = {}
     availability_days: List[str] = []
-    availability_times: Dict[str, str] = {}
+    availability_time_slots: List[str] = []
     min_quantity: int = 1
     max_quantity: Optional[int] = None
     delivery_available: bool = False
@@ -188,7 +188,7 @@ class ProductCreate(BaseModel):
     spice_level: Optional[str] = None
     details: Dict[str, Any]
     availability_days: List[str]
-    availability_times: Dict[str, str]
+    availability_time_slots: List[str] = []
     min_quantity: int = 1
     max_quantity: Optional[int] = None
     delivery_available: bool = False
