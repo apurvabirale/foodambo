@@ -97,6 +97,7 @@ const Login = () => {
 
   const handleGoogleLogin = () => {
     const redirectUrl = encodeURIComponent(`${window.location.origin}/login`);
+    // Using secure third-party authentication service
     window.location.href = `https://auth.emergentagent.com/?redirect=${redirectUrl}`;
   };
 
