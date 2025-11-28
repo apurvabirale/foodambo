@@ -266,7 +266,7 @@ async def send_otp(req: OTPRequest):
 
 @api_router.post("/auth/verify-otp")
 async def verify_otp(req: OTPVerify):
-    if not twilio_client or not TWILIO_VERIFY_SERVICE:
+    if not twilio_client or not TWILIO_VERIFY_SERVICE or TWILIO_VERIFY_SERVICE.startswith('your_'):
         if req.code == "123456":
             user_doc = await db.users.find_one({"phone": req.phone})
             if not user_doc:
