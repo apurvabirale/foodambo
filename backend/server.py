@@ -393,7 +393,7 @@ async def get_my_store(current_user: User = Depends(get_current_user)):
 
 @api_router.get("/stores/{store_id}")
 async def get_store(store_id: str):
-    store = await db.stores.find_one({"id": store_id})
+    store = await db.stores.find_one({"id": store_id}, {"_id": 0})
     if not store:
         raise HTTPException(status_code=404, detail="Store not found")
     return store
