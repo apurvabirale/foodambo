@@ -99,6 +99,8 @@ class Product(BaseModel):
     price: float
     photos: List[str] = []
     product_type: str
+    is_veg: bool = True
+    spice_level: Optional[str] = None
     details: Dict[str, Any] = {}
     availability_days: List[str] = []
     availability_times: Dict[str, str] = {}
@@ -182,6 +184,8 @@ class ProductCreate(BaseModel):
     price: float
     photos: List[str]
     product_type: str
+    is_veg: bool = True
+    spice_level: Optional[str] = None
     details: Dict[str, Any]
     availability_days: List[str]
     availability_times: Dict[str, str]
@@ -398,6 +402,20 @@ async def get_store(store_id: str):
         raise HTTPException(status_code=404, detail="Store not found")
     return store
 
+@api_router.put("/stores/me")
+async def update_my_store(store_data: Dict[str, Any], current_user: User = Depends(get_current_user)):
+    store = await db.stores.find_one({"user_id": current_user.id}, {"_id": 0})
+    if not store:
+        raise HTTPException(status_code=404, detail="Store not found")
+    
+    allowed_fields = ["store_photo", "address", "categories", "location"]
+    update_data = {k: v for k, v in store_data.items() if k in allowed_fields}
+    
+    if update_data:
+        await db.stores.update_one({"id": store["id"]}, {"$set": update_data})
+    
+    return {"success": True}
+
 @api_router.post("/fssai/upload")
 async def upload_fssai(data: FSSAIUpload, current_user: User = Depends(get_current_user)):
     if not EMERGENT_LLM_KEY:
@@ -459,9 +477,12 @@ async def get_products(
     latitude: Optional[float] = None,
     longitude: Optional[float] = None,
     categories: Optional[str] = None,
-    radius_km: float = 2.0
+    radius_km: float = 2.0,
+    exclude_seller_id: Optional[str] = None
 ):
     query = {"active": True}
+    if exclude_seller_id:
+        query["seller_id"] = {"$ne": exclude_seller_id}
     
     products = await db.products.find(query, {"_id": 0}).to_list(1000)
     

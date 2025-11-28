@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from '../context/LocationContext';
-import { productAPI } from '../utils/api';
+import { productAPI, authAPI } from '../utils/api';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
 import { toast } from 'sonner';
@@ -37,11 +37,15 @@ const Home = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
+      const meResponse = await authAPI.getMe();
+      const currentUserId = meResponse.data.id;
+      
       const response = await productAPI.getAll({
         latitude: location?.latitude,
         longitude: location?.longitude,
         categories: selectedCategories.join(','),
         radius_km: 2,
+        exclude_seller_id: currentUserId,
       });
       setProducts(response.data);
     } catch (error) {
