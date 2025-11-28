@@ -149,38 +149,107 @@ const Home = () => {
                 onClick={() => navigate(`/product/${product.id}`)}
                 data-testid={`product-${product.id}`}
               >
-                <div className="flex gap-4 p-4">
-                  <div className="w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100">
+                <div className="p-4">
+                  {/* Product Image */}
+                  <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-100 mb-3">
                     {product.photos?.[0] ? (
                       <img src={product.photos[0]} alt={product.title} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">No image</div>
                     )}
+                    {/* Veg/Non-Veg Badge */}
+                    {product.category === 'fresh_food' && (
+                      <div className="absolute top-2 left-2 bg-white rounded-full p-1 shadow-md">
+                        {product.is_veg ? (
+                          <div className="w-5 h-5 border-2 border-green-600 rounded flex items-center justify-center">
+                            <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                          </div>
+                        ) : (
+                          <div className="w-5 h-5 border-2 border-red-600 rounded flex items-center justify-center">
+                            <div className="w-2 h-2 bg-red-600 rounded-full"></div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {/* Distance Badge */}
+                    {product.distance !== undefined && (
+                      <div className="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded-full text-xs flex items-center gap-1">
+                        <MapPin className="w-3 h-3" />
+                        {product.distance} km
+                      </div>
+                    )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground line-clamp-1 mb-1">{product.title}</h3>
-                    <p className="text-sm text-foreground-muted line-clamp-2 mb-2">{product.description}</p>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-lg font-bold text-primary">₹{product.price}</span>
-                      {product.distance !== undefined && (
-                        <span className="text-xs text-foreground-muted flex items-center gap-1">
-                          <MapPin className="w-3 h-3" />
-                          {product.distance} km
-                        </span>
-                      )}
-                      {product.store_rating > 0 && (
-                        <span className="text-xs text-secondary flex items-center gap-1">
-                          <Star className="w-3 h-3 fill-secondary" />
-                          {product.store_rating}
-                        </span>
-                      )}
+
+                  {/* Product Info */}
+                  <div>
+                    {/* Title + Price */}
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex-1">
+                        <h3 className="font-bold text-foreground text-base line-clamp-1">{product.title}</h3>
+                        {product.min_quantity && (
+                          <p className="text-xs text-foreground-muted">Min Qty: {product.min_quantity}</p>
+                        )}
+                      </div>
+                      <span className="text-xl font-bold text-primary">₹{product.price}</span>
                     </div>
-                    <div className="flex gap-2 mt-2">
-                      {product.delivery_available && (
-                        <span className="badge badge-success text-xs">Delivery</span>
-                      )}
-                      {product.pickup_available && (
-                        <span className="badge badge-warning text-xs">Pickup</span>
+
+                    {/* Description */}
+                    {product.description && (
+                      <p className="text-sm text-foreground-muted line-clamp-2 mb-2">{product.description}</p>
+                    )}
+
+                    {/* Spice Level */}
+                    {product.spice_level && (
+                      <div className="mb-2">
+                        <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
+                          🌶️ {product.spice_level.charAt(0).toUpperCase() + product.spice_level.slice(1)} Spice
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Availability Days */}
+                    {product.availability_days && product.availability_days.length > 0 && (
+                      <div className="mb-2">
+                        <p className="text-xs font-medium text-foreground-muted mb-1">Available:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {product.availability_days.map((day) => (
+                            <span key={day} className="text-xs bg-gray-100 px-2 py-1 rounded">
+                              {day}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Time Slots */}
+                    {product.availability_time_slots && product.availability_time_slots.length > 0 && (
+                      <div className="mb-2">
+                        <p className="text-xs font-medium text-foreground-muted mb-1">Time Slots:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {product.availability_time_slots.map((slot) => (
+                            <span key={slot} className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                              ⏰ {slot}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Delivery/Pickup + Rating */}
+                    <div className="flex items-center justify-between pt-2 border-t border-border">
+                      <div className="flex gap-2">
+                        {product.delivery_available && (
+                          <span className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded font-medium">🚚 Delivery</span>
+                        )}
+                        {product.pickup_available && (
+                          <span className="text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded font-medium">🏪 Pickup</span>
+                        )}
+                      </div>
+                      {product.store_rating > 0 && (
+                        <div className="flex items-center gap-1">
+                          <Star className="w-4 h-4 text-secondary fill-secondary" />
+                          <span className="text-sm font-semibold">{product.store_rating}</span>
+                        </div>
                       )}
                     </div>
                   </div>
