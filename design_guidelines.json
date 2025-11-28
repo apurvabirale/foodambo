@@ -1,0 +1,166 @@
+{
+  "design_system": {
+    "identity": {
+      "name": "Foodambo",
+      "persona": "E1: The Anti-AI Designer",
+      "tone": "Warm, Authentic, Hyperlocal, Trustworthy",
+      "theme_strategy": "Earthy Spice (Light Mode Focus)",
+      "core_philosophy": "Digital Ghar Ka Khana - Technology that feels like a warm hug, not a cold machine."
+    },
+    "typography": {
+      "font_family": {
+        "headings": "Manrope, sans-serif",
+        "body": "Inter, sans-serif",
+        "accent": "Caveat Brush, cursive"
+      },
+      "scale": {
+        "h1": "text-4xl font-bold tracking-tight",
+        "h2": "text-3xl font-bold tracking-tight",
+        "h3": "text-2xl font-semibold",
+        "h4": "text-xl font-semibold",
+        "body_lg": "text-lg leading-relaxed",
+        "body_base": "text-base leading-relaxed",
+        "caption": "text-sm text-muted-foreground"
+      },
+      "rules": [
+        "Use Manrope for all headings to give a friendly, modern look.",
+        "Use Inter for body text for maximum legibility.",
+        "Use Caveat Brush sparingly for 'Handmade' tags or 'Chef's Note' to add a human touch.",
+        "Headings must never be pure black (#000000). Use #2D2D2D."
+      ]
+    },
+    "colors": {
+      "palette": {
+        "primary": {
+          "DEFAULT": "#D9534F",
+          "foreground": "#FFFFFF",
+          "description": "Terracotta Red - Warm, appetizing, urgent but not alarming."
+        },
+        "secondary": {
+          "DEFAULT": "#F0AD4E",
+          "foreground": "#2D2D2D",
+          "description": "Turmeric Yellow - Optimistic, highlights, ratings."
+        },
+        "background": {
+          "DEFAULT": "#FDFBF7",
+          "paper": "#FFFFFF",
+          "description": "Warm Cream / Rice Paper - Avoid sterile white."
+        },
+        "foreground": {
+          "DEFAULT": "#2D2D2D",
+          "muted": "#6B6B6B",
+          "description": "Charcoal - Softer than black."
+        },
+        "accent": {
+          "DEFAULT": "#5CB85C",
+          "foreground": "#FFFFFF",
+          "description": "Fresh Green - Veggies, Success, Verified."
+        },
+        "border": "#E5E0D8"
+      },
+      "gradients": {
+        "warm_glow": "linear-gradient(135deg, #FDFBF7 0%, #FFF5E6 100%)",
+        "spice_rush": "linear-gradient(135deg, #D9534F 0%, #C9302C 100%)"
+      }
+    },
+    "layout": {
+      "spacing": {
+        "container_padding": "p-4 md:p-6 lg:p-8",
+        "section_gap": "gap-8 md:gap-12",
+        "item_gap": "gap-4"
+      },
+      "grid_systems": {
+        "mobile_feed": "grid grid-cols-1 gap-6",
+        "bento_categories": "grid grid-cols-2 md:grid-cols-4 gap-4",
+        "desktop_dashboard": "grid grid-cols-12 gap-6"
+      },
+      "radius": {
+        "default": "rounded-xl",
+        "card": "rounded-2xl",
+        "button": "rounded-full"
+      }
+    },
+    "components": {
+      "cards": {
+        "style": "bg-white border border-border/40 shadow-sm hover:shadow-md transition-all duration-300",
+        "interaction": "hover:-translate-y-1"
+      },
+      "buttons": {
+        "primary": "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20",
+        "secondary": "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        "ghost": "hover:bg-accent/10 hover:text-accent"
+      },
+      "navigation": {
+        "mobile_bottom_bar": "fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-border/40 z-50 h-16 flex items-center justify-around"
+      }
+    },
+    "visual_enhancers": {
+      "textures": "Use a subtle noise texture (opacity 0.02) on the main background to kill digital flatness.",
+      "shadows": "shadow-[0_8px_30px_rgb(0,0,0,0.04)] for cards. Use colored shadows for primary buttons.",
+      "glassmorphism": "backdrop-blur-md bg-white/70 for sticky headers and overlays."
+    },
+    "assets": {
+      "icons": "Lucide React (Rounded style)",
+      "images": {
+        "hero_food": {
+          "url": "https://images.unsplash.com/photo-1546833999-b9f581a1996d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3MjQyMTd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBob21lJTIwY29va2VkJTIwZm9vZCUyMHRoYWxpfGVufDB8fHx8MTc2NDM1NTUyMXww&ixlib=rb-4.1.0&q=85",
+          "alt": "Indian Thali",
+          "category": "Hero"
+        },
+        "pickles": {
+          "url": "https://images.unsplash.com/photo-1573051038546-894db2283a05?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHwxfHxob21lbWFkZSUyMHBpY2tsZXMlMjBqYXIlMjBpbmRpYXxlbnwwfHx8fDE3NjQzNTU1MjR8MA&ixlib=rb-4.1.0&q=85",
+          "alt": "Homemade Pickles",
+          "category": "Category"
+        },
+        "vegetables": {
+          "url": "https://images.unsplash.com/photo-1691836264082-3d2a35f81ee6?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3MjQyMTd8MHwxfHNlYXJjaHwxfHxmcmVzaCUyMG9yZ2FuaWMlMjB2ZWdldGFibGVzJTIwYmFza2V0JTIwaW5kaWF8ZW58MHx8fHwxNzY0MzU1NTQ4fDA&ixlib=rb-4.1.0&q=85",
+          "alt": "Fresh Vegetables",
+          "category": "Category"
+        },
+        "spices": {
+          "url": "https://images.unsplash.com/photo-1651959653830-5c8cb576e134?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3MjQyMTd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBzcGljZXMlMjBtYXNhbGElMjBwb3dkZXIlMjBib3dsc3xlbnwwfHx8fDE3NjQzNTU1NTN8MA&ixlib=rb-4.1.0&q=85",
+          "alt": "Indian Spices",
+          "category": "Category"
+        },
+        "chef_woman": {
+          "url": "https://images.unsplash.com/photo-1596450513856-250e5f5c46cc?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njd8MHwxfHNlYXJjaHwzfHxpbmRpYW4lMjB3b21hbiUyMGNoZWYlMjBraXRjaGVufGVufDB8fHx8MTc2NDM1NTUyOHww&ixlib=rb-4.1.0&q=85",
+          "alt": "Home Chef",
+          "category": "Seller Profile"
+        },
+        "delivery": {
+          "url": "https://images.unsplash.com/photo-1638922690610-90c3a7d29a46?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzV8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBkZWxpdmVyeSUyMGJveSUyMHNjb290ZXJ8ZW58MHx8fHwxNzY0MzU1NTU4fDA&ixlib=rb-4.1.0&q=85",
+          "alt": "Delivery Scooter",
+          "category": "Tracking"
+        }
+      }
+    }
+  },
+  "instructions_to_main_agent": {
+    "general": [
+      "Implement the 'Earthy Spice' theme immediately in tailwind.config.js.",
+      "Use the provided image URLs for placeholders. DO NOT use random Lorem Ipsum images.",
+      "Ensure all interactive elements have data-testid attributes.",
+      "Prioritize mobile responsiveness. This is a PWA.",
+      "Use Shadcn components but override the default 'zinc' styling with our warm palette."
+    ],
+    "specific_pages": {
+      "home": "Create a 'Bento' grid for categories. Use horizontal scrolling for 'Trending Dishes'.",
+      "product_detail": "Use a large hero image (aspect-square on mobile). Add a 'Chat with Seller' floating action button.",
+      "seller_profile": "Focus on trust. Show FSSAI badge prominently. Use the 'chef_woman' image as a placeholder for the seller avatar."
+    }
+  },
+  "universal_guidelines": [
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur).",
+    "You MUST NOT apply universal transition. Eg: transition: all.",
+    "You MUST NOT center align the app container.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations.",
+    "NEVER use AI assistant Emoji characters like 🤖🧠 etc for icons.",
+    "Every interaction needs micro-animations.",
+    "Use 2-3x more spacing than feels comfortable.",
+    "Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations.",
+    "Use sonner for toasts."
+  ]
+}
