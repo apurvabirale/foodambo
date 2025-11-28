@@ -502,7 +502,7 @@ async def get_product(product_id: str):
 
 @api_router.put("/products/{product_id}")
 async def update_product(product_id: str, product_data: ProductCreate, current_user: User = Depends(get_current_user)):
-    product = await db.products.find_one({"id": product_id, "seller_id": current_user.id})
+    product = await db.products.find_one({"id": product_id, "seller_id": current_user.id}, {"_id": 0})
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     
@@ -511,7 +511,7 @@ async def update_product(product_id: str, product_data: ProductCreate, current_u
 
 @api_router.delete("/products/{product_id}")
 async def delete_product(product_id: str, current_user: User = Depends(get_current_user)):
-    product = await db.products.find_one({"id": product_id, "seller_id": current_user.id})
+    product = await db.products.find_one({"id": product_id, "seller_id": current_user.id}, {"_id": 0})
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     
