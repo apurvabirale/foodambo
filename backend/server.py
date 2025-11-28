@@ -128,6 +128,9 @@ class Order(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     accepted_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
+    expires_at: Optional[datetime] = None
+    cancelled_at: Optional[datetime] = None
+    cancellation_charge: float = 0.0
 
 class ChatMessage(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -555,6 +558,22 @@ async def create_order(order_data: OrderCreate, current_user: User = Depends(get
     delivery_fee = 30.0 if order_data.delivery_method == "delivery" else 0.0
     total_price = (product["price"] * order_data.quantity) + delivery_fee
     
+    # Calculate expiry time (1 hour from now)
+    now = datetime.now(timezone.utc)
+    current_hour = now.hour
+    
+    # If after 9 PM, expires next morning at 10 AM
+    if current_hour >= 21:
+        next_morning = now.replace(hour=10, minute=0, second=0, microsecond=0) + timedelta(days=1)
+        expires_at = next_morning
+    else:
+        # Expires 1 hour from now, but not after 9 PM
+        one_hour_later = now + timedelta(hours=1)
+        if one_hour_later.hour >= 21:
+            expires_at = now.replace(hour=21, minute=0, second=0, microsecond=0)
+        else:
+            expires_at = one_hour_later
+    
     order = Order(
         buyer_id=current_user.id,
         seller_id=product["seller_id"],
@@ -565,7 +584,8 @@ async def create_order(order_data: OrderCreate, current_user: User = Depends(get
         delivery_fee=delivery_fee,
         scheduled_date=order_data.scheduled_date,
         scheduled_time=order_data.scheduled_time,
-        buyer_address=order_data.buyer_address
+        buyer_address=order_data.buyer_address,
+        expires_at=expires_at
     )
     order_dict = order.model_dump()
     order_dict['created_at'] = order_dict['created_at'].isoformat()
@@ -573,6 +593,10 @@ async def create_order(order_data: OrderCreate, current_user: User = Depends(get
         order_dict['accepted_at'] = order_dict['accepted_at'].isoformat()
     if order_dict.get('completed_at'):
         order_dict['completed_at'] = order_dict['completed_at'].isoformat()
+    if order_dict.get('expires_at'):
+        order_dict['expires_at'] = order_dict['expires_at'].isoformat()
+    if order_dict.get('cancelled_at'):
+        order_dict['cancelled_at'] = order_dict['cancelled_at'].isoformat()
     await db.orders.insert_one(order_dict)
     
     return order
