@@ -38,11 +38,13 @@ TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN', '')
 TWILIO_VERIFY_SERVICE = os.environ.get('TWILIO_VERIFY_SERVICE', '')
 
 twilio_client = None
-if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
+if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN and not TWILIO_ACCOUNT_SID.startswith('your_'):
     try:
         twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
     except:
         logger.warning("Twilio client initialization failed")
+else:
+    logger.info("Using mocked Twilio (OTP: 123456)")
 
 app = FastAPI(title="Foodambo API")
 api_router = APIRouter(prefix="/api")
