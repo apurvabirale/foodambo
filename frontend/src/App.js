@@ -13,6 +13,7 @@ import EditStore from './pages/EditStore';
 import MyListings from './pages/MyListings';
 import Settings from './pages/Settings';
 import MyStoreFront from './pages/MyStoreFront';
+import SellerOrders from './pages/SellerOrders';
 import MyOrders from './pages/MyOrders';
 import Inbox from './pages/Inbox';
 import Profile from './pages/Profile';
@@ -104,6 +105,11 @@ function AppContent() {
         <Route path="/my-store-front" element={
           <PrivateRoute>
             <MyStoreFront />
+          </PrivateRoute>
+        } />
+        <Route path="/seller-orders" element={
+          <PrivateRoute>
+            <SellerOrders />
           </PrivateRoute>
         } />
       </Routes>
