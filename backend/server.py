@@ -311,29 +311,48 @@ async def verify_otp(req: OTPVerify):
 async def google_auth(req: GoogleAuthRequest):
     async with httpx.AsyncClient() as http_client:
         try:
+            logger.info(f"Google auth attempt with session ID: {req.session_id}")
             response = await http_client.get(
                 "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
-                headers={"X-Session-ID": req.session_id}
+                headers={"X-Session-ID": req.session_id},
+                timeout=10.0
             )
+            logger.info(f"Emergent auth response status: {response.status_code}")
+            
             if response.status_code != 200:
-                raise HTTPException(status_code=400, detail="Invalid session ID")
+                logger.error(f"Invalid session response: {response.text}")
+                raise HTTPException(status_code=400, detail=f"Invalid session ID. Status: {response.status_code}")
+            
             data = response.json()
+            logger.info(f"User data from Emergent: {data.get('email')}")
+            
+            if not data.get("email"):
+                raise HTTPException(status_code=400, detail="No email returned from Google")
+            
             user_doc = await db.users.find_one({"email": data["email"]}, {"_id": 0})
             if not user_doc:
-                user = User(email=data["email"], name=data["name"], profile_picture=data.get("picture"), auth_method="google")
+                user = User(
+                    email=data["email"], 
+                    name=data.get("name", "User"), 
+                    profile_picture=data.get("picture"), 
+                    auth_method="google"
+                )
                 user_dict = user.model_dump()
                 user_dict['created_at'] = user_dict['created_at'].isoformat()
                 if user_dict.get('subscription_expires_at'):
                     user_dict['subscription_expires_at'] = user_dict['subscription_expires_at'].isoformat()
                 await db.users.insert_one(user_dict)
                 user_doc = user_dict
+                logger.info(f"Created new user: {user_doc['id']}")
+            
             token = create_access_token({"sub": user_doc["id"]})
+            logger.info(f"Login successful for user: {user_doc['id']}")
             return {"success": True, "token": token, "user": user_doc}
         except HTTPException:
             raise
         except Exception as e:
             logger.error(f"Google auth error: {str(e)}")
-            raise HTTPException(status_code=400, detail="Google authentication failed")
+            raise HTTPException(status_code=400, detail=f"Google authentication failed: {str(e)}")
 
 @api_router.post("/auth/facebook")
 async def facebook_auth(access_token: str):

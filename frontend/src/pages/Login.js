@@ -19,11 +19,23 @@ const Login = () => {
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/');
+      return;
     }
     
+    // Check for Google auth callback
     const hash = window.location.hash;
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Check both hash and query params for session_id
+    let sessionId = null;
     if (hash.includes('session_id=')) {
-      const sessionId = hash.split('session_id=')[1].split('&')[0];
+      sessionId = hash.split('session_id=')[1].split('&')[0];
+    } else if (urlParams.has('session_id')) {
+      sessionId = urlParams.get('session_id');
+    }
+    
+    if (sessionId) {
+      console.log('Google auth callback with session ID:', sessionId);
       handleGoogleAuth(sessionId);
     }
   }, [isAuthenticated]);
@@ -64,14 +76,22 @@ const Login = () => {
   };
 
   const handleGoogleAuth = async (sessionId) => {
+    setLoading(true);
     try {
+      console.log('Calling Google auth with session ID:', sessionId);
       const response = await authAPI.googleAuth(sessionId);
+      console.log('Google auth response:', response.data);
       login(response.data.token, response.data.user);
       toast.success('Login successful!');
+      // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
       navigate('/');
     } catch (error) {
-      toast.error('Google authentication failed');
+      console.error('Google auth error:', error);
+      const errorMsg = error.response?.data?.detail || error.message || 'Google authentication failed';
+      toast.error(errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
