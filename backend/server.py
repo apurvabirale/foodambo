@@ -284,7 +284,7 @@ async def verify_otp(req: OTPVerify):
     try:
         check = twilio_client.verify.services(TWILIO_VERIFY_SERVICE).verification_checks.create(to=req.phone, code=req.code)
         if check.status == "approved":
-            user_doc = await db.users.find_one({"phone": req.phone})
+            user_doc = await db.users.find_one({"phone": req.phone}, {"_id": 0})
             if not user_doc:
                 user = User(phone=req.phone, name=f"User {req.phone[-4:]}", auth_method="phone")
                 user_dict = user.model_dump()
