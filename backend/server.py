@@ -237,7 +237,7 @@ async def get_current_user(authorization: Optional[str] = Header(None), session_
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
     
-    user_doc = await db.users.find_one({"id": user_id})
+    user_doc = await db.users.find_one({"id": user_id}, {"_id": 0})
     if not user_doc:
         raise HTTPException(status_code=404, detail="User not found")
     
