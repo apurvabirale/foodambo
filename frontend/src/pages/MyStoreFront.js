@@ -242,27 +242,40 @@ const MyStoreFront = () => {
 
         {/* Recent Orders */}
         <div className="mt-6">
-          <h3 className="text-lg font-bold mb-3">Recent Orders</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-bold">Recent Orders</h3>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/seller-orders')}
+            >
+              View All
+            </Button>
+          </div>
           {filteredOrders.length === 0 ? (
             <Card className="p-6 text-center">
               <ShoppingBag className="w-12 h-12 mx-auto text-gray-300 mb-2" />
               <p className="text-foreground-muted">No orders yet</p>
             </Card>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {filteredOrders.slice(0, 5).map(order => (
-                <Card key={order.id} className="p-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold">Order #{order.id.slice(0, 8)}</p>
-                      <p className="text-xs text-foreground-muted">
-                        {new Date(order.created_at).toLocaleDateString()}
+                <Card key={order.id} className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <p className="font-semibold text-base">Order #{order.id.slice(0, 8)}</p>
+                      <p className="text-xs text-foreground-muted mt-1">
+                        {new Date(order.created_at).toLocaleDateString()} at {new Date(order.created_at).toLocaleTimeString()}
+                      </p>
+                      <p className="text-sm text-foreground-muted mt-1">
+                        Scheduled: {order.scheduled_date} at {order.scheduled_time}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-primary">₹{order.total_price}</p>
-                      <span className={`text-xs px-2 py-1 rounded-full ${
+                      <p className="font-bold text-primary text-lg">₹{order.total_price}</p>
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                         order.status === 'completed' ? 'bg-green-100 text-green-700' :
+                        order.status === 'accepted' ? 'bg-blue-100 text-blue-700' :
                         order.status === 'pending' ? 'bg-orange-100 text-orange-700' :
                         'bg-gray-100 text-gray-700'
                       }`}>
@@ -270,6 +283,66 @@ const MyStoreFront = () => {
                       </span>
                     </div>
                   </div>
+                  
+                  {/* Action Buttons for Pending Orders */}
+                  {order.status === 'pending' && (
+                    <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-border">
+                      <Button
+                        onClick={async () => {
+                          try {
+                            await orderAPI.updateStatus(order.id, 'accepted');
+                            toast.success('Order accepted!');
+                            fetchStoreData();
+                          } catch (error) {
+                            toast.error('Failed to accept order');
+                          }
+                        }}
+                        className="bg-green-600 hover:bg-green-700 text-white"
+                        size="sm"
+                      >
+                        ✓ Accept
+                      </Button>
+                      <Button
+                        onClick={async () => {
+                          if (window.confirm('Are you sure you want to reject this order?')) {
+                            try {
+                              await orderAPI.updateStatus(order.id, 'rejected');
+                              toast.success('Order rejected');
+                              fetchStoreData();
+                            } catch (error) {
+                              toast.error('Failed to reject order');
+                            }
+                          }
+                        }}
+                        variant="outline"
+                        className="border-red-600 text-red-600 hover:bg-red-50"
+                        size="sm"
+                      >
+                        ✗ Reject
+                      </Button>
+                    </div>
+                  )}
+                  
+                  {/* Status Update Buttons for Accepted Orders */}
+                  {order.status === 'accepted' && (
+                    <div className="mt-3 pt-3 border-t border-border">
+                      <Button
+                        onClick={async () => {
+                          try {
+                            await orderAPI.updateStatus(order.id, 'completed');
+                            toast.success('Order marked as completed!');
+                            fetchStoreData();
+                          } catch (error) {
+                            toast.error('Failed to update order');
+                          }
+                        }}
+                        className="w-full bg-green-600 hover:bg-green-700 text-white"
+                        size="sm"
+                      >
+                        Mark as Completed
+                      </Button>
+                    </div>
+                  )}
                 </Card>
               ))}
             </div>
