@@ -255,7 +255,7 @@ def calculate_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
 
 @api_router.post("/auth/send-otp")
 async def send_otp(req: OTPRequest):
-    if not twilio_client or not TWILIO_VERIFY_SERVICE:
+    if not twilio_client or not TWILIO_VERIFY_SERVICE or TWILIO_VERIFY_SERVICE.startswith('your_'):
         return {"success": True, "message": "OTP sent (mocked)"}
     try:
         verification = twilio_client.verify.services(TWILIO_VERIFY_SERVICE).verifications.create(to=req.phone, channel="sms")
