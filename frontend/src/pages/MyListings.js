@@ -89,7 +89,7 @@ const MyListings = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => navigate(`/product/${product.id}`)}
+                      onClick={() => navigate(`/edit-listing/${product.id}`)}
                     >
                       <Edit className="w-4 h-4 mr-1" />
                       Edit
