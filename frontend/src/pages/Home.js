@@ -167,11 +167,17 @@ const Home = () => {
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="bg-white rounded-lg p-3 border border-border">
                 <p className="text-xs text-foreground-muted mb-1">One-time Setup</p>
-                <p className="text-2xl font-bold text-primary">₹199</p>
+                <div className="flex items-baseline gap-1">
+                  <p className="text-2xl font-bold text-primary">₹199</p>
+                  <span className="text-xs text-foreground-muted">INR</span>
+                </div>
               </div>
               <div className="bg-white rounded-lg p-3 border border-border">
                 <p className="text-xs text-foreground-muted mb-1">Monthly Fee</p>
-                <p className="text-2xl font-bold text-primary">₹499</p>
+                <div className="flex items-baseline gap-1">
+                  <p className="text-2xl font-bold text-primary">₹499</p>
+                  <span className="text-xs text-foreground-muted">INR</span>
+                </div>
               </div>
             </div>
             
