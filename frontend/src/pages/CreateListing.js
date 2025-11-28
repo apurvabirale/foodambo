@@ -27,6 +27,8 @@ const spiceLevels = [
 
 const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
+const timeSlots = ['9 AM', '1 PM', '5 PM', '8 PM'];
+
 const CreateListing = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -50,8 +52,7 @@ const CreateListing = () => {
   const [isVeg, setIsVeg] = useState(true);
   const [spiceLevel, setSpiceLevel] = useState('');
   const [availabilityDays, setAvailabilityDays] = useState(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
-  const [startTime, setStartTime] = useState('09:00');
-  const [endTime, setEndTime] = useState('21:00');
+  const [timeSlots, setTimeSlots] = useState(['9 AM', '1 PM', '5 PM', '8 PM']);
   const [minQuantity, setMinQuantity] = useState('1');
   const [deliveryAvailable, setDeliveryAvailable] = useState(false);
   const [pickupAvailable, setPickupAvailable] = useState(true);
@@ -114,7 +115,7 @@ const CreateListing = () => {
         spice_level: spiceLevel,
         details: {},
         availability_days: availabilityDays,
-        availability_times: { start: startTime, end: endTime },
+        availability_time_slots: timeSlots,
         min_quantity: parseInt(minQuantity),
         delivery_available: deliveryAvailable,
         pickup_available: pickupAvailable,
@@ -365,22 +366,26 @@ const CreateListing = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Start Time</label>
-              <Input
-                type="time"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">End Time</label>
-              <Input
-                type="time"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-              />
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Time Slots</label>
+            <div className="grid grid-cols-2 gap-2">
+              {['9 AM', '1 PM', '5 PM', '8 PM'].map((slot) => (
+                <label key={slot} className="flex items-center gap-2 p-2 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={timeSlots.includes(slot)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setTimeSlots([...timeSlots, slot]);
+                      } else {
+                        setTimeSlots(timeSlots.filter(s => s !== slot));
+                      }
+                    }}
+                    className="rounded"
+                  />
+                  <span className="text-sm font-medium">{slot}</span>
+                </label>
+              ))}
             </div>
           </div>
 
