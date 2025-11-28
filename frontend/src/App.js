@@ -84,6 +84,16 @@ function AppContent() {
             <Wallet />
           </PrivateRoute>
         } />
+        <Route path="/edit-store" element={
+          <PrivateRoute>
+            <EditStore />
+          </PrivateRoute>
+        } />
+        <Route path="/edit-listing/:id" element={
+          <PrivateRoute>
+            <EditListing />
+          </PrivateRoute>
+        } />
       </Routes>
       {isAuthenticated && <BottomNav />}
       <Toaster />
