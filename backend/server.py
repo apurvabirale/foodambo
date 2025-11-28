@@ -618,7 +618,7 @@ async def create_review(review_data: ReviewCreate, current_user: User = Depends(
     review_dict['created_at'] = review_dict['created_at'].isoformat()
     await db.reviews.insert_one(review_dict)
     
-    reviews = await db.reviews.find({"store_id": product["store_id"]}).to_list(1000)
+    reviews = await db.reviews.find({"store_id": product["store_id"]}, {"_id": 0}).to_list(1000)
     avg_rating = sum([r["rating"] for r in reviews]) / len(reviews) if reviews else 0
     await db.stores.update_one(
         {"id": product["store_id"]},
