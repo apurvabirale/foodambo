@@ -303,6 +303,88 @@ const CreateListing = () => {
           </div>
 
           <div className="space-y-2">
+            <label className="text-sm font-medium">Food Type</label>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  checked={isVeg}
+                  onChange={() => setIsVeg(true)}
+                  className="rounded-full"
+                />
+                <span className="text-sm">🟢 Veg</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  checked={!isVeg}
+                  onChange={() => setIsVeg(false)}
+                  className="rounded-full"
+                />
+                <span className="text-sm">🔴 Non-Veg</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Spice Level</label>
+            <Select value={spiceLevel} onValueChange={setSpiceLevel}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select spice level" />
+              </SelectTrigger>
+              <SelectContent>
+                {spiceLevels.map((level) => (
+                  <SelectItem key={level.value} value={level.value}>
+                    {level.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Availability Days</label>
+            <div className="grid grid-cols-4 gap-2">
+              {daysOfWeek.map((day) => (
+                <label key={day} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={availabilityDays.includes(day)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setAvailabilityDays([...availabilityDays, day]);
+                      } else {
+                        setAvailabilityDays(availabilityDays.filter(d => d !== day));
+                      }
+                    }}
+                    className="rounded"
+                  />
+                  <span className="text-sm">{day}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Start Time</label>
+              <Input
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">End Time</label>
+              <Input
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
             <label className="text-sm font-medium">Minimum Quantity</label>
             <Input
               type="number"
