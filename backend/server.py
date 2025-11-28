@@ -342,7 +342,7 @@ async def facebook_auth(access_token: str):
             email = data.get("email")
             if not email:
                 raise HTTPException(status_code=400, detail="Email not available from Facebook")
-            user_doc = await db.users.find_one({"email": email})
+            user_doc = await db.users.find_one({"email": email}, {"_id": 0})
             if not user_doc:
                 user = User(email=email, name=data["name"], profile_picture=data.get("picture", {}).get("data", {}).get("url"), auth_method="facebook")
                 user_dict = user.model_dump()
