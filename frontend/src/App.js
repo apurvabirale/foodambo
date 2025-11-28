@@ -11,6 +11,7 @@ import CreateListing from './pages/CreateListing';
 import EditListing from './pages/EditListing';
 import EditStore from './pages/EditStore';
 import MyListings from './pages/MyListings';
+import Settings from './pages/Settings';
 import MyOrders from './pages/MyOrders';
 import Inbox from './pages/Inbox';
 import Profile from './pages/Profile';
@@ -92,6 +93,11 @@ function AppContent() {
         <Route path="/edit-listing/:id" element={
           <PrivateRoute>
             <EditListing />
+          </PrivateRoute>
+        } />
+        <Route path="/settings" element={
+          <PrivateRoute>
+            <Settings />
           </PrivateRoute>
         } />
       </Routes>
