@@ -561,7 +561,7 @@ async def get_seller_orders(current_user: User = Depends(get_current_user)):
 
 @api_router.put("/orders/{order_id}/status")
 async def update_order_status(order_id: str, status: str, current_user: User = Depends(get_current_user)):
-    order = await db.orders.find_one({"id": order_id})
+    order = await db.orders.find_one({"id": order_id}, {"_id": 0})
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     
