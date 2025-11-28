@@ -115,6 +115,20 @@ const Home = () => {
               </div>
             )}
           </div>
+          
+          {/* Become a Seller Quick CTA - Always visible */}
+          {!hasStore && (
+            <div className="mt-3">
+              <button
+                onClick={() => navigate('/create-listing')}
+                className="w-full bg-gradient-to-r from-primary to-secondary text-white py-2.5 rounded-full font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+              >
+                <span className="text-lg">🏪</span>
+                Start Selling - Zero Commission!
+                <span className="text-lg">→</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
