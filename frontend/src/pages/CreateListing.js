@@ -673,11 +673,12 @@ const CreateListing = () => {
                 </div>
                 
                 <p className="text-xs text-green-700 bg-green-50 p-2 rounded">
-                  💡 Party orders appear in a special section on the home page!
+                  💡 Party packages appear in a special section on the home page!
                 </p>
               </div>
             )}
-          </div>
+            </div>
+          )}
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Delivery Options</label>
