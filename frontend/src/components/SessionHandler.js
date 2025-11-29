@@ -16,12 +16,16 @@ const SessionHandler = ({ children }) => {
       console.log('SessionHandler: Checking hash:', hash);
       
       if (hash && hash.includes('session_id=')) {
+        // Clean the hash immediately to prevent multiple processing
+        const hashToProcess = hash;
+        window.history.replaceState(null, '', window.location.pathname);
+        
         setProcessing(true);
         console.log('SessionHandler: Found session_id, processing...');
         
         try {
           // Extract session_id from hash
-          const sessionId = hash.split('session_id=')[1].split('&')[0];
+          const sessionId = hashToProcess.split('session_id=')[1].split('&')[0];
           console.log('SessionHandler: Extracted session_id:', sessionId.substring(0, 20) + '...');
           
           // Call Emergent's session data endpoint
