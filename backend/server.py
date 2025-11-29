@@ -748,6 +748,44 @@ async def get_messages(order_id: str, current_user: User = Depends(get_current_u
     messages = await db.chat_messages.find({"order_id": order_id}, {"_id": 0}).sort("timestamp", 1).to_list(1000)
     return messages
 
+@api_router.post("/ai/generate-description")
+async def generate_description(
+    data: dict,
+    current_user: User = Depends(get_current_user)
+):
+    """Generate AI-powered product description"""
+    title = data.get("title", "")
+    category = data.get("category", "")
+    is_veg = data.get("is_veg", True)
+    spice_level = data.get("spice_level", "")
+    
+    if not title:
+        raise HTTPException(status_code=400, detail="Title is required")
+    
+    # Get Emergent LLM key from environment
+    api_key = os.getenv("EMERGENT_LLM_KEY", "sk-emergent-70fDa9c67762e3bC63")
+    
+    # Create a chat instance
+    chat = LlmChat(
+        api_key=api_key,
+        session_id=f"desc-gen-{current_user.id}-{uuid.uuid4()}",
+        system_message="You are a food description expert specializing in Indian homemade cuisine. Create authentic, mouth-watering descriptions that highlight the traditional aspects and authentic flavors."
+    ).with_model("openai", "gpt-5-mini")
+    
+    # Create prompt based on product details
+    veg_text = "vegetarian" if is_veg else "non-vegetarian"
+    spice_text = f", {spice_level} spice level" if spice_level else ""
+    
+    prompt = f"Write a 2-3 sentence authentic description for '{title}', a {veg_text} {category} dish{spice_text}. Focus on traditional preparation, authentic flavors, and what makes it special. Keep it appetizing and concise."
+    
+    user_message = UserMessage(text=prompt)
+    
+    try:
+        response = await chat.send_message(user_message)
+        return {"description": response}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"AI generation failed: {str(e)}")
+
 @api_router.post("/reviews")
 async def create_review(review_data: ReviewCreate, current_user: User = Depends(get_current_user)):
     order = await db.orders.find_one({"id": review_data.order_id, "buyer_id": current_user.id}, {"_id": 0})
