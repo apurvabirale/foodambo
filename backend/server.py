@@ -104,6 +104,10 @@ class Store(BaseModel):
     is_pure_veg: bool = False
     fssai_license: Optional[str] = None
     fssai_verified: bool = False
+    fssai_number: Optional[str] = None
+    fssai_certificate_url: Optional[str] = None
+    fssai_submitted_at: Optional[datetime] = None
+    fssai_assistance_requested: bool = False
     rating: float = 0.0
     total_reviews: int = 0
     acceptance_rate: float = 100.0
