@@ -487,15 +487,18 @@ frontend:
 
   - task: "Seller Order Management (Accept/Reject)"
     implemented: true
-    working: "NA"
+    working: true
     file: "frontend/src/pages/SellerOrders.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Seller orders page with Accept/Reject buttons for pending orders. Includes order expiry display. Needs testing."
+        - working: true
+          agent: "testing"
+          comment: "Seller Orders page working correctly: ✅ Page loads successfully, ✅ Filter buttons present (All, Pending, Accepted, Completed), ✅ Order cards display with proper status badges, ✅ Accept/Reject buttons functional for pending orders, ✅ Order expiry display working, ✅ 'Mark as Completed' button for accepted orders. Found 3 orders with different statuses (accepted, rejected, pending). All seller order management functionality working as expected."
 
   - task: "Buyer Order Tracking"
     implemented: true
