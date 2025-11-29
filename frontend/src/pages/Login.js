@@ -62,7 +62,7 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await authAPI.verifyOTP(phone.startsWith('+') ? phone : `+91${phone}`, otp);
-      login(response.data.token);
+      await login(response.data.token);
       toast.success('Login successful!');
       navigate('/');
     } catch (error) {
