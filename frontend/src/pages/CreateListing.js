@@ -41,6 +41,7 @@ const CreateListing = () => {
   const [storeName, setStoreName] = useState('');
   const [storeAddress, setStoreAddress] = useState('');
   const [storeCategories, setStoreCategories] = useState([]);
+  const [storeLocation, setStoreLocation] = useState(null);
   
   // Product form
   const [category, setCategory] = useState('');
@@ -65,7 +66,16 @@ const CreateListing = () => {
 
   useEffect(() => {
     checkStore();
-  }, []);
+    // Auto-populate store location from user profile
+    if (user?.location) {
+      setStoreLocation({
+        latitude: user.location.latitude,
+        longitude: user.location.longitude,
+        address: user.location.address || ''
+      });
+      setStoreAddress(user.location.address || '');
+    }
+  }, [user]);
 
   const checkStore = async () => {
     try {
@@ -78,8 +88,19 @@ const CreateListing = () => {
   };
 
   const handleCreateStore = async () => {
-    if (!storeName || !storeAddress || !location) {
+    if (!storeName || !storeAddress) {
       toast.error('Please fill all store details');
+      return;
+    }
+
+    // Use storeLocation if set, otherwise fallback to user's location
+    const finalLocation = storeLocation || (user?.location ? {
+      latitude: user.location.latitude,
+      longitude: user.location.longitude
+    } : location);
+
+    if (!finalLocation || !finalLocation.latitude || !finalLocation.longitude) {
+      toast.error('Store location is required. Please set your location.');
       return;
     }
 
@@ -88,8 +109,8 @@ const CreateListing = () => {
       await storeAPI.create({
         store_name: storeName,
         address: storeAddress,
-        latitude: location.latitude,
-        longitude: location.longitude,
+        latitude: finalLocation.latitude,
+        longitude: finalLocation.longitude,
         categories: storeCategories,
       });
       toast.success('Store created successfully!');
