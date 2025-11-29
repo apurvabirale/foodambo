@@ -28,37 +28,8 @@ const SessionHandler = ({ children }) => {
           const sessionId = hashToProcess.split('session_id=')[1].split('&')[0];
           console.log('SessionHandler: Extracted session_id:', sessionId.substring(0, 20) + '...');
           
-          // Call Emergent's session data endpoint
-          console.log('SessionHandler: Calling Emergent session-data endpoint...');
-          let response;
-          let data;
-          
-          try {
-            response = await fetch('https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data', {
-              headers: {
-                'X-Session-ID': sessionId
-              }
-            });
-          } catch (fetchError) {
-            console.error('SessionHandler: Network error calling Emergent API:', fetchError);
-            throw new Error('Network error: Unable to reach authentication service');
-          }
-
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error('SessionHandler: Emergent API failed:', response.status, errorText);
-            throw new Error('Failed to get session data from Emergent');
-          }
-
-          try {
-            data = await response.json();
-            console.log('SessionHandler: Got user data:', data.email);
-          } catch (jsonError) {
-            console.error('SessionHandler: Failed to parse Emergent response:', jsonError);
-            throw new Error('Invalid response from authentication service');
-          }
-          
-          // Send session data to our backend to create user and get token
+          // Send session_id directly to OUR backend (not to Emergent)
+          // Our backend will call Emergent API server-to-server (no CORS issues)
           console.log('SessionHandler: Calling backend auth endpoint...');
           console.log('SessionHandler: Backend URL:', process.env.REACT_APP_BACKEND_URL);
           
