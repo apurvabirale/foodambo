@@ -324,6 +324,12 @@ agent_communication:
 
 user_problem_statement: "Comprehensive testing of ALL Foodambo features including: Authentication (Phone OTP, Google), Product listing creation with AI description generator, Party Orders section, Order placement and management, Seller Accept/Reject flow, Buyer/Seller order tracking, Search functionality, Category filtering, Location-based product discovery, and Payment info display (Direct UPI model)"
 
+#====================================================================================================
+# LOCATION FEATURE TESTING - Session 3
+#====================================================================================================
+
+user_problem_statement: "Test the new mandatory location feature implementation for Foodambo app. Test scenarios: 1) New User Location Setup Flow (login with 8888888888, OTP: 123456), 2) Store Creation with Auto-populated Location, 3) Existing User should NOT see Location Setup (login with 9876543210, OTP: 123456)"
+
 backend:
   - task: "AI Product Description Generator API"
     implemented: true
