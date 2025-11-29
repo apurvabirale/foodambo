@@ -790,7 +790,9 @@ async def generate_description(
     
     try:
         response = await chat.send_message(user_message)
-        return {"description": response}
+        # Convert response to string to avoid ObjectId serialization issues
+        description_text = str(response) if response else ""
+        return {"description": description_text}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"AI generation failed: {str(e)}")
 
