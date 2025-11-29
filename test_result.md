@@ -547,11 +547,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Home Page with Category Pills & Party Orders Section"
     - "Create Listing with AI Generator & Enhanced Fields"
-    - "Product Detail Page with Party Packages & Delivery Charges"
-    - "Seller Order Management (Accept/Reject)"
-  stuck_tasks: []
+  stuck_tasks:
+    - "Create Listing with AI Generator & Enhanced Fields"
   test_all: false
   test_priority: "high_first"
 
