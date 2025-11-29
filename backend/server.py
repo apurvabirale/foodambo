@@ -14,7 +14,7 @@ from pathlib import Path
 import uuid
 import httpx
 import math
-from emergentintegrations.llm.chat import LlmChat, UserMessage, FileContentWithMimeType
+from emergentintegrations.llm.chat import LlmChat, UserMessage
 import base64
 
 ROOT_DIR = Path(__file__).parent
