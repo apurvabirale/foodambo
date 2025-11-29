@@ -158,7 +158,6 @@ const SessionHandler = ({ children }) => {
     return () => {
       isProcessing = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]); // Only depend on location to detect URL changes
 
   if (processing) {
