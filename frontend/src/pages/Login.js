@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { authAPI } from '../utils/api';
 import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
 import { toast } from 'sonner';
 
 const cuisineImages = [
