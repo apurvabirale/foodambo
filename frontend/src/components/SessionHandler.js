@@ -54,104 +54,100 @@ const SessionHandler = ({ children }) => {
         
         // Clean the hash AFTER validation
         window.history.replaceState(null, '', window.location.pathname);
-          
-          // Send session_id directly to OUR backend (not to Emergent)
-          // Our backend will call Emergent API server-to-server (no CORS issues)
-          console.log('SessionHandler: Calling backend auth endpoint...');
-          console.log('SessionHandler: Backend URL:', process.env.REACT_APP_BACKEND_URL);
-          
-          let backendResponse;
-          let retryCount = 0;
-          const maxRetries = 2;
-          
-          // Try up to 3 times (initial + 2 retries) with short delays
-          while (retryCount <= maxRetries) {
-            try {
-              if (retryCount > 0) {
-                console.log(`SessionHandler: Retry attempt ${retryCount}/${maxRetries}...`);
-                await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
-              }
-              
-              backendResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  session_id: sessionId
-                }),
-                timeout: 10000
-              });
-              
-              // If we get a response, break the retry loop
-              if (backendResponse) {
-                break;
-              }
-            } catch (fetchError) {
-              console.error(`SessionHandler: Network error (attempt ${retryCount + 1}):`, fetchError);
-              
-              if (retryCount === maxRetries) {
-                throw new Error('Network error: Unable to reach backend server after multiple attempts');
-              }
-              retryCount++;
+        
+        // Send session_id directly to OUR backend (not to Emergent)
+        // Our backend will call Emergent API server-to-server (no CORS issues)
+        console.log('SessionHandler: Calling backend auth endpoint...');
+        console.log('SessionHandler: Backend URL:', process.env.REACT_APP_BACKEND_URL);
+        
+        let backendResponse;
+        let retryCount = 0;
+        const maxRetries = 2;
+        
+        // Try up to 3 times (initial + 2 retries) with short delays
+        while (retryCount <= maxRetries) {
+          try {
+            if (retryCount > 0) {
+              console.log(`SessionHandler: Retry attempt ${retryCount}/${maxRetries}...`);
+              await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
             }
+            
+            backendResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                session_id: sessionId
+              })
+            });
+            
+            // If we get a response, break the retry loop
+            if (backendResponse) {
+              break;
+            }
+          } catch (fetchError) {
+            console.error(`SessionHandler: Network error (attempt ${retryCount + 1}):`, fetchError);
+            
+            if (retryCount === maxRetries) {
+              throw new Error('Network error: Unable to reach backend server after multiple attempts');
+            }
+            retryCount++;
           }
-          
-          if (!backendResponse) {
-            throw new Error('Failed to get response from backend after retries');
-          }
-          
-          console.log('SessionHandler: Backend response status:', backendResponse.status);
-
-          if (!backendResponse.ok) {
-            const errorText = await backendResponse.text();
-            console.error('SessionHandler: Backend auth failed:', backendResponse.status, errorText);
-            throw new Error('Backend authentication failed: ' + errorText);
-          }
-
-          const authData = await backendResponse.json();
-          console.log('SessionHandler: Got auth token, logging in...');
-          
-          // Store token and login
-          login(authData.token);
-          
-          // Clean URL hash
-          window.history.replaceState(null, '', window.location.pathname);
-          
-          console.log('SessionHandler: Authentication complete!');
-          toast.success('Login successful!');
-          navigate('/');
-        } catch (error) {
-          console.error('SessionHandler: Error during authentication:', error);
-          console.error('SessionHandler: Error stack:', error.stack);
-          
-          let errorMessage = '';
-          let showOtpTip = true;
-          
-          if (error.message.includes('Invalid session ID') || error.message.includes('Invalid hash format')) {
-            errorMessage = '⚠️ Authentication link expired or invalid. Please try logging in again.';
-          } else if (error.message.includes('user_data_not_found') || error.message.includes('expired')) {
-            errorMessage = '⏱️ Session expired (they expire in 10 seconds). Click "Continue with Google" again.';
-          } else if (error.message.includes('Network error') || error.message.includes('after multiple attempts')) {
-            errorMessage = '🌐 Connection issue. Please check your internet and try again.';
-          } else if (error.message.includes('Emergent')) {
-            errorMessage = '⚠️ Google authentication service unavailable. Try again in a moment.';
-          } else if (error.message.includes('backend')) {
-            errorMessage = '⚠️ Server busy. Please try again.';
-          } else {
-            errorMessage = '❌ Login failed: ' + error.message;
-            showOtpTip = false;
-          }
-          
-          toast.error(errorMessage, {
-            duration: 6000,
-            description: showOtpTip ? '💡 Tip: Phone OTP login works instantly!' : undefined
-          });
-          
-          navigate('/login');
-        } finally {
-          setProcessing(false);
         }
+        
+        if (!backendResponse) {
+          throw new Error('Failed to get response from backend after retries');
+        }
+        
+        console.log('SessionHandler: Backend response status:', backendResponse.status);
+
+        if (!backendResponse.ok) {
+          const errorText = await backendResponse.text();
+          console.error('SessionHandler: Backend auth failed:', backendResponse.status, errorText);
+          throw new Error('Backend authentication failed: ' + errorText);
+        }
+
+        const authData = await backendResponse.json();
+        console.log('SessionHandler: Got auth token, logging in...');
+        
+        // Store token and login
+        await login(authData.token);
+        
+        console.log('SessionHandler: Authentication complete!');
+        toast.success('🎉 Login successful!');
+        navigate('/');
+      } catch (error) {
+        console.error('SessionHandler: Error during authentication:', error);
+        console.error('SessionHandler: Error stack:', error.stack);
+        
+        let errorMessage = '';
+        let showOtpTip = true;
+        
+        if (error.message.includes('Invalid session ID') || error.message.includes('Invalid hash format')) {
+          errorMessage = '⚠️ Authentication link expired or invalid. Please try logging in again.';
+        } else if (error.message.includes('user_data_not_found') || error.message.includes('expired')) {
+          errorMessage = '⏱️ Session expired (expires in 10 sec). Click "Continue with Google" again.';
+        } else if (error.message.includes('Network error') || error.message.includes('after multiple attempts')) {
+          errorMessage = '🌐 Connection issue. Please check your internet and try again.';
+        } else if (error.message.includes('Emergent')) {
+          errorMessage = '⚠️ Google authentication service unavailable. Try again in a moment.';
+        } else if (error.message.includes('backend') || error.message.includes('Backend')) {
+          errorMessage = '⚠️ Server busy. Please try again.';
+        } else {
+          errorMessage = '❌ Login failed: ' + error.message;
+          showOtpTip = false;
+        }
+        
+        toast.error(errorMessage, {
+          duration: 6000,
+          description: showOtpTip ? '💡 Tip: Phone OTP login works instantly!' : undefined
+        });
+        
+        navigate('/login');
+      } finally {
+        setProcessing(false);
+        isProcessing = false;
       }
     };
 
@@ -171,6 +167,7 @@ const SessionHandler = ({ children }) => {
         <div className="text-center space-y-4">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-4 border-orange-500"></div>
           <p className="text-lg font-medium text-foreground">Completing sign in...</p>
+          <p className="text-sm text-foreground-muted">Please wait...</p>
         </div>
       </div>
     );
