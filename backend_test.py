@@ -584,7 +584,7 @@ def main():
     
     # Setup
     tester = FoodamboAPITester()
-    test_phone = "9876543210"  # Using the specific phone from review request
+    test_phone = "+919876543210"  # Using the specific phone from review request with country code
     test_otp = "123456"
 
     # Authentication Flow
