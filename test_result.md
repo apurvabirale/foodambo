@@ -457,15 +457,18 @@ frontend:
 
   - task: "Create Listing with AI Generator & Enhanced Fields"
     implemented: true
-    working: "NA"
+    working: false
     file: "frontend/src/pages/CreateListing.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Create listing form enhanced with AI description generator button, veg/non-veg toggle, spice level, qty_per_unit, availability fields, and party package inputs. Needs testing."
+        - working: false
+          agent: "testing"
+          comment: "Create listing form working correctly with all enhanced fields present. CRITICAL ISSUE: AI Description Generator button found and functional (shows 'Generating...' state when clicked), but description is not populated in the textarea. Backend logs show successful AI API calls (200 OK) and LiteLLM completion, but there's a serialization error with ObjectId in the response. The AI generation works but response handling fails. All other form fields working: category selection, title input, price, party packages, veg/non-veg toggle, availability settings."
 
   - task: "Product Detail Page with Party Packages & Delivery Charges"
     implemented: true
