@@ -103,19 +103,19 @@ const SessionHandler = ({ children }) => {
           console.error('SessionHandler: Error stack:', error.stack);
           
           let errorMessage = 'Authentication failed. ';
-          if (error.message.includes('Network error')) {
-            errorMessage += 'Please check your internet connection and try again.';
+          if (error.message.includes('user_data_not_found') || error.message.includes('expired')) {
+            errorMessage += 'Session expired. Please try logging in again.';
+          } else if (error.message.includes('Network error')) {
+            errorMessage += 'Please try again.';
           } else if (error.message.includes('Emergent')) {
-            errorMessage += 'Google authentication service is unavailable.';
+            errorMessage += 'Google authentication service is temporarily unavailable.';
           } else if (error.message.includes('backend')) {
-            errorMessage += 'Server is unavailable. Please try again later.';
+            errorMessage += 'Server is temporarily unavailable.';
           } else {
             errorMessage += error.message;
           }
           
           toast.error(errorMessage);
-          // Clean URL hash
-          window.history.replaceState(null, '', window.location.pathname);
           navigate('/login');
         } finally {
           setProcessing(false);
