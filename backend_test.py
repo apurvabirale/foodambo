@@ -528,9 +528,8 @@ class FoodamboAPITester:
         success1, response1 = self.run_test(
             "Seller Accept Order",
             "PUT",
-            f"orders/{self.order_id}/status",
-            200,
-            data={"status": "accepted"}
+            f"orders/{self.order_id}/status?status=accepted",
+            200
         )
         
         if not success1:
@@ -541,9 +540,8 @@ class FoodamboAPITester:
             success2, response2 = self.run_test(
                 "Seller Reject Order",
                 "PUT",
-                f"orders/{self.party_order_id}/status",
-                200,
-                data={"status": "rejected"}
+                f"orders/{self.party_order_id}/status?status=rejected",
+                200
             )
             return success1 and success2
         
