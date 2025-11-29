@@ -218,24 +218,59 @@ const ProductDetail = () => {
 
         {/* Order Form */}
         <Card className="p-4 space-y-4">
-          <h3 className="font-semibold text-lg">Place Order</h3>
+          <h3 className="font-semibold text-lg">{product.is_party_order ? '🎉 Book Party Package' : 'Place Order'}</h3>
           
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Quantity *</label>
-            <Input
-              type="number"
-              min={product.min_quantity || 1}
-              value={quantity}
-              onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-              data-testid="quantity-input"
-            />
-            {product.min_quantity > 1 && (
-              <p className="text-xs text-orange-600 flex items-center gap-1">
-                <AlertCircle className="w-3 h-3" />
-                Minimum order: {product.min_quantity} {product.category === 'fresh_food' ? 'plate(s)' : 'unit(s)'}
+          {product.is_party_order ? (
+            /* Party Package Selection */
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Select Package Size *</label>
+              <div className="grid grid-cols-1 gap-3">
+                {product.party_packages && Object.entries(product.party_packages).map(([people, price]) => (
+                  <button
+                    key={people}
+                    onClick={() => setSelectedPartyPackage(people)}
+                    className={`p-4 border-2 rounded-lg text-left transition-all ${
+                      selectedPartyPackage === people
+                        ? 'border-primary bg-primary/5'
+                        : 'border-gray-200 hover:border-primary/50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-bold text-lg">{people} People</p>
+                        <p className="text-sm text-foreground-muted">Perfect for {people === '25' ? 'small' : people === '50' ? 'medium' : 'large'} gatherings</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-2xl font-bold text-primary">₹{price}</p>
+                        <p className="text-xs text-foreground-muted">₹{Math.round(price / parseInt(people))}/person</p>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-blue-600 bg-blue-50 p-2 rounded">
+                💡 All party packages include full setup and service
               </p>
-            )}
-          </div>
+            </div>
+          ) : (
+            /* Regular Quantity Selection */
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Quantity *</label>
+              <Input
+                type="number"
+                min={product.min_quantity || 1}
+                value={quantity}
+                onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+                data-testid="quantity-input"
+              />
+              {product.min_quantity > 1 && (
+                <p className="text-xs text-orange-600 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" />
+                  Minimum order: {product.min_quantity} {product.category === 'fresh_food' ? 'plate(s)' : 'unit(s)'}
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Delivery Method *</label>
