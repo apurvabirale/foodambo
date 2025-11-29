@@ -325,17 +325,27 @@ async def send_otp(req: OTPRequest):
 
 @api_router.post("/auth/verify-otp")
 async def verify_otp(req: OTPVerify):
+    def serialize_user(user_dict):
+        """Helper to serialize datetime fields to ISO format"""
+        if user_dict.get('created_at') and isinstance(user_dict['created_at'], datetime):
+            user_dict['created_at'] = user_dict['created_at'].isoformat()
+        if user_dict.get('subscription_started_at') and isinstance(user_dict['subscription_started_at'], datetime):
+            user_dict['subscription_started_at'] = user_dict['subscription_started_at'].isoformat()
+        if user_dict.get('subscription_expires_at') and isinstance(user_dict['subscription_expires_at'], datetime):
+            user_dict['subscription_expires_at'] = user_dict['subscription_expires_at'].isoformat()
+        return user_dict
+    
     if not twilio_client or not TWILIO_VERIFY_SERVICE or TWILIO_VERIFY_SERVICE.startswith('your_'):
         if req.code == "123456":
             user_doc = await db.users.find_one({"phone": req.phone}, {"_id": 0})
             if not user_doc:
                 user = User(phone=req.phone, name=f"User {req.phone[-4:]}", auth_method="phone")
                 user_dict = user.model_dump()
-                user_dict['created_at'] = user_dict['created_at'].isoformat()
-                if user_dict.get('subscription_expires_at'):
-                    user_dict['subscription_expires_at'] = user_dict['subscription_expires_at'].isoformat()
+                user_dict = serialize_user(user_dict)
                 await db.users.insert_one(user_dict)
                 user_doc = user_dict
+            else:
+                user_doc = serialize_user(user_doc)
             token = create_access_token({"sub": user_doc["id"]})
             return {"success": True, "token": token, "user": user_doc}
         raise HTTPException(status_code=400, detail="Invalid OTP")
@@ -347,11 +357,11 @@ async def verify_otp(req: OTPVerify):
             if not user_doc:
                 user = User(phone=req.phone, name=f"User {req.phone[-4:]}", auth_method="phone")
                 user_dict = user.model_dump()
-                user_dict['created_at'] = user_dict['created_at'].isoformat()
-                if user_dict.get('subscription_expires_at'):
-                    user_dict['subscription_expires_at'] = user_dict['subscription_expires_at'].isoformat()
+                user_dict = serialize_user(user_dict)
                 await db.users.insert_one(user_dict)
                 user_doc = user_dict
+            else:
+                user_doc = serialize_user(user_doc)
             token = create_access_token({"sub": user_doc["id"]})
             return {"success": True, "token": token, "user": user_doc}
         raise HTTPException(status_code=400, detail="Invalid OTP")
