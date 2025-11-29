@@ -10,6 +10,7 @@ import { Card } from '../components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { toast } from 'sonner';
 import { ArrowLeft, Upload, X, Sparkles } from 'lucide-react';
+import LocationPicker from '../components/LocationPicker';
 
 const categories = [
   { value: 'fresh_food', label: 'Fresh Food' },
