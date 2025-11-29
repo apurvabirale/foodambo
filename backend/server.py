@@ -172,7 +172,21 @@ class Order(BaseModel):
     buyer_address: Optional[str] = None
     buyer_phone: Optional[str] = None
     party_package: Optional[str] = None
+    delivered_at: Optional[datetime] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Message(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    order_id: str
+    sender_id: str
+    sender_name: str
+    message: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class MessageCreate(BaseModel):
+    order_id: str
+    message: str
     accepted_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
     expires_at: Optional[datetime] = None
