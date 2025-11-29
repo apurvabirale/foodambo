@@ -14,6 +14,7 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [store, setStore] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [deliveryMethod, setDeliveryMethod] = useState('pickup');
@@ -39,6 +40,14 @@ const ProductDetail = () => {
       }
       const storeResponse = await storeAPI.get(response.data.store_id);
       setStore(storeResponse.data);
+      
+      // Fetch store reviews
+      try {
+        const reviewsResponse = await reviewAPI.getStore(response.data.store_id);
+        setReviews(reviewsResponse.data);
+      } catch (error) {
+        console.error('Failed to load reviews:', error);
+      }
     } catch (error) {
       toast.error('Failed to load product');
     } finally {
