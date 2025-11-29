@@ -54,6 +54,7 @@ const CreateListing = () => {
   const [availabilityDays, setAvailabilityDays] = useState(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
   const [timeSlots, setTimeSlots] = useState(['9 AM', '1 PM', '5 PM', '8 PM']);
   const [minQuantity, setMinQuantity] = useState('1');
+  const [qtyPerUnit, setQtyPerUnit] = useState('');
   const [deliveryAvailable, setDeliveryAvailable] = useState(false);
   const [pickupAvailable, setPickupAvailable] = useState(true);
 
