@@ -10,23 +10,50 @@ const SessionHandler = ({ children }) => {
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
+    let isProcessing = false; // Debounce flag
+    
     const handleSession = async () => {
+      // Prevent multiple simultaneous processing
+      if (isProcessing || processing) {
+        console.log('SessionHandler: Already processing, skipping...');
+        return;
+      }
+      
       // Check for session_id in URL hash
       const hash = window.location.hash;
       console.log('SessionHandler: Checking hash:', hash);
       
-      if (hash && hash.includes('session_id=')) {
-        // Clean the hash immediately to prevent multiple processing
-        const hashToProcess = hash;
+      if (!hash || !hash.includes('session_id=')) {
+        return;
+      }
+      
+      // Mark as processing immediately
+      isProcessing = true;
+      setProcessing(true);
+      
+      // Save hash before clearing
+      const hashToProcess = hash;
+      
+      try {
+        // Extract session_id with proper validation
+        const hashParts = hashToProcess.split('session_id=');
+        if (hashParts.length < 2) {
+          throw new Error('Invalid hash format: session_id not found');
+        }
+        
+        const sessionIdPart = hashParts[1].split('&')[0];
+        const sessionId = sessionIdPart.trim();
+        
+        // Validate session ID format (should be a UUID)
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        if (!sessionId || sessionId.length < 10 || !uuidRegex.test(sessionId)) {
+          throw new Error('Invalid session ID format');
+        }
+        
+        console.log('SessionHandler: Valid session_id extracted:', sessionId.substring(0, 20) + '...');
+        
+        // Clean the hash AFTER validation
         window.history.replaceState(null, '', window.location.pathname);
-        
-        setProcessing(true);
-        console.log('SessionHandler: Found session_id, processing...');
-        
-        try {
-          // Extract session_id from hash
-          const sessionId = hashToProcess.split('session_id=')[1].split('&')[0];
-          console.log('SessionHandler: Extracted session_id:', sessionId.substring(0, 20) + '...');
           
           // Send session_id directly to OUR backend (not to Emergent)
           // Our backend will call Emergent API server-to-server (no CORS issues)
