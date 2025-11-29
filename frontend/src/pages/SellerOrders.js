@@ -250,23 +250,52 @@ const SellerOrders = () => {
                 )}
 
                 {order.status === 'accepted' && (
-                  <Button
-                    onClick={() => handleComplete(order.id)}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold"
-                  >
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Mark as Completed
-                  </Button>
+                  <div className="space-y-2">
+                    <Button
+                      onClick={() => handleComplete(order.id)}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold"
+                    >
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Mark as Completed
+                    </Button>
+                    <Button
+                      onClick={() => navigate(`/chat/${order.id}`)}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      💬 Chat with Buyer
+                    </Button>
+                  </div>
                 )}
 
                 {order.status === 'completed' && (
-                  <div className="bg-green-50 rounded-lg p-3 text-center">
-                    <CheckCircle className="w-6 h-6 mx-auto text-green-600 mb-1" />
-                    <p className="text-sm font-medium text-green-700">Order Completed</p>
-                    <p className="text-xs text-green-600">
-                      {new Date(order.completed_at).toLocaleString()}
-                    </p>
+                  <div className="space-y-2">
+                    <div className="bg-green-50 rounded-lg p-3 text-center">
+                      <CheckCircle className="w-6 h-6 mx-auto text-green-600 mb-1" />
+                      <p className="text-sm font-medium text-green-700">Order Completed</p>
+                      <p className="text-xs text-green-600">
+                        {new Date(order.completed_at).toLocaleString()}
+                      </p>
+                    </div>
+                    <Button
+                      onClick={() => navigate(`/chat/${order.id}`)}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      💬 Chat with Buyer
+                    </Button>
                   </div>
+                )}
+                
+                {order.status === 'pending' && (
+                  <Button
+                    onClick={() => navigate(`/chat/${order.id}`)}
+                    variant="outline"
+                    className="w-full mt-2"
+                    size="sm"
+                  >
+                    💬 Chat with Buyer
+                  </Button>
                 )}
               </Card>
             );
