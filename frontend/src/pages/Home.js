@@ -554,14 +554,6 @@ const Home = () => {
         )}
       </div>
 
-      {/* Floating Action Button */}
-      <button
-        className="floating-action-btn"
-        onClick={() => navigate('/create-listing')}
-        data-testid="create-listing-fab"
-      >
-        <Plus className="w-6 h-6" />
-      </button>
     </div>
   );
 };
