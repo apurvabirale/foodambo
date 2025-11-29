@@ -13,14 +13,19 @@ const SessionHandler = ({ children }) => {
     const handleSession = async () => {
       // Check for session_id in URL hash
       const hash = window.location.hash;
+      console.log('SessionHandler: Checking hash:', hash);
+      
       if (hash && hash.includes('session_id=')) {
         setProcessing(true);
+        console.log('SessionHandler: Found session_id, processing...');
         
         try {
           // Extract session_id from hash
           const sessionId = hash.split('session_id=')[1].split('&')[0];
+          console.log('SessionHandler: Extracted session_id:', sessionId.substring(0, 20) + '...');
           
           // Call Emergent's session data endpoint
+          console.log('SessionHandler: Calling Emergent session-data endpoint...');
           const response = await fetch('https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data', {
             headers: {
               'X-Session-ID': sessionId
