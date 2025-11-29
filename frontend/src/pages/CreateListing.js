@@ -291,14 +291,30 @@ const CreateListing = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Description</label>
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">Description</label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleGenerateDescription}
+                disabled={!title || generatingDescription}
+                className="flex items-center gap-2 h-8 text-xs"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                {generatingDescription ? 'Generating...' : 'AI Generate'}
+              </Button>
+            </div>
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe your product..."
+              placeholder="Describe your product... or use AI Generate button"
               rows={4}
               data-testid="description-input"
             />
+            <p className="text-xs text-foreground-muted">
+              💡 Tip: Enter the title first, then click "AI Generate" for an authentic description
+            </p>
           </div>
 
           <div className="space-y-2">
