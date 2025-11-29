@@ -259,13 +259,25 @@ const CreateListing = () => {
               </div>
             </div>
 
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Store Location</label>
+              <p className="text-xs text-foreground-muted mb-2">
+                Location is auto-filled from your profile. You can change it if your store is at a different location.
+              </p>
+              <LocationPicker
+                onLocationSelect={setStoreLocation}
+                initialLocation={storeLocation}
+                showAddress={false}
+              />
+            </div>
+
             <Button
               onClick={handleCreateStore}
               disabled={loading}
               className="w-full btn-primary h-12 rounded-full"
               data-testid="create-store-btn"
             >
-              {loading ? 'Creating...' : 'Create Store (₹199 activation)'}
+              {loading ? 'Creating...' : 'Create Store (No activation fee)'}
             </Button>
           </Card>
         </div>
