@@ -621,7 +621,14 @@ async def create_order(order_data: OrderCreate, current_user: User = Depends(get
         raise HTTPException(status_code=404, detail="Product not found")
     
     delivery_fee = 30.0 if order_data.delivery_method == "delivery" else 0.0
-    total_price = (product["price"] * order_data.quantity) + delivery_fee
+    
+    # Calculate price based on party package or regular quantity
+    if product.get("is_party_order") and order_data.party_package:
+        party_packages = product.get("party_packages", {})
+        package_price = party_packages.get(order_data.party_package, 0)
+        total_price = package_price + delivery_fee
+    else:
+        total_price = (product["price"] * order_data.quantity) + delivery_fee
     
     # Calculate expiry time (1 hour from now)
     now = datetime.now(timezone.utc)
@@ -651,6 +658,7 @@ async def create_order(order_data: OrderCreate, current_user: User = Depends(get
         scheduled_time=order_data.scheduled_time,
         buyer_address=order_data.buyer_address,
         buyer_phone=order_data.buyer_phone,
+        party_package=order_data.party_package,
         expires_at=expires_at
     )
     order_dict = order.model_dump()
