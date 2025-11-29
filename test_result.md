@@ -560,13 +560,52 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+frontend:
+  - task: "New User Location Setup Flow"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/LocationSetup.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "LocationSetup page implemented with mandatory location requirement for new users. Includes LocationPicker component, manual coordinate entry, address field, and 'Continue to Foodambo' button. Needs testing with new user (8888888888, OTP: 123456)."
+
+  - task: "Store Creation with Auto-populated Location"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/CreateListing.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Store creation form auto-populates location from user profile. LocationPicker component allows sellers to override store location. Needs testing after user sets location in LocationSetup."
+
+  - task: "Existing User Location Bypass"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "PrivateRoute component checks if user has location data and redirects to /location-setup if missing. Existing users with location should bypass setup. Needs testing with existing user (9876543210, OTP: 123456)."
+
 agent_communication:
     - agent: "main"
       message: "Deployment blockers have been resolved. App is READY FOR DEPLOYMENT per deployment_agent analysis. Now conducting comprehensive feature testing to verify all implemented features are working correctly. Focus on: 1) AI description generator, 2) Party orders flow, 3) Order placement with party packages, 4) Seller accept/reject workflow, 5) Enhanced product listing creation, 6) Complete order lifecycle from buyer and seller perspectives. Test credentials: Phone: any 10-digit number, OTP: 123456. Payment model is Direct UPI (not integrated gateway) - verify payment instructions are displayed correctly."
     - agent: "testing"
       message: "COMPREHENSIVE BACKEND TESTING COMPLETED SUCCESSFULLY - 100% SUCCESS RATE (29/29 tests passed). All priority features working perfectly: ✅ AI Description Generator - Generates authentic food descriptions using EMERGENT_LLM_KEY ✅ Party Orders API - Properly filters products with is_party_order=true and party_packages ✅ Order Creation with Party Packages - Correctly calculates pricing (package price + ₹50 delivery fee) ✅ Seller Accept/Reject Flow - Order status updates working with proper expiry logic (1-hour window, 7AM-9PM constraints) ✅ Product Search & Filtering - Text search, category filtering, and location-based discovery functional ✅ Complete Order Lifecycle - Buyer/seller order listing, auto-expiry, and order management working. Authentication flow (Phone OTP +919876543210/123456) working perfectly. All backend APIs ready for production use."
     - agent: "testing"
-      message: "COMPREHENSIVE FRONTEND TESTING COMPLETED - 95% SUCCESS RATE. ✅ Phone OTP Login Flow - Working perfectly with 9876543210/123456 ✅ Home Page UI - All elements verified (search, categories, listings) ✅ Seller Order Management - Accept/reject buttons, expiry display, status filtering all functional ✅ Buyer Order Tracking - Order display, status tracking, chat buttons working ✅ Search Functionality - Product search and filtering working ✅ Bottom Navigation - All navigation buttons functional ❌ CRITICAL ISSUE: AI Description Generator - Button functional and shows 'Generating...' state, but description not populated due to ObjectId serialization error in backend response. Backend AI API calls successful (200 OK) but response handling fails. All other create listing form fields working correctly."
+      message: "COMPREHENSIVE FRONTEND TESTING COMPLETED - 95% SUCCESS RATE. ✅ Phone OTP Login Flow - Working perfectly with 9876543210/123456 ✅ Home Page UI - All elements verified (search, categories, listings) ✅ Seller Order Management - Accept/reject buttons, expiry display, status filtering all functional ✅ Buyer Order Tracking - Order display, status tracking, chat buttons working ✅ Search Functionality - Product search and filtering working ✅ Bottom Navigation - All navigation buttons functional ❌ CRITICAL ISSUE: AI Description Generator - Button functional and shows 'Generating..' state, but description not populated due to ObjectId serialization error in backend response. Backend AI API calls successful (200 OK) but response handling fails. All other create listing form fields working correctly."
     - agent: "testing"
       message: "✅ AI DESCRIPTION GENERATOR ISSUE RESOLVED! Re-tested the AI Description Generator functionality and it is now working perfectly. Successfully generated authentic description for 'Test Paneer Tikka' with proper integration between frontend and backend. The ObjectId serialization issue has been fixed. Complete test flow passed: Login → Create Listing → Fill form details → AI Generate → Description populated correctly. All Foodambo features are now fully functional and ready for production use."
+    - agent: "main"
+      message: "NEW LOCATION FEATURE TESTING REQUEST: Testing mandatory location feature implementation. Need to verify: 1) New users (8888888888/123456) are redirected to LocationSetup page, 2) LocationSetup UI elements and functionality, 3) Store creation auto-populates location from user profile, 4) Existing users (9876543210/123456) bypass location setup. Frontend URL: http://localhost:3000"
 
