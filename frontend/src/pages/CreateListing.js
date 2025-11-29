@@ -544,74 +544,87 @@ const CreateListing = () => {
             </>
           )}
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Availability Days</label>
-            <div className="grid grid-cols-4 gap-2">
-              {daysOfWeek.map((day) => (
-                <label key={day} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={availabilityDays.includes(day)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setAvailabilityDays([...availabilityDays, day]);
-                      } else {
-                        setAvailabilityDays(availabilityDays.filter(d => d !== day));
-                      }
-                    }}
-                    className="rounded"
-                  />
-                  <span className="text-sm">{day}</span>
-                </label>
-              ))}
+          {/* Availability for Food items, Pickles, Party Packages, and Vegetables */}
+          {(category === 'fresh_food' || category === 'pickles' || category === 'party_package' || category === 'vegetables') && (
+            <>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Availability Days</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {daysOfWeek.map((day) => (
+                    <label key={day} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={availabilityDays.includes(day)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setAvailabilityDays([...availabilityDays, day]);
+                          } else {
+                            setAvailabilityDays(availabilityDays.filter(d => d !== day));
+                          }
+                        }}
+                        className="rounded"
+                      />
+                      <span className="text-sm">{day}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {(category === 'fresh_food' || category === 'pickles' || category === 'party_package') && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Time Slots</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {['9 AM', '1 PM', '5 PM', '8 PM'].map((slot) => (
+                      <label key={slot} className="flex items-center gap-2 p-2 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={timeSlots.includes(slot)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setTimeSlots([...timeSlots, slot]);
+                            } else {
+                              setTimeSlots(timeSlots.filter(s => s !== slot));
+                            }
+                          }}
+                          className="rounded"
+                        />
+                        <span className="text-sm font-medium">{slot}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Minimum Quantity for Fresh Food, Pickles, and Vegetables */}
+          {(category === 'fresh_food' || category === 'pickles' || category === 'vegetables') && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Minimum Quantity</label>
+              <Input
+                type="number"
+                value={minQuantity}
+                onChange={(e) => setMinQuantity(e.target.value)}
+                min="1"
+                data-testid="min-quantity-input"
+              />
             </div>
-          </div>
+          )}
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Time Slots</label>
-            <div className="grid grid-cols-2 gap-2">
-              {['9 AM', '1 PM', '5 PM', '8 PM'].map((slot) => (
-                <label key={slot} className="flex items-center gap-2 p-2 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={timeSlots.includes(slot)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setTimeSlots([...timeSlots, slot]);
-                      } else {
-                        setTimeSlots(timeSlots.filter(s => s !== slot));
-                      }
-                    }}
-                    className="rounded"
-                  />
-                  <span className="text-sm font-medium">{slot}</span>
-                </label>
-              ))}
+          {/* Quantity per Unit for Fresh Food and Pickles only */}
+          {(category === 'fresh_food' || category === 'pickles') && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Quantity per Unit (Optional)</label>
+              <Input
+                type="text"
+                value={qtyPerUnit}
+                onChange={(e) => setQtyPerUnit(e.target.value)}
+                placeholder="e.g., 500gm, 1 plate, 1 kg"
+                data-testid="qty-per-unit-input"
+              />
+              <p className="text-xs text-foreground-muted">Helps buyers understand portion size</p>
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Minimum Quantity</label>
-            <Input
-              type="number"
-              value={minQuantity}
-              onChange={(e) => setMinQuantity(e.target.value)}
-              min="1"
-              data-testid="min-quantity-input"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Quantity per Unit (Optional)</label>
-            <Input
-              type="text"
-              value={qtyPerUnit}
-              onChange={(e) => setQtyPerUnit(e.target.value)}
-              placeholder="e.g., 500gm, 1 plate, 1 kg"
-              data-testid="qty-per-unit-input"
-            />
-            <p className="text-xs text-foreground-muted">Helps buyers understand portion size</p>
-          </div>
+          )}
 
           {/* Party Order Section */}
           <div className="border-2 border-dashed border-primary/30 rounded-lg p-4 space-y-3 bg-gradient-to-r from-primary/5 to-secondary/5">
