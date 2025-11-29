@@ -213,6 +213,7 @@ class OrderCreate(BaseModel):
     scheduled_time: str
     buyer_address: Optional[str] = None
     buyer_phone: Optional[str] = None
+    party_package: Optional[str] = None
 
 class ChatMessageCreate(BaseModel):
     order_id: str
