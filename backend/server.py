@@ -125,6 +125,7 @@ class Order(BaseModel):
     scheduled_time: str
     status: str = "pending"
     buyer_address: Optional[str] = None
+    buyer_phone: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     accepted_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
