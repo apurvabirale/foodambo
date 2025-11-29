@@ -24,6 +24,11 @@ import EditProfile from './pages/EditProfile';
 import Chat from './pages/Chat';
 import LeaveReview from './pages/LeaveReview';
 import FSSAICertificate from './pages/FSSAICertificate';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminUsers from './pages/AdminUsers';
+import AdminStores from './pages/AdminStores';
+import AdminProducts from './pages/AdminProducts';
+import AdminOrders from './pages/AdminOrders';
 import BottomNav from './components/BottomNav';
 import './App.css';
 
