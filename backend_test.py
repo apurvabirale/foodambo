@@ -17,7 +17,7 @@ class FoodamboAPITester:
         self.tests_passed = 0
         self.failed_tests = []
 
-    def run_test(self, name, method, endpoint, expected_status, data=None, headers=None):
+    def run_test(self, name, method, endpoint, expected_status, data=None, headers=None, params=None):
         """Run a single API test"""
         url = f"{self.base_url}/api/{endpoint}"
         test_headers = {'Content-Type': 'application/json'}
@@ -32,13 +32,16 @@ class FoodamboAPITester:
         
         try:
             if method == 'GET':
-                response = requests.get(url, headers=test_headers, params=data)
+                response = requests.get(url, headers=test_headers, params=data or params)
             elif method == 'POST':
-                response = requests.post(url, json=data, headers=test_headers)
+                response = requests.post(url, json=data, headers=test_headers, params=params)
             elif method == 'PUT':
-                response = requests.put(url, json=data, headers=test_headers)
+                if params:
+                    response = requests.put(url, headers=test_headers, params=params)
+                else:
+                    response = requests.put(url, json=data, headers=test_headers)
             elif method == 'DELETE':
-                response = requests.delete(url, headers=test_headers)
+                response = requests.delete(url, headers=test_headers, params=params)
 
             success = response.status_code == expected_status
             if success:
