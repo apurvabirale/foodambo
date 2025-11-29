@@ -67,6 +67,25 @@ const Profile = () => {
         </Card>
 
         <div className="space-y-2">
+          {/* Admin Panel - Only for Admins */}
+          {user?.is_admin && (
+            <Card
+              className="p-4 cursor-pointer hover:shadow-md transition-shadow border-2 border-purple-200 bg-purple-50"
+              onClick={() => navigate('/admin')}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Shield className="w-6 h-6 text-purple-600" />
+                  <div>
+                    <span className="font-semibold text-purple-900">Admin Panel</span>
+                    <p className="text-xs text-purple-700">Manage platform</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-purple-600" />
+              </div>
+            </Card>
+          )}
+
           {/* FSSAI Certificate - Only for Sellers */}
           {user?.is_seller && (
             <Card
