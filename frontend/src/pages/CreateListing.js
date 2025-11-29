@@ -437,45 +437,112 @@ const CreateListing = () => {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Food Type</label>
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  checked={isVeg}
-                  onChange={() => setIsVeg(true)}
-                  className="rounded-full"
-                />
-                <span className="text-sm">🟢 Veg</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  checked={!isVeg}
-                  onChange={() => setIsVeg(false)}
-                  className="rounded-full"
-                />
-                <span className="text-sm">🔴 Non-Veg</span>
-              </label>
-            </div>
-          </div>
+          {/* Fresh Food & Pickles & Party Package - Common Fields */}
+          {(category === 'fresh_food' || category === 'pickles' || category === 'party_package') && (
+            <>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Food Type</label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      checked={isVeg}
+                      onChange={() => setIsVeg(true)}
+                      className="rounded-full"
+                    />
+                    <span className="text-sm">🟢 Veg</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      checked={!isVeg}
+                      onChange={() => setIsVeg(false)}
+                      className="rounded-full"
+                    />
+                    <span className="text-sm">🔴 Non-Veg</span>
+                  </label>
+                </div>
+              </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Spice Level</label>
-            <Select value={spiceLevel} onValueChange={setSpiceLevel}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select spice level" />
-              </SelectTrigger>
-              <SelectContent>
-                {spiceLevels.map((level) => (
-                  <SelectItem key={level.value} value={level.value}>
-                    {level.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Spice Level</label>
+                <Select value={spiceLevel} onValueChange={setSpiceLevel}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select spice level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {spiceLevels.map((level) => (
+                      <SelectItem key={level.value} value={level.value}>
+                        {level.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </>
+          )}
+
+          {/* Vegetables & Farm Products - Specific Fields */}
+          {category === 'vegetables' && (
+            <>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Weight</label>
+                <Input
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
+                  placeholder="e.g., 1 kg, 500g, 1 dozen"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Type</label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      checked={!isOrganic}
+                      onChange={() => setIsOrganic(false)}
+                      className="rounded-full"
+                    />
+                    <span className="text-sm">Regular</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      checked={isOrganic}
+                      onChange={() => setIsOrganic(true)}
+                      className="rounded-full"
+                    />
+                    <span className="text-sm">🌱 Organic</span>
+                  </label>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Art & Handmade - Specific Fields */}
+          {category === 'art_handmade' && (
+            <>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Price Per Unit</label>
+                <Input
+                  value={pricePerUnit}
+                  onChange={(e) => setPricePerUnit(e.target.value)}
+                  placeholder="e.g., per piece, per set"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Size/Weight Info</label>
+                <Textarea
+                  value={sizeInfo}
+                  onChange={(e) => setSizeInfo(e.target.value)}
+                  placeholder="e.g., 30cm x 40cm, 500g"
+                  rows={2}
+                />
+              </div>
+            </>
+          )}
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Availability Days</label>
