@@ -98,20 +98,27 @@ const SessionHandler = ({ children }) => {
           console.error('SessionHandler: Error during authentication:', error);
           console.error('SessionHandler: Error stack:', error.stack);
           
-          let errorMessage = 'Authentication failed. ';
+          let errorMessage = '';
+          let canRetry = true;
+          
           if (error.message.includes('user_data_not_found') || error.message.includes('expired')) {
-            errorMessage += 'Session expired. Please try logging in again.';
-          } else if (error.message.includes('Network error')) {
-            errorMessage += 'Please try again.';
+            errorMessage = '⏱️ Session expired. Click "Continue with Google" again to retry.';
+          } else if (error.message.includes('Network error') || error.message.includes('after multiple attempts')) {
+            errorMessage = '🌐 Connection issue. Please check your internet and try again.';
           } else if (error.message.includes('Emergent')) {
-            errorMessage += 'Google authentication service is temporarily unavailable.';
+            errorMessage = '⚠️ Google authentication service unavailable. Try again in a moment.';
           } else if (error.message.includes('backend')) {
-            errorMessage += 'Server is temporarily unavailable.';
+            errorMessage = '⚠️ Server busy. Please try again.';
           } else {
-            errorMessage += error.message;
+            errorMessage = '❌ Login failed. ' + error.message;
+            canRetry = false;
           }
           
-          toast.error(errorMessage);
+          toast.error(errorMessage, {
+            duration: canRetry ? 5000 : 3000,
+            description: canRetry ? 'Tip: Use Phone OTP login for instant access!' : undefined
+          });
+          
           navigate('/login');
         } finally {
           setProcessing(false);
