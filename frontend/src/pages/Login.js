@@ -1,57 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../utils/api';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { toast } from 'sonner';
-import { Phone, Mail, Facebook } from 'lucide-react';
+
+const cuisineImages = [
+  { src: 'https://images.unsplash.com/photo-1630870487699-1a6d8b24cc1f?w=400', label: 'Maharashtrian' },
+  { src: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400', label: 'North Indian' },
+  { src: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400', label: 'Punjabi' },
+  { src: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400', label: 'South Indian' },
+  { src: 'https://images.unsplash.com/photo-1683533678059-63c6a0e9e3ef?w=400', label: 'Coastal' },
+  { src: 'https://images.unsplash.com/photo-1743674453123-93356ade2891?w=400', label: 'Bengali' },
+  { src: 'https://images.unsplash.com/photo-1631451457509-454a498df1c0?w=400', label: 'Street Food' },
+];
 
 const Login = () => {
-  const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuth();
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
-  const [step, setStep] = useState('phone');
+  const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    // Handle Google OAuth callback
+    const token = searchParams.get('token');
+    if (token) {
+      login(token);
+      toast.success('Login successful!');
       navigate('/');
-      return;
     }
-    
-    // Check for Google auth callback
-    const hash = window.location.hash;
-    const urlParams = new URLSearchParams(window.location.search);
-    
-    // Check both hash and query params for session_id
-    let sessionId = null;
-    if (hash.includes('session_id=')) {
-      sessionId = hash.split('session_id=')[1].split('&')[0];
-    } else if (urlParams.has('session_id')) {
-      sessionId = urlParams.get('session_id');
-    }
-    
-    if (sessionId) {
-      console.log('Google auth callback with session ID:', sessionId);
-      handleGoogleAuth(sessionId);
-    }
-  }, [isAuthenticated]);
+  }, [searchParams, login, navigate]);
 
   const handleSendOTP = async () => {
     if (!phone || phone.length < 10) {
       toast.error('Please enter a valid phone number');
       return;
     }
+
     setLoading(true);
     try {
-      await authAPI.sendOTP(phone);
-      toast.success('OTP sent to your phone');
-      setStep('otp');
+      await authAPI.sendOTP(phone.startsWith('+') ? phone : `+91${phone}`);
+      setOtpSent(true);
+      toast.success('OTP sent successfully!');
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to send OTP');
+      toast.error('Failed to send OTP');
     } finally {
       setLoading(false);
     }
@@ -62,10 +58,11 @@ const Login = () => {
       toast.error('Please enter a valid 6-digit OTP');
       return;
     }
+
     setLoading(true);
     try {
-      const response = await authAPI.verifyOTP(phone, otp);
-      login(response.data.token, response.data.user);
+      const response = await authAPI.verifyOTP(phone.startsWith('+') ? phone : `+91${phone}`, otp);
+      login(response.data.token);
       toast.success('Login successful!');
       navigate('/');
     } catch (error) {
@@ -75,147 +72,185 @@ const Login = () => {
     }
   };
 
-  const handleGoogleAuth = async (sessionId) => {
-    setLoading(true);
-    try {
-      console.log('Calling Google auth with session ID:', sessionId);
-      const response = await authAPI.googleAuth(sessionId);
-      console.log('Google auth response:', response.data);
-      login(response.data.token, response.data.user);
-      toast.success('Login successful!');
-      // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-      navigate('/');
-    } catch (error) {
-      console.error('Google auth error:', error);
-      const errorMsg = error.response?.data?.detail || error.message || 'Google authentication failed';
-      toast.error(errorMsg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleGoogleLogin = () => {
-    const redirectUrl = encodeURIComponent(`${window.location.origin}/login`);
-    // Using secure third-party authentication service
-    window.location.href = `https://auth.emergentagent.com/?redirect=${redirectUrl}`;
-  };
-
-  const handleFacebookLogin = () => {
-    toast.info('Facebook login not configured. Please use phone OTP or Google.');
+    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/auth/google?origin=${window.location.origin}/login`;
   };
 
   return (
-    <div className="auth-container">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <img 
-            src="https://customer-assets.emergentagent.com/job_fresh-neighborhood/artifacts/vv7vq469_Logo1.png" 
-            alt="Foodambo" 
-            className="w-48 mx-auto mb-4"
-            data-testid="app-logo"
-          />
-          <p className="text-foreground-muted text-lg font-semibold">Foodambo - Authentic as ever</p>
+    <div className="min-h-screen flex flex-col lg:flex-row">
+      {/* Left Side - Cuisine Collage */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-orange-500 via-orange-600 to-red-600">
+        {/* Decorative overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/40 z-10"></div>
+        
+        {/* Cuisine Images Grid */}
+        <div className="absolute inset-0 grid grid-cols-3 gap-2 p-8">
+          {cuisineImages.map((img, idx) => (
+            <div 
+              key={idx}
+              className="relative rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all duration-300"
+              style={{
+                animationDelay: `${idx * 0.1}s`,
+                animation: 'fadeInUp 0.6s ease-out forwards',
+              }}
+            >
+              <img 
+                src={img.src} 
+                alt={img.label} 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
+                <p className="text-white text-sm font-semibold">{img.label}</p>
+              </div>
+            </div>
+          ))}
         </div>
 
-        <Card className="shadow-2xl border-border/40">
-          <CardHeader>
-            <CardTitle className="text-2xl font-heading">Welcome Back</CardTitle>
-            <CardDescription>Login to discover local homemade delights</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {step === 'phone' ? (
-              <>
+        {/* Brand Message */}
+        <div className="absolute bottom-8 left-8 right-8 z-20 text-white">
+          <h2 className="text-4xl font-bold mb-3 drop-shadow-lg">Discover Authentic Flavors</h2>
+          <p className="text-xl font-medium drop-shadow-md">From every corner of India, delivered to your doorstep</p>
+        </div>
+      </div>
+
+      {/* Right Side - Login Form */}
+      <div className="flex-1 flex items-center justify-center p-6 bg-gradient-to-br from-orange-50 to-white">
+        <div className="w-full max-w-md space-y-8">
+          {/* Logo & Branding */}
+          <div className="text-center space-y-3">
+            <div className="inline-block bg-gradient-to-r from-orange-500 to-red-500 p-4 rounded-3xl shadow-xl mb-4">
+              <span className="text-5xl">🍛</span>
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+              Foodambo
+            </h1>
+            <p className="text-xl font-semibold text-orange-700">Authentic as ever</p>
+            <p className="text-foreground-muted">Experience the most authentic cuisines</p>
+          </div>
+
+          {/* Mobile Cuisine Preview */}
+          <div className="lg:hidden">
+            <div className="grid grid-cols-4 gap-2 mb-6">
+              {cuisineImages.slice(0, 4).map((img, idx) => (
+                <div key={idx} className="aspect-square rounded-lg overflow-hidden shadow-md">
+                  <img src={img.src} alt={img.label} className="w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Login Form */}
+          <div className="bg-white rounded-2xl shadow-2xl p-8 border border-orange-100">
+            <h2 className="text-2xl font-bold text-center mb-6 text-foreground">Welcome Back!</h2>
+            
+            {!otpSent ? (
+              <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Phone Number</label>
+                  <label className="text-sm font-medium text-foreground">Phone Number</label>
                   <Input
                     type="tel"
-                    placeholder="+91 98765 43210"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="text-lg"
-                    data-testid="phone-input"
+                    placeholder="98765 43210"
+                    className="h-12 text-base border-orange-200 focus:border-orange-500"
                   />
                 </div>
                 <Button
                   onClick={handleSendOTP}
                   disabled={loading}
-                  className="w-full btn-primary rounded-full h-12 text-base"
-                  data-testid="send-otp-btn"
+                  className="w-full h-12 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold text-base rounded-xl shadow-lg"
                 >
-                  <Phone className="w-5 h-5 mr-2" />
                   {loading ? 'Sending...' : 'Send OTP'}
                 </Button>
-              </>
+              </div>
             ) : (
-              <>
+              <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Enter OTP</label>
+                  <label className="text-sm font-medium text-foreground">Enter OTP</label>
                   <Input
                     type="text"
-                    placeholder="123456"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
+                    placeholder="123456"
                     maxLength={6}
-                    className="text-2xl text-center tracking-widest"
-                    data-testid="otp-input"
+                    className="h-12 text-base text-center tracking-widest text-2xl font-bold border-orange-200 focus:border-orange-500"
                   />
+                  <p className="text-xs text-center text-foreground-muted">Sent to {phone}</p>
                 </div>
                 <Button
                   onClick={handleVerifyOTP}
                   disabled={loading}
-                  className="w-full btn-primary rounded-full h-12 text-base"
-                  data-testid="verify-otp-btn"
+                  className="w-full h-12 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold text-base rounded-xl shadow-lg"
                 >
                   {loading ? 'Verifying...' : 'Verify OTP'}
                 </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => setStep('phone')}
-                  className="w-full"
-                  data-testid="back-btn"
+                <button
+                  onClick={() => setOtpSent(false)}
+                  className="w-full text-sm text-orange-600 hover:text-orange-700 font-medium"
                 >
-                  Change Phone Number
-                </Button>
-              </>
+                  Change Number
+                </button>
+              </div>
             )}
 
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border" />
+                <div className="w-full border-t border-gray-200"></div>
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-foreground-muted">Or continue with</span>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-white text-foreground-muted">or continue with</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                variant="outline"
-                onClick={handleGoogleLogin}
-                className="rounded-full h-12"
-                data-testid="google-login-btn"
-              >
-                <Mail className="w-5 h-5 mr-2" />
-                Google
-              </Button>
-              <Button
-                variant="outline"
-                onClick={handleFacebookLogin}
-                className="rounded-full h-12"
-                data-testid="facebook-login-btn"
-              >
-                <Facebook className="w-5 h-5 mr-2" />
-                Facebook
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            <Button
+              onClick={handleGoogleLogin}
+              variant="outline"
+              className="w-full h-12 border-2 border-orange-200 hover:border-orange-400 hover:bg-orange-50 font-semibold text-base rounded-xl"
+            >
+              <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              Continue with Google
+            </Button>
 
-        <p className="text-center text-sm text-foreground-muted mt-6">
-          By continuing, you agree to Foodambo's Terms & Privacy Policy
-        </p>
+            <p className="text-xs text-center text-foreground-muted mt-6">
+              By continuing, you agree to our Terms & Privacy Policy
+            </p>
+          </div>
+
+          {/* Feature Highlights */}
+          <div className="grid grid-cols-3 gap-4 pt-6">
+            <div className="text-center">
+              <div className="text-3xl mb-2">🏠</div>
+              <p className="text-xs text-foreground-muted font-medium">Homemade</p>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl mb-2">🎯</div>
+              <p className="text-xs text-foreground-muted font-medium">Local</p>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl mb-2">✨</div>
+              <p className="text-xs text-foreground-muted font-medium">Authentic</p>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 };
