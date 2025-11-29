@@ -769,7 +769,9 @@ async def generate_description(
         raise HTTPException(status_code=400, detail="Title is required")
     
     # Get Emergent LLM key from environment
-    api_key = os.getenv("EMERGENT_LLM_KEY", "sk-emergent-70fDa9c67762e3bC63")
+    api_key = os.getenv("EMERGENT_LLM_KEY")
+    if not api_key:
+        raise HTTPException(status_code=500, detail="EMERGENT_LLM_KEY not configured")
     
     # Create a chat instance
     chat = LlmChat(
