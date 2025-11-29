@@ -44,6 +44,7 @@ const CreateListing = () => {
   const [storeAddress, setStoreAddress] = useState('');
   const [storeCategories, setStoreCategories] = useState([]);
   const [storeLocation, setStoreLocation] = useState(null);
+  const [isPureVeg, setIsPureVeg] = useState(false);
   
   // Product form - Common fields
   const [category, setCategory] = useState('');
@@ -126,6 +127,7 @@ const CreateListing = () => {
         latitude: finalLocation.latitude,
         longitude: finalLocation.longitude,
         categories: storeCategories,
+        is_pure_veg: isPureVeg,
       });
       toast.success('Store created successfully!');
       setHasStore(true);
