@@ -113,11 +113,7 @@ const Home = () => {
   const fetchPartyOrders = async () => {
     setPartyLoading(true);
     try {
-      const meResponse = await authAPI.getMe();
-      const currentUserId = meResponse.data.id;
-      
       const params = {
-        exclude_seller_id: currentUserId,
         party_orders_only: true,
       };
       
