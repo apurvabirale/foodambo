@@ -508,10 +508,6 @@ metadata:
 
 test_plan:
   current_focus:
-    - "AI Product Description Generator API"
-    - "Party Orders Product API"
-    - "Order Creation with Party Packages"
-    - "Seller Order Accept/Reject Flow"
     - "Home Page with Category Pills & Party Orders Section"
     - "Create Listing with AI Generator & Enhanced Fields"
     - "Product Detail Page with Party Packages & Delivery Charges"
