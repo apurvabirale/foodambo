@@ -292,7 +292,7 @@ const ProductDetail = () => {
                   className="h-12"
                   data-testid="delivery-btn"
                 >
-                  🚚 Delivery (₹30)
+                  🚚 Delivery (₹50)
                 </Button>
               )}
             </div>
