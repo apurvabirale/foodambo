@@ -609,6 +609,21 @@ frontend:
           agent: "testing"
           comment: "✅ Location redirect logic working correctly! User 9876543210 (who doesn't have location data) is properly redirected to /location-setup page as expected. PrivateRoute component correctly checks user.location?.latitude and redirects users without location data to location setup. The redirect behavior is working as intended - users without location data must complete location setup before accessing the app."
 
+  - task: "Seller Product Visibility on Home Page"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/Home.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "User reported recurring bug that sellers cannot see their own listings on home page. Previous agent removed exclude_seller_id parameter from frontend Home.js file. Needs verification that sellers can see their own products."
+        - working: true
+          agent: "testing"
+          comment: "✅ CONFIRMED: Sellers CAN see their own products on home page. Backend analysis shows exclude_seller_id parameter is NOT used in frontend Home.js fetchProducts function (lines 81-94). API testing confirms products endpoint returns all products including seller's own products. Created test seller with product 'Seller Own Biryani' - API returns it correctly along with other products. The reported bug appears to be resolved as the exclusion logic has been removed from frontend."
+
 agent_communication:
     - agent: "main"
       message: "Deployment blockers have been resolved. App is READY FOR DEPLOYMENT per deployment_agent analysis. Now conducting comprehensive feature testing to verify all implemented features are working correctly. Focus on: 1) AI description generator, 2) Party orders flow, 3) Order placement with party packages, 4) Seller accept/reject workflow, 5) Enhanced product listing creation, 6) Complete order lifecycle from buyer and seller perspectives. Test credentials: Phone: any 10-digit number, OTP: 123456. Payment model is Direct UPI (not integrated gateway) - verify payment instructions are displayed correctly."
