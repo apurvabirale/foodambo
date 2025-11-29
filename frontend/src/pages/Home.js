@@ -5,7 +5,7 @@ import { productAPI, authAPI } from '../utils/api';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
 import { toast } from 'sonner';
-import { MapPin, Star, Plus, Search } from 'lucide-react';
+import { MapPin, Star, Plus, Search, X } from 'lucide-react';
 
 const categories = [
   { id: 'fresh_food', label: 'Fresh Food', image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400', color: '#D9534F' },
