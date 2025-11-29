@@ -549,10 +549,8 @@ metadata:
   run_ui: true
 
 test_plan:
-  current_focus:
-    - "Create Listing with AI Generator & Enhanced Fields"
-  stuck_tasks:
-    - "Create Listing with AI Generator & Enhanced Fields"
+  current_focus: []
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
