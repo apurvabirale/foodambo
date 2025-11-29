@@ -164,8 +164,8 @@ const ProductDetail = () => {
         <div className="flex items-center gap-4">
           <span className="text-3xl font-bold text-primary">₹{product.price}</span>
           <div className="flex gap-2">
-            {product.delivery_available && <span className="badge badge-success">Delivery ₹30</span>}
-            {product.pickup_available && <span className="badge badge-warning">Pickup</span>}
+            {product.delivery_available && <span className="badge badge-success">Delivery ₹50</span>}
+            {product.pickup_available && <span className="badge badge-warning">Pickup (Free)</span>}
           </div>
         </div>
 
