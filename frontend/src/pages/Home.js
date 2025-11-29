@@ -295,11 +295,32 @@ const Home = () => {
           <span className="text-sm text-foreground-muted">{products.length} found</span>
         </div>
         
-        {loading || locationLoading ? (
-          <div className="text-center py-12 text-foreground-muted">Loading...</div>
+        {/* Show location error message if any */}
+        {locationError && !location && (
+          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-sm text-yellow-800">
+              📍 Location access denied. Please enable location to see nearby products.
+            </p>
+          </div>
+        )}
+        
+        {/* Show fetch error message if any */}
+        {fetchError && (
+          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-sm text-blue-800">{fetchError}</p>
+          </div>
+        )}
+        
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-2"></div>
+            <p className="text-foreground-muted">Loading products...</p>
+          </div>
         ) : products.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-foreground-muted mb-4">No products found nearby</p>
+            <p className="text-foreground-muted mb-4">
+              {location ? 'No products found nearby' : 'Enable location to discover products near you'}
+            </p>
             <Button onClick={fetchProducts} variant="outline">Refresh</Button>
           </div>
         ) : (
