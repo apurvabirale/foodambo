@@ -155,14 +155,15 @@ const SessionHandler = ({ children }) => {
       }
     };
 
-    // Only run once when component mounts or when hash changes
+    // Run on mount and when location changes
     handleSession();
     
     // Cleanup function
     return () => {
       isProcessing = false;
     };
-  }, [window.location.hash]); // Only depend on hash, not location/login/navigate
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location]); // Only depend on location to detect URL changes
 
   if (processing) {
     return (
