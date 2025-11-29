@@ -556,9 +556,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "New User Location Setup Flow"
-    - "Store Creation with Auto-populated Location"
-    - "Existing User Location Bypass"
+    - "Admin Panel Access from Profile Page"
+    - "Admin Dashboard with Analytics"
+    - "Admin User Management"
+    - "Admin Navigation and Quick Actions"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
