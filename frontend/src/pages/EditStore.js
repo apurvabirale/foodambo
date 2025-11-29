@@ -108,6 +108,21 @@ const EditStore = () => {
           </div>
 
           <div className="space-y-2">
+            <div className="flex items-center gap-2 mb-2">
+              <MapPin className="w-4 h-4 text-primary" />
+              <label className="text-sm font-medium">Store Location *</label>
+            </div>
+            <LocationPicker
+              onLocationSelect={setStoreLocation}
+              initialLocation={storeLocation}
+              showAddress={false}
+            />
+            <p className="text-xs text-foreground-muted">
+              Precise location helps buyers find you. Address is entered above.
+            </p>
+          </div>
+
+          <div className="space-y-2">
             <label className="text-sm font-medium">Categories</label>
             <div className="space-y-2">
               {categories.map((cat) => (
