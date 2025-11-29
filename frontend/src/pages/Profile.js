@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { User, Store, Wallet, FileText, Settings, LogOut, ChevronRight } from 'lucide-react';
+import { User, Store, Wallet, FileText, Settings, LogOut, ChevronRight, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Profile = () => {
