@@ -61,6 +61,7 @@ const CreateListing = () => {
   const [partyPackage75, setPartyPackage75] = useState('');
   const [deliveryAvailable, setDeliveryAvailable] = useState(false);
   const [pickupAvailable, setPickupAvailable] = useState(true);
+  const [generatingDescription, setGeneratingDescription] = useState(false);
 
   useEffect(() => {
     checkStore();
