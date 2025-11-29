@@ -153,8 +153,14 @@ const SessionHandler = ({ children }) => {
       }
     };
 
+    // Only run once when component mounts or when hash changes
     handleSession();
-  }, [location, login, navigate]);
+    
+    // Cleanup function
+    return () => {
+      isProcessing = false;
+    };
+  }, [window.location.hash]); // Only depend on hash, not location/login/navigate
 
   if (processing) {
     return (
