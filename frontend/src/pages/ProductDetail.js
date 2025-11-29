@@ -21,6 +21,7 @@ const ProductDetail = () => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [buyerAddress, setBuyerAddress] = useState('');
   const [buyerPhone, setBuyerPhone] = useState('');
+  const [selectedPartyPackage, setSelectedPartyPackage] = useState('');
 
   useEffect(() => {
     fetchProduct();
