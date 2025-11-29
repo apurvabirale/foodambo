@@ -10,7 +10,9 @@ class FoodamboAPITester:
         self.user_id = None
         self.store_id = None
         self.product_id = None
+        self.party_product_id = None
         self.order_id = None
+        self.party_order_id = None
         self.tests_run = 0
         self.tests_passed = 0
         self.failed_tests = []
