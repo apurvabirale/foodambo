@@ -199,6 +199,8 @@ class ProductCreate(BaseModel):
     min_quantity: int = 1
     max_quantity: Optional[int] = None
     qty_per_unit: Optional[str] = None
+    is_party_order: bool = False
+    party_packages: Optional[Dict[str, float]] = None
     delivery_available: bool = False
     pickup_available: bool = True
 
