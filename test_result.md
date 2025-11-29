@@ -328,7 +328,7 @@ user_problem_statement: "Comprehensive testing of ALL Foodambo features includin
 # LOCATION FEATURE TESTING - Session 3
 #====================================================================================================
 
-user_problem_statement: "Test the new mandatory location feature implementation for Foodambo app. Test scenarios: 1) New User Location Setup Flow (login with 8888888888, OTP: 123456), 2) Store Creation with Auto-populated Location, 3) Existing User should NOT see Location Setup (login with 9876543210, OTP: 123456)"
+user_problem_statement: "Test the Admin Panel feature implementation for Foodambo app. Admin user: ganeshbirale87@gmail.com should have access to Admin Panel from Profile page with Dashboard analytics, User Management, Store Management, Product Management, and Order Monitoring features."
 
 backend:
   - task: "AI Product Description Generator API"
