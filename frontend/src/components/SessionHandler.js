@@ -126,10 +126,12 @@ const SessionHandler = ({ children }) => {
           console.error('SessionHandler: Error stack:', error.stack);
           
           let errorMessage = '';
-          let canRetry = true;
+          let showOtpTip = true;
           
-          if (error.message.includes('user_data_not_found') || error.message.includes('expired')) {
-            errorMessage = '⏱️ Session expired. Click "Continue with Google" again to retry.';
+          if (error.message.includes('Invalid session ID') || error.message.includes('Invalid hash format')) {
+            errorMessage = '⚠️ Authentication link expired or invalid. Please try logging in again.';
+          } else if (error.message.includes('user_data_not_found') || error.message.includes('expired')) {
+            errorMessage = '⏱️ Session expired (they expire in 10 seconds). Click "Continue with Google" again.';
           } else if (error.message.includes('Network error') || error.message.includes('after multiple attempts')) {
             errorMessage = '🌐 Connection issue. Please check your internet and try again.';
           } else if (error.message.includes('Emergent')) {
@@ -137,13 +139,13 @@ const SessionHandler = ({ children }) => {
           } else if (error.message.includes('backend')) {
             errorMessage = '⚠️ Server busy. Please try again.';
           } else {
-            errorMessage = '❌ Login failed. ' + error.message;
-            canRetry = false;
+            errorMessage = '❌ Login failed: ' + error.message;
+            showOtpTip = false;
           }
           
           toast.error(errorMessage, {
-            duration: canRetry ? 5000 : 3000,
-            description: canRetry ? 'Tip: Use Phone OTP login for instant access!' : undefined
+            duration: 6000,
+            description: showOtpTip ? '💡 Tip: Phone OTP login works instantly!' : undefined
           });
           
           navigate('/login');
