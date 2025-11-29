@@ -467,6 +467,60 @@ const ProductDetail = () => {
         </div>
       )}
 
+      {/* Reviews Section */}
+      {store && (
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold">Store Reviews</h3>
+            {store.rating > 0 && (
+              <div className="flex items-center gap-1 bg-secondary/10 px-3 py-1 rounded-full">
+                <Star className="w-4 h-4 text-secondary fill-secondary" />
+                <span className="font-bold">{store.rating}</span>
+                <span className="text-xs text-foreground-muted">({store.total_reviews})</span>
+              </div>
+            )}
+          </div>
+          
+          {reviews.length === 0 ? (
+            <Card className="p-6 text-center">
+              <p className="text-foreground-muted">No reviews yet. Be the first to review!</p>
+            </Card>
+          ) : (
+            <div className="space-y-3">
+              {reviews.slice(0, 3).map((review) => (
+                <Card key={review.id} className="p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${
+                            i < review.rating ? 'text-secondary fill-secondary' : 'text-gray-300'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm text-foreground-muted">
+                      {new Date(review.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="text-sm">{review.comment}</p>
+                </Card>
+              ))}
+              {reviews.length > 3 && (
+                <Button
+                  variant="outline"
+                  onClick={() => navigate(`/store/${store.id}`)}
+                  className="w-full"
+                >
+                  View All {reviews.length} Reviews
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Chat FAB */}
       {store && (
         <button className="floating-action-btn bg-secondary" data-testid="chat-fab">
