@@ -358,25 +358,22 @@ const Home = () => {
         </div>
       )}
 
-      {/* Categories */}
+      {/* Categories - Compact Design */}
       <div className="p-4">
-        <h2 className="text-xl font-semibold mb-3">Categories</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <h2 className="text-base font-semibold mb-2">Categories</h2>
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => toggleCategory(cat.id)}
-              className={`category-card p-0 overflow-hidden ${
-                selectedCategories.includes(cat.id) ? 'ring-2 ring-primary' : ''
+              className={`flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                selectedCategories.includes(cat.id) 
+                  ? 'bg-primary text-white shadow-md' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
               data-testid={`category-${cat.id}`}
             >
-              <div className="relative aspect-video">
-                <img src={cat.image} alt={cat.label} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-3">
-                  <p className="text-white font-semibold text-sm">{cat.label}</p>
-                </div>
-              </div>
+              {cat.label}
             </button>
           ))}
         </div>
