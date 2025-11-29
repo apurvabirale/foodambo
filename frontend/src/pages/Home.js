@@ -10,8 +10,9 @@ import { MapPin, Star, Plus, Search, X } from 'lucide-react';
 const categories = [
   { id: 'fresh_food', label: 'Fresh Food', image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400', color: '#D9534F' },
   { id: 'pickles', label: 'Pickles & Chutneys', image: 'https://images.unsplash.com/photo-1573051038546-894db2283a05?w=400', color: '#F0AD4E' },
-  { id: 'organic_veggies', label: 'Organic Veggies', image: 'https://images.unsplash.com/photo-1691836264082-3d2a35f81ee6?w=400', color: '#5CB85C' },
+  { id: 'vegetables', label: 'Vegetables & Farm Products', image: 'https://images.unsplash.com/photo-1691836264082-3d2a35f81ee6?w=400', color: '#5CB85C' },
   { id: 'art_handmade', label: 'Art & Handmade', image: 'https://images.unsplash.com/photo-1651959653830-5c8cb576e134?w=400', color: '#2D2D2D' },
+  { id: 'party_package', label: 'Party Package', image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400', color: '#E91E63' },
 ];
 
 const trendingDishes = [
