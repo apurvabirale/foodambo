@@ -330,8 +330,14 @@ async def google_auth(req: GoogleAuthRequest):
             logger.info(f"Emergent auth response status: {response.status_code}")
             
             if response.status_code != 200:
-                logger.error(f"Invalid session response: {response.text}")
-                raise HTTPException(status_code=400, detail=f"Invalid session ID. Status: {response.status_code}")
+                error_detail = response.text
+                logger.error(f"Invalid session response: {error_detail}")
+                
+                # Check if session expired
+                if 'expired' in error_detail.lower() or 'not_found' in error_detail.lower():
+                    raise HTTPException(status_code=400, detail="Session expired. Please try logging in again.")
+                else:
+                    raise HTTPException(status_code=400, detail=f"Invalid session ID. Status: {response.status_code}")
             
             data = response.json()
             logger.info(f"User data from Emergent: {data.get('email')}")
