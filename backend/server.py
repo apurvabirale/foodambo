@@ -75,6 +75,7 @@ class User(BaseModel):
     auth_method: str
     is_seller: bool = False
     seller_active: bool = False
+    is_admin: bool = False
     subscription_plan: Optional[str] = None  # 'monthly' or 'yearly'
     subscription_status: str = "inactive"  # inactive, active, grace_period, expired
     subscription_started_at: Optional[datetime] = None
