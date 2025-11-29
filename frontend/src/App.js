@@ -19,11 +19,12 @@ import MyOrders from './pages/MyOrders';
 import Inbox from './pages/Inbox';
 import Profile from './pages/Profile';
 import Wallet from './pages/Wallet';
+import LocationSetup from './pages/LocationSetup';
 import BottomNav from './components/BottomNav';
 import './App.css';
 
 const PrivateRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
   
   if (loading) {
     return (
@@ -33,7 +34,16 @@ const PrivateRoute = ({ children }) => {
     );
   }
   
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+  
+  // Check if user needs to set up location
+  if (user && !user.location?.latitude && window.location.pathname !== '/location-setup') {
+    return <Navigate to="/location-setup" />;
+  }
+  
+  return children;
 };
 
 function AppContent() {
