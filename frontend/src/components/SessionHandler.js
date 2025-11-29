@@ -96,7 +96,20 @@ const SessionHandler = ({ children }) => {
           navigate('/');
         } catch (error) {
           console.error('SessionHandler: Error during authentication:', error);
-          toast.error('Authentication failed: ' + error.message);
+          console.error('SessionHandler: Error stack:', error.stack);
+          
+          let errorMessage = 'Authentication failed. ';
+          if (error.message.includes('Network error')) {
+            errorMessage += 'Please check your internet connection and try again.';
+          } else if (error.message.includes('Emergent')) {
+            errorMessage += 'Google authentication service is unavailable.';
+          } else if (error.message.includes('backend')) {
+            errorMessage += 'Server is unavailable. Please try again later.';
+          } else {
+            errorMessage += error.message;
+          }
+          
+          toast.error(errorMessage);
           // Clean URL hash
           window.history.replaceState(null, '', window.location.pathname);
           navigate('/login');
