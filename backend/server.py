@@ -907,6 +907,185 @@ async def get_my_transactions(current_user: User = Depends(get_current_user)):
     transactions = await db.transactions.find({"user_id": current_user.id}, {"_id": 0}).sort("created_at", -1).to_list(1000)
     return transactions
 
+# Razorpay Payment & Subscription Endpoints
+@api_router.post("/payments/create-order")
+async def create_payment_order(payment_order: PaymentOrder, current_user: User = Depends(get_current_user)):
+    """Create Razorpay order for activation, monthly, or yearly subscription"""
+    if not razorpay_client:
+        raise HTTPException(status_code=503, detail="Payment service not configured")
+    
+    # Determine amount based on plan type
+    amount_map = {
+        "activation": 9900,  # ₹99 in paise
+        "monthly": 29900,    # ₹299 in paise
+        "yearly": 200000     # ₹2000 in paise
+    }
+    
+    if payment_order.plan_type not in amount_map:
+        raise HTTPException(status_code=400, detail="Invalid plan type")
+    
+    amount = amount_map[payment_order.plan_type]
+    
+    try:
+        # Create Razorpay order
+        razorpay_order = razorpay_client.order.create({
+            "amount": amount,
+            "currency": "INR",
+            "payment_capture": 1,
+            "notes": {
+                "user_id": current_user.id,
+                "plan_type": payment_order.plan_type
+            }
+        })
+        
+        # Save subscription record
+        subscription = Subscription(
+            user_id=current_user.id,
+            plan_type=payment_order.plan_type,
+            amount=amount,
+            status="pending",
+            razorpay_order_id=razorpay_order["id"]
+        )
+        sub_dict = subscription.model_dump()
+        sub_dict['created_at'] = sub_dict['created_at'].isoformat()
+        await db.subscriptions.insert_one(sub_dict)
+        
+        return {
+            "order_id": razorpay_order["id"],
+            "amount": amount,
+            "currency": "INR",
+            "key_id": RAZORPAY_KEY_ID
+        }
+    except Exception as e:
+        logger.error(f"Payment order creation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to create payment order: {str(e)}")
+
+@api_router.post("/payments/verify")
+async def verify_payment(payment_verification: PaymentVerification, current_user: User = Depends(get_current_user)):
+    """Verify Razorpay payment and update subscription status"""
+    if not razorpay_client:
+        raise HTTPException(status_code=503, detail="Payment service not configured")
+    
+    try:
+        # Verify payment signature
+        razorpay_client.utility.verify_payment_signature({
+            'razorpay_order_id': payment_verification.razorpay_order_id,
+            'razorpay_payment_id': payment_verification.razorpay_payment_id,
+            'razorpay_signature': payment_verification.razorpay_signature
+        })
+        
+        # Update subscription record
+        subscription = await db.subscriptions.find_one({
+            "razorpay_order_id": payment_verification.razorpay_order_id,
+            "user_id": current_user.id
+        }, {"_id": 0})
+        
+        if not subscription:
+            raise HTTPException(status_code=404, detail="Subscription not found")
+        
+        now = datetime.now(timezone.utc)
+        plan_type = subscription["plan_type"]
+        
+        # Update subscription status
+        await db.subscriptions.update_one(
+            {"razorpay_order_id": payment_verification.razorpay_order_id},
+            {
+                "$set": {
+                    "status": "paid",
+                    "razorpay_payment_id": payment_verification.razorpay_payment_id,
+                    "razorpay_signature": payment_verification.razorpay_signature,
+                    "payment_date": now.isoformat()
+                }
+            }
+        )
+        
+        # Update user subscription status
+        user_update = {}
+        
+        if plan_type == "activation":
+            user_update["activation_paid"] = True
+        elif plan_type == "monthly":
+            # Monthly subscription expires at end of current month + 14 days grace period
+            end_of_month = (now.replace(day=1) + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+            grace_period_end = end_of_month + timedelta(days=14)
+            user_update.update({
+                "subscription_plan": "monthly",
+                "subscription_status": "active",
+                "subscription_started_at": now.isoformat(),
+                "subscription_expires_at": grace_period_end.isoformat(),
+                "seller_active": True
+            })
+        elif plan_type == "yearly":
+            # Yearly subscription expires after 1 year + 14 days grace period
+            expires_at = now + timedelta(days=365 + 14)
+            user_update.update({
+                "subscription_plan": "yearly",
+                "subscription_status": "active",
+                "subscription_started_at": now.isoformat(),
+                "subscription_expires_at": expires_at.isoformat(),
+                "seller_active": True
+            })
+        
+        await db.users.update_one({"id": current_user.id}, {"$set": user_update})
+        
+        # Fetch updated user
+        updated_user = await db.users.find_one({"id": current_user.id}, {"_id": 0})
+        
+        return {
+            "success": True,
+            "message": "Payment verified successfully",
+            "subscription_status": updated_user.get("subscription_status"),
+            "expires_at": updated_user.get("subscription_expires_at")
+        }
+    except razorpay.errors.SignatureVerificationError:
+        raise HTTPException(status_code=400, detail="Invalid payment signature")
+    except Exception as e:
+        logger.error(f"Payment verification failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Payment verification failed: {str(e)}")
+
+@api_router.get("/subscription/status")
+async def get_subscription_status(current_user: User = Depends(get_current_user)):
+    """Get current subscription status and check for expiry"""
+    now = datetime.now(timezone.utc)
+    
+    # Check if subscription has expired
+    if current_user.subscription_expires_at:
+        expires_at = current_user.subscription_expires_at if isinstance(current_user.subscription_expires_at, datetime) else datetime.fromisoformat(current_user.subscription_expires_at)
+        
+        if now > expires_at:
+            # Subscription expired - deactivate store
+            await db.users.update_one(
+                {"id": current_user.id},
+                {"$set": {"subscription_status": "expired", "seller_active": False}}
+            )
+            current_user.subscription_status = "expired"
+            current_user.seller_active = False
+        elif now > (expires_at - timedelta(days=14)):
+            # In grace period
+            await db.users.update_one(
+                {"id": current_user.id},
+                {"$set": {"subscription_status": "grace_period"}}
+            )
+            current_user.subscription_status = "grace_period"
+    
+    return {
+        "activation_paid": current_user.activation_paid,
+        "subscription_plan": current_user.subscription_plan,
+        "subscription_status": current_user.subscription_status,
+        "subscription_expires_at": current_user.subscription_expires_at,
+        "seller_active": current_user.seller_active,
+        "is_seller": current_user.is_seller
+    }
+
+@api_router.get("/subscription/history")
+async def get_subscription_history(current_user: User = Depends(get_current_user)):
+    """Get subscription payment history"""
+    subscriptions = await db.subscriptions.find(
+        {"user_id": current_user.id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(1000)
+    return subscriptions
+
 app.include_router(api_router)
 
 app.add_middleware(
