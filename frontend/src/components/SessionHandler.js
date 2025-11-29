@@ -56,15 +56,23 @@ const SessionHandler = ({ children }) => {
           
           // Send session data to our backend to create user and get token
           console.log('SessionHandler: Calling backend auth endpoint...');
-          const backendResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              session_id: sessionId
-            })
-          });
+          console.log('SessionHandler: Backend URL:', process.env.REACT_APP_BACKEND_URL);
+          
+          let backendResponse;
+          try {
+            backendResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                session_id: sessionId
+              })
+            });
+          } catch (fetchError) {
+            console.error('SessionHandler: Network error calling backend:', fetchError);
+            throw new Error('Network error: Unable to reach backend server');
+          }
           
           console.log('SessionHandler: Backend response status:', backendResponse.status);
 
