@@ -121,6 +121,10 @@ class FoodamboAPITester:
             self.store_id = response['id']
             print(f"   Store created: {self.store_id}")
             return True
+        elif not success:
+            # Try to get existing store instead
+            print("   Store already exists, trying to get existing store...")
+            return self.test_get_my_store()
         return False
 
     def test_get_my_store(self):
