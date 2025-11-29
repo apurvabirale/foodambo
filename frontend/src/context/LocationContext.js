@@ -8,9 +8,18 @@ export const LocationProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Set a timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      if (loading && !location) {
+        setError('Location request timed out');
+        setLoading(false);
+      }
+    }, 10000); // 10 second timeout
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          clearTimeout(timeout);
           setLocation({
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
@@ -18,14 +27,23 @@ export const LocationProvider = ({ children }) => {
           setLoading(false);
         },
         (err) => {
+          clearTimeout(timeout);
           setError(err.message);
           setLoading(false);
+        },
+        {
+          timeout: 10000,
+          enableHighAccuracy: false,
+          maximumAge: 300000 // Cache position for 5 minutes
         }
       );
     } else {
+      clearTimeout(timeout);
       setError('Geolocation is not supported');
       setLoading(false);
     }
+
+    return () => clearTimeout(timeout);
   }, []);
 
   return (
