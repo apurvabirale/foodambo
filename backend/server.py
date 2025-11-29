@@ -16,6 +16,7 @@ import httpx
 import math
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 import base64
+import razorpay
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -37,6 +38,10 @@ TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID', '')
 TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN', '')
 TWILIO_VERIFY_SERVICE = os.environ.get('TWILIO_VERIFY_SERVICE', '')
 
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', '')
+RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', '')
+RAZORPAY_WEBHOOK_SECRET = os.environ.get('RAZORPAY_WEBHOOK_SECRET', '')
+
 twilio_client = None
 if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN and not TWILIO_ACCOUNT_SID.startswith('your_'):
     try:
@@ -45,6 +50,17 @@ if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN and not TWILIO_ACCOUNT_SID.startswit
         logger.warning("Twilio client initialization failed")
 else:
     logger.info("Using mocked Twilio (OTP: 123456)")
+
+# Initialize Razorpay client
+razorpay_client = None
+if RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET and not RAZORPAY_KEY_ID.startswith('your_'):
+    try:
+        razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+        logger.info("Razorpay client initialized")
+    except Exception as e:
+        logger.warning(f"Razorpay client initialization failed: {e}")
+else:
+    logger.info("Razorpay not configured - using mock mode")
 
 app = FastAPI(title="Foodambo API")
 api_router = APIRouter(prefix="/api")
