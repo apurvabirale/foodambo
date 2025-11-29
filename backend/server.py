@@ -509,11 +509,16 @@ async def get_products(
     categories: Optional[str] = None,
     radius_km: float = 2.0,
     exclude_seller_id: Optional[str] = None,
-    search: Optional[str] = None
+    search: Optional[str] = None,
+    party_orders_only: Optional[bool] = None
 ):
     query = {"active": True}
     if exclude_seller_id:
         query["seller_id"] = {"$ne": exclude_seller_id}
+    
+    # Filter for party orders or regular orders
+    if party_orders_only is not None:
+        query["is_party_order"] = party_orders_only
     
     if search:
         query["$or"] = [
