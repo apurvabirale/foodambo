@@ -403,6 +403,18 @@ const CreateListing = () => {
           </div>
 
           <div className="space-y-2">
+            <label className="text-sm font-medium">Quantity per Unit (Optional)</label>
+            <Input
+              type="text"
+              value={qtyPerUnit}
+              onChange={(e) => setQtyPerUnit(e.target.value)}
+              placeholder="e.g., 500gm, 1 plate, 1 kg"
+              data-testid="qty-per-unit-input"
+            />
+            <p className="text-xs text-foreground-muted">Helps buyers understand portion size</p>
+          </div>
+
+          <div className="space-y-2">
             <label className="text-sm font-medium">Delivery Options</label>
             <div className="space-y-2">
               <label className="flex items-center gap-2">
