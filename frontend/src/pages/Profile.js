@@ -27,14 +27,24 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-background pb-20" data-testid="profile-page">
       <div className="bg-gradient-to-br from-primary to-primary/80 text-white p-6 pb-12">
-        <div className="flex items-center gap-4">
-          <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-3xl font-bold">
-            {user?.name?.charAt(0).toUpperCase() || 'U'}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4">
+            <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-3xl font-bold">
+              {user?.name?.charAt(0).toUpperCase() || 'U'}
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold">{user?.name || 'User'}</h1>
+              <p className="text-white/80">{user?.phone || user?.email || ''}</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold">{user?.name || 'User'}</h1>
-            <p className="text-white/80">{user?.phone || user?.email || ''}</p>
-          </div>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => navigate('/edit-profile')}
+            className="bg-white/20 text-white border-white/30 hover:bg-white/30"
+          >
+            Edit
+          </Button>
         </div>
       </div>
 
