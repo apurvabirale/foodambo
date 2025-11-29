@@ -95,14 +95,26 @@ const MyOrders = () => {
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-lg font-bold text-primary">₹{order.total_price}</span>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => navigate(`/inbox?order=${order.id}`)}
-                        data-testid={`chat-btn-${order.id}`}
-                      >
-                        Chat
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/chat/${order.id}`)}
+                          data-testid={`chat-btn-${order.id}`}
+                        >
+                          Chat
+                        </Button>
+                        {order.status === 'completed' && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => navigate(`/order/${order.id}/review`)}
+                            className="bg-secondary/10 text-secondary border-secondary/30"
+                          >
+                            Review
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
