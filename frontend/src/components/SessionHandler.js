@@ -26,19 +26,33 @@ const SessionHandler = ({ children }) => {
           
           // Call Emergent's session data endpoint
           console.log('SessionHandler: Calling Emergent session-data endpoint...');
-          const response = await fetch('https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data', {
-            headers: {
-              'X-Session-ID': sessionId
-            }
-          });
-
-          if (!response.ok) {
-            console.error('SessionHandler: Emergent API failed:', response.status, await response.text());
-            throw new Error('Failed to get session data');
+          let response;
+          let data;
+          
+          try {
+            response = await fetch('https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data', {
+              headers: {
+                'X-Session-ID': sessionId
+              }
+            });
+          } catch (fetchError) {
+            console.error('SessionHandler: Network error calling Emergent API:', fetchError);
+            throw new Error('Network error: Unable to reach authentication service');
           }
 
-          const data = await response.json();
-          console.log('SessionHandler: Got user data:', data.email);
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('SessionHandler: Emergent API failed:', response.status, errorText);
+            throw new Error('Failed to get session data from Emergent');
+          }
+
+          try {
+            data = await response.json();
+            console.log('SessionHandler: Got user data:', data.email);
+          } catch (jsonError) {
+            console.error('SessionHandler: Failed to parse Emergent response:', jsonError);
+            throw new Error('Invalid response from authentication service');
+          }
           
           // Send session data to our backend to create user and get token
           console.log('SessionHandler: Calling backend auth endpoint...');
