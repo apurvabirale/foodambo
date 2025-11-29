@@ -65,8 +65,13 @@ const StoreProfile = () => {
               {store.store_name.charAt(0)}
             </div>
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <h2 className="text-2xl font-bold">{store.store_name}</h2>
+                {store.is_pure_veg && (
+                  <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
+                    🟢 Pure Veg
+                  </span>
+                )}
                 {store.fssai_verified && (
                   <CheckCircle className="w-5 h-5 text-accent" />
                 )}
