@@ -82,6 +82,7 @@ const Home = () => {
         categories: selectedCategories.join(','),
         exclude_seller_id: currentUserId,
         search: searchQuery,
+        party_orders_only: false,
       };
       
       // Only add location params if available
@@ -103,6 +104,33 @@ const Home = () => {
       toast.error('Failed to load products');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPartyOrders = async () => {
+    setPartyLoading(true);
+    try {
+      const meResponse = await authAPI.getMe();
+      const currentUserId = meResponse.data.id;
+      
+      const params = {
+        exclude_seller_id: currentUserId,
+        party_orders_only: true,
+      };
+      
+      // Only add location params if available
+      if (location) {
+        params.latitude = location.latitude;
+        params.longitude = location.longitude;
+        params.radius_km = 2;
+      }
+      
+      const response = await productAPI.getAll(params);
+      setPartyOrders(response.data);
+    } catch (error) {
+      console.error('Failed to fetch party orders:', error);
+    } finally {
+      setPartyLoading(false);
     }
   };
 
