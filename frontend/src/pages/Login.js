@@ -115,7 +115,7 @@ const Login = () => {
             className="w-48 mx-auto mb-4"
             data-testid="app-logo"
           />
-          <p className="text-foreground-muted text-lg">Fresh & Homemade, Delivered Local</p>
+          <p className="text-foreground-muted text-lg font-semibold">Foodambo - Authentic as ever</p>
         </div>
 
         <Card className="shadow-2xl border-border/40">
