@@ -54,6 +54,11 @@ function AppContent() {
       <div className="App">
         <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/location-setup" element={
+          <PrivateRoute>
+            <LocationSetup />
+          </PrivateRoute>
+        } />
         <Route path="/" element={
           <PrivateRoute>
             <Home />
