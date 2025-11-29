@@ -23,25 +23,31 @@ const trendingDishes = [
 
 const Home = () => {
   const navigate = useNavigate();
-  const { location, loading: locationLoading } = useLocation();
+  const { location, loading: locationLoading, error: locationError } = useLocation();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState(['fresh_food', 'pickles', 'organic_veggies', 'art_handmade']);
   const [searchQuery, setSearchQuery] = useState('');
   const [hasStore, setHasStore] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
 
   useEffect(() => {
     checkStore();
   }, []);
 
   useEffect(() => {
+    // If location is available, fetch products
     if (location) {
       fetchProducts();
+    } else if (!locationLoading && locationError) {
+      // Location failed - still fetch products but without location filtering
+      setLoading(false);
+      setFetchError('Location access denied. Showing all products nearby.');
     }
-  }, [location, selectedCategories]);
+  }, [location, selectedCategories, locationLoading]);
 
   useEffect(() => {
-    if (location) {
+    if (location || (!locationLoading && locationError)) {
       const timeoutId = setTimeout(() => {
         fetchProducts();
       }, 500);
