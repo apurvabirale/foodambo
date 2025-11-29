@@ -25,6 +25,7 @@ const EditStore = () => {
   const [address, setAddress] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [storeLocation, setStoreLocation] = useState(null);
+  const [isPureVeg, setIsPureVeg] = useState(false);
 
   useEffect(() => {
     fetchStore();
@@ -36,6 +37,7 @@ const EditStore = () => {
       setStore(response.data);
       setAddress(response.data.address);
       setSelectedCategories(response.data.categories || []);
+      setIsPureVeg(response.data.is_pure_veg || false);
       if (response.data.location) {
         setStoreLocation({
           latitude: response.data.location.latitude,
@@ -62,6 +64,7 @@ const EditStore = () => {
       await storeAPI.update({
         address,
         categories: selectedCategories,
+        is_pure_veg: isPureVeg,
         latitude: storeLocation.latitude,
         longitude: storeLocation.longitude,
       });
