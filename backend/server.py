@@ -101,6 +101,7 @@ class Store(BaseModel):
     address: str
     location: Dict[str, float]
     categories: List[str] = []
+    is_pure_veg: bool = False
     fssai_license: Optional[str] = None
     fssai_verified: bool = False
     rating: float = 0.0
