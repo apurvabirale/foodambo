@@ -21,6 +21,8 @@ import Profile from './pages/Profile';
 import Wallet from './pages/Wallet';
 import LocationSetup from './pages/LocationSetup';
 import EditProfile from './pages/EditProfile';
+import Chat from './pages/Chat';
+import LeaveReview from './pages/LeaveReview';
 import BottomNav from './components/BottomNav';
 import './App.css';
 
@@ -93,6 +95,16 @@ function AppContent() {
         <Route path="/inbox" element={
           <PrivateRoute>
             <Inbox />
+          </PrivateRoute>
+        } />
+        <Route path="/chat/:orderId" element={
+          <PrivateRoute>
+            <Chat />
+          </PrivateRoute>
+        } />
+        <Route path="/order/:orderId/review" element={
+          <PrivateRoute>
+            <LeaveReview />
           </PrivateRoute>
         } />
         <Route path="/profile" element={
