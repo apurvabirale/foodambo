@@ -400,9 +400,21 @@ def main():
     if not tester.test_get_my_orders():
         print("❌ Get my orders failed")
 
-    # Additional Auth Tests
-    print("\n🔐 Testing Additional Auth...")
+    # Google Authentication Tests
+    print("\n🔐 Testing Google Authentication Flow...")
+    print("   Note: Testing error handling since we can't simulate real Google OAuth")
+    
     tester.test_google_auth_invalid()
+    tester.test_google_auth_expired_session()
+    tester.test_google_auth_empty_session()
+    tester.test_google_auth_missing_session()
+    tester.test_google_auth_malformed_request()
+    tester.test_google_auth_network_timeout()
+    
+    # JWT and Database Tests
+    print("\n🔑 Testing JWT Token & Database Operations...")
+    tester.test_jwt_token_validation()
+    tester.test_database_operations()
 
     # Print Results
     print("\n" + "=" * 50)
