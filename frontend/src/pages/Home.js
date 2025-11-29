@@ -205,76 +205,84 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Become a Seller CTA - Only show if user doesn't have a store */}
+      {/* Become a Seller CTA - Compact Button */}
       {!hasStore && (
-        <div className="p-4">
-          <div className="relative">
-            {/* Glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-secondary/20 to-accent/20 blur-xl animate-pulse"></div>
-            
-            <Card 
-              className="relative overflow-hidden cursor-pointer border-2 border-primary shadow-2xl hover:shadow-primary/30 transition-all duration-300 hover:scale-[1.02] animate-in fade-in slide-in-from-bottom-4"
-              onClick={() => navigate('/create-listing')}
-              data-testid="become-seller-cta"
-            >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/20 rounded-full -mr-16 -mt-16"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent/20 rounded-full -ml-12 -mb-12"></div>
-          
-          <div className="relative p-6">
-            <div className="flex items-start justify-between mb-3">
+        <div className="px-4 pb-2">
+          <button
+            onClick={() => setShowSellerModal(true)}
+            className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-lg font-semibold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            data-testid="become-seller-cta"
+          >
+            <span className="text-lg">🏪</span>
+            Start Selling Today - Zero Commission!
+            <span className="text-lg">→</span>
+          </button>
+        </div>
+      )}
+
+      {/* Seller Info Modal */}
+      {showSellerModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowSellerModal(false)}>
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between mb-4">
               <div>
-                <div className="inline-flex items-center gap-2 bg-secondary/10 text-secondary px-3 py-1 rounded-full mb-2">
-                  <span className="text-xs font-bold">LIMITED TIME</span>
-                </div>
-                <h3 className="text-2xl font-bold text-foreground mb-1">Start Selling Today!</h3>
+                <h3 className="text-2xl font-bold text-foreground mb-1">Start Selling on Foodambo!</h3>
                 <p className="text-foreground-muted text-sm">Turn your passion into income 💰</p>
               </div>
-              <div className="text-5xl">🏪</div>
+              <button onClick={() => setShowSellerModal(false)} className="text-gray-400 hover:text-gray-600">
+                <X className="w-6 h-6" />
+              </button>
             </div>
             
             <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="bg-white rounded-lg p-3 border border-border">
+              <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
                 <p className="text-xs text-foreground-muted mb-1">One-time Setup</p>
-                <div className="flex items-baseline gap-1">
-                  <p className="text-2xl font-bold text-primary">₹199</p>
-                  <span className="text-xs text-foreground-muted">INR</span>
-                </div>
+                <p className="text-2xl font-bold text-primary">₹199</p>
               </div>
-              <div className="bg-white rounded-lg p-3 border border-border">
+              <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
                 <p className="text-xs text-foreground-muted mb-1">Monthly Fee</p>
-                <div className="flex items-baseline gap-1">
-                  <p className="text-2xl font-bold text-primary">₹499</p>
-                  <span className="text-xs text-foreground-muted">INR</span>
-                </div>
+                <p className="text-2xl font-bold text-primary">₹499</p>
               </div>
             </div>
             
             <div className="space-y-2 mb-4">
               <div className="flex items-center gap-2 text-sm">
-                <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
+                <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-xs">✓</span>
                 </div>
                 <span className="font-medium">Zero Commission - Keep 100% earnings</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
-                <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
+                <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-xs">✓</span>
                 </div>
                 <span className="font-medium">Reach customers within 2 km</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
-                <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
+                <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-xs">✓</span>
                 </div>
                 <span className="font-medium">Build your permanent brand</span>
               </div>
+              <div className="flex items-center gap-2 text-sm">
+                <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-xs">✓</span>
+                </div>
+                <span className="font-medium">Direct UPI payments from buyers</span>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+              <p className="text-xs font-semibold text-blue-800 mb-1">Payment to Foodambo:</p>
+              <p className="text-sm text-blue-700">Pay subscription via UPI to: <span className="font-bold">foodambo@upi</span></p>
             </div>
             
-            <Button className="w-full btn-primary h-12 rounded-full text-base font-bold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all">
+            <Button 
+              onClick={() => navigate('/create-listing')}
+              className="w-full btn-primary h-12 rounded-full text-base font-bold"
+            >
               🚀 Create Your Store Now
             </Button>
-          </div>
-          </Card>
           </div>
         </div>
       )}
