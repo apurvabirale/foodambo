@@ -314,3 +314,7 @@ agent_communication:
       message: "Comprehensive Google authentication testing completed successfully. All critical authentication flows working correctly. Backend APIs tested with 95% success rate (19/20 tests passed). Only minor issue: store creation returns 400 for existing stores, which is expected behavior. Google auth endpoint properly integrates with Emergent API and handles all error scenarios correctly."
     - agent: "testing"
       message: "Starting comprehensive frontend authentication flow testing. Will test Phone OTP login with +919876543210 and OTP 123456, verify all UI elements, test post-login home page functionality, and validate navigation. Testing URL: http://localhost:3000"
+    - agent: "testing"
+      message: "CRITICAL ISSUE FOUND AND FIXED: Phone OTP login was failing due to AuthContext login function not properly handling user data fetching after token storage. Fixed by making login function async and adding automatic user data fetch when no userData provided. All authentication flows now working perfectly."
+    - agent: "testing"
+      message: "COMPREHENSIVE TESTING COMPLETED SUCCESSFULLY: ✅ Phone OTP Login (PRIORITY) - Working perfectly with +919876543210 and OTP 123456 ✅ Login Page UI - All elements verified (logo, tagline, cuisine images, Google button, orange design) ✅ Post-Login Home Page - Loads successfully with all required sections ✅ Bottom Navigation - Fully functional ✅ Authentication State - Properly maintained. All requirements from review request have been met."
