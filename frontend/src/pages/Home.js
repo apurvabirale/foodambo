@@ -71,21 +71,33 @@ const Home = () => {
 
   const fetchProducts = async () => {
     setLoading(true);
+    setFetchError(null);
     try {
       const meResponse = await authAPI.getMe();
       const currentUserId = meResponse.data.id;
       
-      const response = await productAPI.getAll({
-        latitude: location?.latitude,
-        longitude: location?.longitude,
+      const params = {
         categories: selectedCategories.join(','),
-        radius_km: 2,
         exclude_seller_id: currentUserId,
         search: searchQuery,
-      });
+      };
+      
+      // Only add location params if available
+      if (location) {
+        params.latitude = location.latitude;
+        params.longitude = location.longitude;
+        params.radius_km = 2;
+      }
+      
+      const response = await productAPI.getAll(params);
       setProducts(response.data);
+      
+      if (response.data.length === 0 && !location) {
+        setFetchError('Enable location to find products near you');
+      }
     } catch (error) {
       console.error('Failed to fetch products:', error);
+      setFetchError('Failed to load products. Please try again.');
       toast.error('Failed to load products');
     } finally {
       setLoading(false);
