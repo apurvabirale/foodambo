@@ -75,7 +75,11 @@ class User(BaseModel):
     auth_method: str
     is_seller: bool = False
     seller_active: bool = False
+    subscription_plan: Optional[str] = None  # 'monthly' or 'yearly'
+    subscription_status: str = "inactive"  # inactive, active, grace_period, expired
+    subscription_started_at: Optional[datetime] = None
     subscription_expires_at: Optional[datetime] = None
+    activation_paid: bool = False  # ₹99 activation fee paid
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     location: Optional[Dict[str, Any]] = None
     delivery_available: bool = False
