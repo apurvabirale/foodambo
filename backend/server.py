@@ -405,6 +405,21 @@ async def facebook_auth(access_token: str):
 async def get_me(current_user: User = Depends(get_current_user)):
     return current_user
 
+@api_router.put("/auth/profile")
+async def update_profile(profile_data: Dict[str, Any], current_user: User = Depends(get_current_user)):
+    """Update user profile including location"""
+    allowed_fields = ["location", "name", "profile_picture", "delivery_available", "pickup_available"]
+    update_data = {k: v for k, v in profile_data.items() if k in allowed_fields}
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No valid fields to update")
+    
+    await db.users.update_one({"id": current_user.id}, {"$set": update_data})
+    
+    # Fetch and return updated user
+    updated_user = await db.users.find_one({"id": current_user.id}, {"_id": 0})
+    return updated_user
+
 @api_router.post("/stores")
 async def create_store(store_data: StoreCreate, current_user: User = Depends(get_current_user)):
     existing_store = await db.stores.find_one({"user_id": current_user.id}, {"_id": 0})
