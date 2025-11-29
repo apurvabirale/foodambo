@@ -69,4 +69,8 @@ export const walletAPI = {
   getTransactions: () => api.get('/wallet/transactions/my'),
 };
 
+export const aiAPI = {
+  generateDescription: (data) => api.post('/ai/generate-description', data),
+};
+
 export default api;
