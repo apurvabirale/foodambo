@@ -34,19 +34,44 @@ const SessionHandler = ({ children }) => {
           console.log('SessionHandler: Backend URL:', process.env.REACT_APP_BACKEND_URL);
           
           let backendResponse;
-          try {
-            backendResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                session_id: sessionId
-              })
-            });
-          } catch (fetchError) {
-            console.error('SessionHandler: Network error calling backend:', fetchError);
-            throw new Error('Network error: Unable to reach backend server');
+          let retryCount = 0;
+          const maxRetries = 2;
+          
+          // Try up to 3 times (initial + 2 retries) with short delays
+          while (retryCount <= maxRetries) {
+            try {
+              if (retryCount > 0) {
+                console.log(`SessionHandler: Retry attempt ${retryCount}/${maxRetries}...`);
+                await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
+              }
+              
+              backendResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  session_id: sessionId
+                }),
+                timeout: 10000
+              });
+              
+              // If we get a response, break the retry loop
+              if (backendResponse) {
+                break;
+              }
+            } catch (fetchError) {
+              console.error(`SessionHandler: Network error (attempt ${retryCount + 1}):`, fetchError);
+              
+              if (retryCount === maxRetries) {
+                throw new Error('Network error: Unable to reach backend server after multiple attempts');
+              }
+              retryCount++;
+            }
+          }
+          
+          if (!backendResponse) {
+            throw new Error('Failed to get response from backend after retries');
           }
           
           console.log('SessionHandler: Backend response status:', backendResponse.status);
