@@ -23,6 +23,7 @@ import LocationSetup from './pages/LocationSetup';
 import EditProfile from './pages/EditProfile';
 import Chat from './pages/Chat';
 import LeaveReview from './pages/LeaveReview';
+import FSSAICertificate from './pages/FSSAICertificate';
 import BottomNav from './components/BottomNav';
 import './App.css';
 
@@ -105,6 +106,11 @@ function AppContent() {
         <Route path="/order/:orderId/review" element={
           <PrivateRoute>
             <LeaveReview />
+          </PrivateRoute>
+        } />
+        <Route path="/fssai-certificate" element={
+          <PrivateRoute>
+            <FSSAICertificate />
           </PrivateRoute>
         } />
         <Route path="/profile" element={
