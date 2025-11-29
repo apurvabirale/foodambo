@@ -28,10 +28,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = (newToken, userData) => {
+  const login = async (newToken, userData) => {
     localStorage.setItem('foodambo_token', newToken);
     setToken(newToken);
-    setUser(userData);
+    if (userData) {
+      setUser(userData);
+    } else {
+      // If no user data provided, fetch it
+      try {
+        const response = await authAPI.getMe();
+        setUser(response.data);
+      } catch (error) {
+        console.error('Failed to fetch user after login:', error);
+        logout();
+      }
+    }
   };
 
   const logout = () => {
