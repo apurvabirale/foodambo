@@ -144,6 +144,29 @@ const CreateListing = () => {
     }
   };
 
+  const handleGenerateDescription = async () => {
+    if (!title) {
+      toast.error('Please enter a product title first');
+      return;
+    }
+
+    setGeneratingDescription(true);
+    try {
+      const response = await aiAPI.generateDescription({
+        title,
+        category,
+        is_veg: isVeg,
+        spice_level: spiceLevel,
+      });
+      setDescription(response.data.description);
+      toast.success('Description generated! Feel free to edit it.');
+    } catch (error) {
+      toast.error('Failed to generate description');
+    } finally {
+      setGeneratingDescription(false);
+    }
+  };
+
   const handlePhotoUpload = (e) => {
     const file = e.target.files?.[0];
     if (file) {
