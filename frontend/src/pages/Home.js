@@ -25,7 +25,9 @@ const Home = () => {
   const navigate = useNavigate();
   const { location, loading: locationLoading, error: locationError } = useLocation();
   const [products, setProducts] = useState([]);
+  const [partyOrders, setPartyOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [partyLoading, setPartyLoading] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState(['fresh_food', 'pickles', 'organic_veggies', 'art_handmade']);
   const [searchQuery, setSearchQuery] = useState('');
   const [hasStore, setHasStore] = useState(false);
