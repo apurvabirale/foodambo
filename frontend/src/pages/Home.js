@@ -295,6 +295,69 @@ const Home = () => {
         </div>
       </div>
 
+      {/* Party Orders Section */}
+      {partyOrders.length > 0 && (
+        <div className="p-4 bg-gradient-to-r from-orange-50 via-yellow-50 to-orange-50">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                🎉 Party Packages
+                <span className="text-xs bg-secondary text-white px-2 py-1 rounded-full">NEW</span>
+              </h2>
+              <p className="text-sm text-foreground-muted mt-1">Perfect for celebrations & gatherings</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 gap-4">
+            {partyOrders.map((partyOrder) => (
+              <Card
+                key={partyOrder.id}
+                className="party-order-card cursor-pointer overflow-hidden border-2 border-orange-200 hover:border-orange-400 transition-all hover:shadow-lg"
+                onClick={() => navigate(`/product/${partyOrder.id}`)}
+              >
+                <div className="flex gap-4 p-4">
+                  {/* Image */}
+                  <div className="relative w-32 h-32 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                    {partyOrder.photos?.[0] ? (
+                      <img src={partyOrder.photos[0]} alt={partyOrder.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-4xl">🎊</div>
+                    )}
+                    <div className="absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                      PARTY
+                    </div>
+                  </div>
+                  
+                  {/* Details */}
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg mb-1">{partyOrder.title}</h3>
+                    <p className="text-sm text-foreground-muted mb-3 line-clamp-2">{partyOrder.description}</p>
+                    
+                    {/* Package Prices */}
+                    <div className="flex flex-wrap gap-2">
+                      {partyOrder.party_packages && Object.entries(partyOrder.party_packages).map(([people, price]) => (
+                        <div key={people} className="bg-white border border-orange-300 rounded-lg px-3 py-1.5">
+                          <p className="text-xs text-orange-700 font-semibold">{people} People</p>
+                          <p className="text-sm font-bold text-primary">₹{price}</p>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {/* Store Info */}
+                    {partyOrder.store_name && (
+                      <p className="text-xs text-foreground-muted mt-2">
+                        🏪 {partyOrder.store_name}
+                        {partyOrder.distance && <span className="ml-2">• {partyOrder.distance} km</span>}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Categories */}
       <div className="p-4">
         <h2 className="text-xl font-semibold mb-3">Categories</h2>
