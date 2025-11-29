@@ -41,6 +41,7 @@ const Home = () => {
     // If location is available, fetch products
     if (location) {
       fetchProducts();
+      fetchPartyOrders();
     } else if (!locationLoading && locationError) {
       // Location failed - still fetch products but without location filtering
       setLoading(false);
