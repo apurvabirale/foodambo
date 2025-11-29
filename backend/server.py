@@ -204,6 +204,7 @@ class OrderCreate(BaseModel):
     scheduled_date: str
     scheduled_time: str
     buyer_address: Optional[str] = None
+    buyer_phone: Optional[str] = None
 
 class ChatMessageCreate(BaseModel):
     order_id: str
