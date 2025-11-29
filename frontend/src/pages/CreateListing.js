@@ -626,22 +626,14 @@ const CreateListing = () => {
             </div>
           )}
 
-          {/* Party Order Section */}
-          <div className="border-2 border-dashed border-primary/30 rounded-lg p-4 space-y-3 bg-gradient-to-r from-primary/5 to-secondary/5">
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="party-order"
-                checked={isPartyOrder}
-                onChange={(e) => setIsPartyOrder(e.target.checked)}
-                className="w-4 h-4 rounded"
-              />
-              <label htmlFor="party-order" className="text-sm font-semibold flex items-center gap-2">
-                🎉 This is a Party Order Package
-              </label>
-            </div>
-            
-            {isPartyOrder && (
+          {/* Party Package Section - Only for party_package category */}
+          {category === 'party_package' && (
+            <div className="border-2 border-dashed border-primary/30 rounded-lg p-4 space-y-3 bg-gradient-to-r from-primary/5 to-secondary/5">
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-semibold">🎉 Party Package Pricing</label>
+              </div>
+              
+              {(
               <div className="space-y-3 pt-2 border-t border-border">
                 <p className="text-xs text-foreground-muted">Set prices for different party sizes:</p>
                 
