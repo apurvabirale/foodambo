@@ -637,6 +637,7 @@ async def create_order(order_data: OrderCreate, current_user: User = Depends(get
         scheduled_date=order_data.scheduled_date,
         scheduled_time=order_data.scheduled_time,
         buyer_address=order_data.buyer_address,
+        buyer_phone=order_data.buyer_phone,
         expires_at=expires_at
     )
     order_dict = order.model_dump()
