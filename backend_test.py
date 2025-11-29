@@ -135,6 +135,9 @@ class FoodamboAPITester:
             "stores/me",
             200
         )
+        if success and 'id' in response:
+            self.store_id = response['id']
+            print(f"   Using existing store: {self.store_id}")
         return success
 
     def test_create_product(self):
