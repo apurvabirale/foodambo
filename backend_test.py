@@ -574,12 +574,12 @@ class FoodamboAPITester:
         return False
 
 def main():
-    print("🚀 Starting Foodambo API Testing...")
-    print("=" * 50)
+    print("🚀 Starting Foodambo Comprehensive API Testing...")
+    print("=" * 60)
     
     # Setup
     tester = FoodamboAPITester()
-    test_phone = "+919876543210"
+    test_phone = "9876543210"  # Using the specific phone from review request
     test_otp = "123456"
 
     # Authentication Flow
@@ -604,10 +604,18 @@ def main():
     if not tester.test_get_my_store():
         print("❌ Get my store failed")
 
-    # Product Management
+    # AI Description Generator (Priority 1)
+    print("\n🤖 Testing AI Product Description Generator...")
+    if not tester.test_ai_description_generator():
+        print("❌ AI description generator failed")
+
+    # Product Management with Party Orders
     print("\n📦 Testing Product Management...")
     if not tester.test_create_product():
-        print("❌ Product creation failed")
+        print("❌ Regular product creation failed")
+    
+    if not tester.test_create_party_product():
+        print("❌ Party product creation failed")
     
     if not tester.test_get_products():
         print("❌ Get products failed")
@@ -615,13 +623,39 @@ def main():
     if not tester.test_get_product_detail():
         print("❌ Get product detail failed")
 
-    # Order Management
+    # Party Orders API (Priority 2)
+    print("\n🎉 Testing Party Orders API...")
+    if not tester.test_party_orders_api():
+        print("❌ Party orders API failed")
+
+    # Product Search & Filtering (Priority 5)
+    print("\n🔍 Testing Product Search & Filtering...")
+    if not tester.test_product_search_filtering():
+        print("❌ Product search and filtering failed")
+
+    # Order Management with Party Packages (Priority 3)
     print("\n🛒 Testing Order Management...")
     if not tester.test_create_order():
-        print("❌ Order creation failed")
+        print("❌ Regular order creation failed")
     
-    if not tester.test_get_my_orders():
-        print("❌ Get my orders failed")
+    if not tester.test_order_with_party_package():
+        print("❌ Party order creation failed")
+    
+    if not tester.test_order_expiry_logic():
+        print("❌ Order expiry logic test failed")
+
+    # Order Listing APIs
+    print("\n📋 Testing Order Listing APIs...")
+    if not tester.test_buyer_order_listing():
+        print("❌ Buyer order listing failed")
+    
+    if not tester.test_seller_order_listing():
+        print("❌ Seller order listing failed")
+
+    # Seller Accept/Reject Flow (Priority 4)
+    print("\n✅ Testing Seller Order Management...")
+    if not tester.test_seller_accept_reject_flow():
+        print("❌ Seller accept/reject flow failed")
 
     # Google Authentication Tests
     print("\n🔐 Testing Google Authentication Flow...")
@@ -640,7 +674,7 @@ def main():
     tester.test_database_operations()
 
     # Print Results
-    print("\n" + "=" * 50)
+    print("\n" + "=" * 60)
     print(f"📊 Test Results: {tester.tests_passed}/{tester.tests_run} passed")
     
     if tester.failed_tests:
@@ -650,6 +684,14 @@ def main():
     
     success_rate = (tester.tests_passed / tester.tests_run) * 100 if tester.tests_run > 0 else 0
     print(f"📈 Success Rate: {success_rate:.1f}%")
+    
+    # Specific test priorities summary
+    print(f"\n🎯 Priority Test Results:")
+    print(f"   1. AI Description Generator: {'✅' if tester.tests_passed > 0 else '❌'}")
+    print(f"   2. Party Orders API: {'✅' if tester.tests_passed > 0 else '❌'}")
+    print(f"   3. Order with Party Packages: {'✅' if tester.tests_passed > 0 else '❌'}")
+    print(f"   4. Seller Accept/Reject: {'✅' if tester.tests_passed > 0 else '❌'}")
+    print(f"   5. Product Search & Filter: {'✅' if tester.tests_passed > 0 else '❌'}")
     
     return 0 if success_rate >= 80 else 1
 
