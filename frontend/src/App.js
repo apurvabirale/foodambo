@@ -118,6 +118,7 @@ function AppContent() {
       {isAuthenticated && <BottomNav />}
       <Toaster />
     </div>
+    </SessionHandler>
   );
 }
 
