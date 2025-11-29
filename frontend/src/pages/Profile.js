@@ -67,6 +67,25 @@ const Profile = () => {
         </Card>
 
         <div className="space-y-2">
+          {/* FSSAI Certificate - Only for Sellers */}
+          {user?.is_seller && (
+            <Card
+              className="p-4 cursor-pointer hover:shadow-md transition-shadow border-2 border-orange-200 bg-orange-50"
+              onClick={() => navigate('/fssai-certificate')}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">📜</span>
+                  <div>
+                    <span className="font-semibold text-orange-900">FSSAI Certificate</span>
+                    <p className="text-xs text-orange-700">Required within 15 days</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-orange-600" />
+              </div>
+            </Card>
+          )}
+
           {menuItems.map((item) => {
             const Icon = item.icon;
             return (
