@@ -807,11 +807,13 @@ async def update_order_status(order_id: str, status: str, current_user: User = D
     if order["seller_id"] != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized")
     
+    now = datetime.now(timezone.utc)
     update_data = {"status": status}
     if status == "accepted":
-        update_data["accepted_at"] = datetime.now(timezone.utc).isoformat()
+        update_data["accepted_at"] = now.isoformat()
     elif status == "completed":
-        update_data["completed_at"] = datetime.now(timezone.utc).isoformat()
+        update_data["completed_at"] = now.isoformat()
+        update_data["delivered_at"] = now.isoformat()  # Track delivery time for chat expiry
     
     await db.orders.update_one({"id": order_id}, {"$set": update_data})
     return {"success": True}
@@ -832,8 +834,28 @@ async def send_message(msg_data: ChatMessageCreate, current_user: User = Depends
 
 @api_router.get("/chat/messages/{order_id}")
 async def get_messages(order_id: str, current_user: User = Depends(get_current_user)):
+    # Check if chat is still active (within 4 hours of delivery)
+    order = await db.orders.find_one({"id": order_id}, {"_id": 0})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Verify user is part of this order
+    if current_user.id not in [order["buyer_id"], order["seller_id"]]:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    chat_expired = False
+    if order.get("delivered_at"):
+        delivered_at = datetime.fromisoformat(order["delivered_at"]) if isinstance(order["delivered_at"], str) else order["delivered_at"]
+        hours_since_delivery = (datetime.now(timezone.utc) - delivered_at).total_seconds() / 3600
+        if hours_since_delivery > 4:
+            chat_expired = True
+    
     messages = await db.chat_messages.find({"order_id": order_id}, {"_id": 0}).sort("timestamp", 1).to_list(1000)
-    return messages
+    return {
+        "messages": messages,
+        "chat_expired": chat_expired,
+        "order_status": order["status"]
+    }
 
 @api_router.post("/ai/generate-description")
 async def generate_description(
