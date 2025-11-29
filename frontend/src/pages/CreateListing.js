@@ -118,6 +118,7 @@ const CreateListing = () => {
         availability_days: availabilityDays,
         availability_time_slots: timeSlots,
         min_quantity: parseInt(minQuantity),
+        qty_per_unit: qtyPerUnit,
         delivery_available: deliveryAvailable,
         pickup_available: pickupAvailable,
       });
