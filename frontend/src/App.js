@@ -158,6 +158,31 @@ function AppContent() {
             <SellerOrders />
           </PrivateRoute>
         } />
+        <Route path="/admin" element={
+          <PrivateRoute>
+            <AdminDashboard />
+          </PrivateRoute>
+        } />
+        <Route path="/admin/users" element={
+          <PrivateRoute>
+            <AdminUsers />
+          </PrivateRoute>
+        } />
+        <Route path="/admin/stores" element={
+          <PrivateRoute>
+            <AdminStores />
+          </PrivateRoute>
+        } />
+        <Route path="/admin/products" element={
+          <PrivateRoute>
+            <AdminProducts />
+          </PrivateRoute>
+        } />
+        <Route path="/admin/orders" element={
+          <PrivateRoute>
+            <AdminOrders />
+          </PrivateRoute>
+        } />
       </Routes>
       {isAuthenticated && <BottomNav />}
       <Toaster />
