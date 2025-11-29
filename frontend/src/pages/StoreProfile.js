@@ -5,6 +5,7 @@ import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
 import { ArrowLeft, Star, MapPin, CheckCircle } from 'lucide-react';
+import ShareButton from '../components/ShareButton';
 
 const StoreProfile = () => {
   const { id } = useParams();
@@ -42,11 +43,18 @@ const StoreProfile = () => {
   return (
     <div className="min-h-screen bg-background pb-20" data-testid="store-profile">
       <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-lg border-b border-border">
-        <div className="p-4 flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <h1 className="text-lg font-semibold">Store Profile</h1>
+        <div className="p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <h1 className="text-lg font-semibold">Store Profile</h1>
+          </div>
+          <ShareButton 
+            title={store?.store_name}
+            text={`Check out ${store?.store_name} on Foodambo - Authentic homemade food!`}
+            type="store"
+          />
         </div>
       </div>
 
