@@ -6,13 +6,15 @@ import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
 import { Card } from '../components/ui/card';
 import { toast } from 'sonner';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, MapPin } from 'lucide-react';
+import LocationPicker from '../components/LocationPicker';
 
 const categories = [
   { value: 'fresh_food', label: 'Fresh Food' },
   { value: 'pickles', label: 'Pickles & Chutneys' },
-  { value: 'organic_veggies', label: 'Organic Vegetables' },
+  { value: 'vegetables', label: 'Vegetables & Farm Products' },
   { value: 'art_handmade', label: 'Art & Handmade' },
+  { value: 'party_package', label: 'Party Package' },
 ];
 
 const EditStore = () => {
@@ -22,6 +24,7 @@ const EditStore = () => {
   const [store, setStore] = useState(null);
   const [address, setAddress] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [storeLocation, setStoreLocation] = useState(null);
 
   useEffect(() => {
     fetchStore();
@@ -33,6 +36,13 @@ const EditStore = () => {
       setStore(response.data);
       setAddress(response.data.address);
       setSelectedCategories(response.data.categories || []);
+      if (response.data.location) {
+        setStoreLocation({
+          latitude: response.data.location.latitude,
+          longitude: response.data.location.longitude,
+          address: response.data.address || ''
+        });
+      }
     } catch (error) {
       toast.error('Failed to load store');
       navigate('/profile');
@@ -42,11 +52,18 @@ const EditStore = () => {
   };
 
   const handleSave = async () => {
+    if (!storeLocation || !storeLocation.latitude || !storeLocation.longitude) {
+      toast.error('Store location is required');
+      return;
+    }
+
     setSaving(true);
     try {
       await storeAPI.update({
         address,
         categories: selectedCategories,
+        latitude: storeLocation.latitude,
+        longitude: storeLocation.longitude,
       });
       toast.success('Store updated successfully');
       navigate('/profile');
