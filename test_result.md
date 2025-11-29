@@ -555,7 +555,10 @@ metadata:
   run_ui: true
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "New User Location Setup Flow"
+    - "Store Creation with Auto-populated Location"
+    - "Existing User Location Bypass"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
