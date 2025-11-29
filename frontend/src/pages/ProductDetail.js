@@ -111,9 +111,9 @@ const ProductDetail = () => {
   // Calculate total price based on party order or regular order
   let totalPrice = 0;
   if (product.is_party_order && selectedPartyPackage) {
-    totalPrice = (product.party_packages?.[selectedPartyPackage] || 0) + (deliveryMethod === 'delivery' ? 30 : 0);
+    totalPrice = (product.party_packages?.[selectedPartyPackage] || 0) + (deliveryMethod === 'delivery' ? 50 : 0);
   } else {
-    totalPrice = (product.price * quantity) + (deliveryMethod === 'delivery' ? 30 : 0);
+    totalPrice = (product.price * quantity) + (deliveryMethod === 'delivery' ? 50 : 0);
   }
   
   const selectedDateObj = scheduledDate ? new Date(scheduledDate) : null;
