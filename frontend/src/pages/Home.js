@@ -32,6 +32,7 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [hasStore, setHasStore] = useState(false);
   const [fetchError, setFetchError] = useState(null);
+  const [showSellerModal, setShowSellerModal] = useState(false);
 
   useEffect(() => {
     checkStore();
