@@ -218,7 +218,11 @@ const Login = () => {
               Continue with Google
             </Button>
 
-            <p className="text-xs text-center text-foreground-muted mt-6">
+            <p className="text-xs text-center text-blue-600 bg-blue-50 p-2 rounded mt-3">
+              💡 Tip: Phone OTP login is faster and more reliable!
+            </p>
+
+            <p className="text-xs text-center text-foreground-muted mt-4">
               By continuing, you agree to our Terms & Privacy Policy
             </p>
           </div>
