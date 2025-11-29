@@ -626,7 +626,7 @@ async def create_order(order_data: OrderCreate, current_user: User = Depends(get
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     
-    delivery_fee = 30.0 if order_data.delivery_method == "delivery" else 0.0
+    delivery_fee = 50.0 if order_data.delivery_method == "delivery" else 0.0
     
     # Calculate price based on party package or regular quantity
     if product.get("is_party_order") and order_data.party_package:
