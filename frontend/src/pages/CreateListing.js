@@ -109,6 +109,12 @@ const CreateListing = () => {
 
     setLoading(true);
     try {
+      const partyPackages = isPartyOrder ? {
+        '25': parseFloat(partyPackage25) || 0,
+        '50': parseFloat(partyPackage50) || 0,
+        '75': parseFloat(partyPackage75) || 0,
+      } : null;
+
       await productAPI.create({
         category,
         title,
@@ -123,6 +129,8 @@ const CreateListing = () => {
         availability_time_slots: timeSlots,
         min_quantity: parseInt(minQuantity),
         qty_per_unit: qtyPerUnit,
+        is_party_order: isPartyOrder,
+        party_packages: partyPackages,
         delivery_available: deliveryAvailable,
         pickup_available: pickupAvailable,
       });
