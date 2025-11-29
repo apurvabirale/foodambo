@@ -78,12 +78,8 @@ const Home = () => {
     setLoading(true);
     setFetchError(null);
     try {
-      const meResponse = await authAPI.getMe();
-      const currentUserId = meResponse.data.id;
-      
       const params = {
         categories: selectedCategories.join(','),
-        exclude_seller_id: currentUserId,
         search: searchQuery,
         party_orders_only: false,
       };
