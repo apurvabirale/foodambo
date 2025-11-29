@@ -55,10 +55,13 @@ const SessionHandler = ({ children }) => {
           console.log('SessionHandler: Backend response status:', backendResponse.status);
 
           if (!backendResponse.ok) {
-            throw new Error('Backend authentication failed');
+            const errorText = await backendResponse.text();
+            console.error('SessionHandler: Backend auth failed:', backendResponse.status, errorText);
+            throw new Error('Backend authentication failed: ' + errorText);
           }
 
           const authData = await backendResponse.json();
+          console.log('SessionHandler: Got auth token, logging in...');
           
           // Store token and login
           login(authData.token);
@@ -66,11 +69,12 @@ const SessionHandler = ({ children }) => {
           // Clean URL hash
           window.history.replaceState(null, '', window.location.pathname);
           
+          console.log('SessionHandler: Authentication complete!');
           toast.success('Login successful!');
           navigate('/');
         } catch (error) {
-          console.error('Session handling error:', error);
-          toast.error('Authentication failed. Please try again.');
+          console.error('SessionHandler: Error during authentication:', error);
+          toast.error('Authentication failed: ' + error.message);
           // Clean URL hash
           window.history.replaceState(null, '', window.location.pathname);
           navigate('/login');
