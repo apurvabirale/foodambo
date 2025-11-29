@@ -40,8 +40,9 @@ function AppContent() {
   const { isAuthenticated } = useAuth();
   
   return (
-    <div className="App">
-      <Routes>
+    <SessionHandler>
+      <div className="App">
+        <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={
           <PrivateRoute>
