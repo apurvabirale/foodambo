@@ -236,6 +236,120 @@ class FoodamboAPITester:
         )
         return success  # Success means it properly rejected invalid session
 
+    def test_google_auth_expired_session(self):
+        """Test Google auth with expired session"""
+        success, response = self.run_test(
+            "Google Auth (Expired Session)",
+            "POST", 
+            "auth/google",
+            400,
+            data={"session_id": "expired_session_456"}
+        )
+        return success
+
+    def test_google_auth_empty_session(self):
+        """Test Google auth with empty session_id"""
+        success, response = self.run_test(
+            "Google Auth (Empty Session)",
+            "POST",
+            "auth/google", 
+            400,
+            data={"session_id": ""}
+        )
+        return success
+
+    def test_google_auth_missing_session(self):
+        """Test Google auth with missing session_id field"""
+        success, response = self.run_test(
+            "Google Auth (Missing Session)",
+            "POST",
+            "auth/google",
+            422,  # Validation error for missing required field
+            data={}
+        )
+        return success
+
+    def test_google_auth_malformed_request(self):
+        """Test Google auth with malformed request"""
+        success, response = self.run_test(
+            "Google Auth (Malformed)",
+            "POST",
+            "auth/google",
+            422,
+            data={"wrong_field": "test"}
+        )
+        return success
+
+    def test_google_auth_network_timeout(self):
+        """Test Google auth behavior with network issues (simulated by very long session_id)"""
+        # This will likely timeout when calling the Emergent API
+        success, response = self.run_test(
+            "Google Auth (Network Issues)",
+            "POST",
+            "auth/google",
+            400,  # Should return error for network issues
+            data={"session_id": "x" * 1000}  # Very long session ID to potentially cause issues
+        )
+        return success
+
+    def test_jwt_token_validation(self):
+        """Test JWT token validation by calling protected endpoint"""
+        if not self.token:
+            print("❌ Skipping JWT validation - no token available")
+            return False
+            
+        # Test with valid token
+        success, response = self.run_test(
+            "JWT Token Validation (Valid)",
+            "GET",
+            "auth/me",
+            200
+        )
+        
+        if not success:
+            return False
+            
+        # Test with invalid token
+        old_token = self.token
+        self.token = "invalid_jwt_token_123"
+        
+        success_invalid, _ = self.run_test(
+            "JWT Token Validation (Invalid)",
+            "GET", 
+            "auth/me",
+            401  # Should fail with invalid token
+        )
+        
+        # Restore valid token
+        self.token = old_token
+        return success_invalid
+
+    def test_database_operations(self):
+        """Test database operations for user management"""
+        # This is tested indirectly through the auth flow
+        # We verify user creation/retrieval by checking the response structure
+        if not self.token:
+            print("❌ Skipping database test - no authenticated user")
+            return False
+            
+        success, response = self.run_test(
+            "Database User Retrieval",
+            "GET",
+            "auth/me", 
+            200
+        )
+        
+        if success:
+            # Verify user data structure
+            expected_fields = ['id', 'name', 'auth_method', 'created_at']
+            missing_fields = [field for field in expected_fields if field not in response]
+            if missing_fields:
+                print(f"❌ Missing user fields: {missing_fields}")
+                return False
+            print(f"✅ User data structure valid: {list(response.keys())}")
+            
+        return success
+
 def main():
     print("🚀 Starting Foodambo API Testing...")
     print("=" * 50)
