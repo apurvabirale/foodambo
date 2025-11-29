@@ -456,6 +456,12 @@ const Home = () => {
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div className="flex-1">
                       <h3 className="font-bold text-foreground text-lg leading-tight mb-1">{product.title}</h3>
+                      {product.store_name && (
+                        <p className="text-xs text-orange-600 font-semibold flex items-center gap-1 mb-1">
+                          <span>🏪</span>
+                          {product.store_name}
+                        </p>
+                      )}
                       {product.min_quantity && (
                         <p className="text-xs text-foreground-muted font-medium">
                           Min Order: {product.min_quantity} {product.category === 'fresh_food' ? 'plate(s)' : 'unit(s)'}
