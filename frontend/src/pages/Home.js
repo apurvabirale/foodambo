@@ -28,7 +28,7 @@ const Home = () => {
   const [partyOrders, setPartyOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [partyLoading, setPartyLoading] = useState(true);
-  const [selectedCategories, setSelectedCategories] = useState(['fresh_food', 'pickles', 'organic_veggies', 'art_handmade']);
+  const [selectedCategories, setSelectedCategories] = useState(['fresh_food', 'pickles', 'vegetables', 'art_handmade', 'party_package']);
   const [searchQuery, setSearchQuery] = useState('');
   const [hasStore, setHasStore] = useState(false);
   const [fetchError, setFetchError] = useState(null);
