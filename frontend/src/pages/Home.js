@@ -221,14 +221,12 @@ const Home = () => {
               </button>
             </div>
             
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
-                <p className="text-xs text-foreground-muted mb-1">One-time Setup</p>
-                <p className="text-2xl font-bold text-primary">₹199</p>
-              </div>
-              <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
-                <p className="text-xs text-foreground-muted mb-1">Monthly Fee</p>
-                <p className="text-2xl font-bold text-primary">₹499</p>
+            <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg p-4 border-2 border-orange-200 mb-4">
+              <div className="text-center">
+                <p className="text-sm text-foreground-muted mb-1">Monthly Subscription</p>
+                <p className="text-4xl font-bold text-primary">₹299</p>
+                <p className="text-xs text-green-700 font-semibold mt-1">✨ No activation fee!</p>
+                <p className="text-xs text-foreground-muted mt-2">Payment due at end of every month</p>
               </div>
             </div>
             
