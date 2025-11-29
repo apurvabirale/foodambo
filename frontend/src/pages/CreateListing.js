@@ -426,6 +426,67 @@ const CreateListing = () => {
             <p className="text-xs text-foreground-muted">Helps buyers understand portion size</p>
           </div>
 
+          {/* Party Order Section */}
+          <div className="border-2 border-dashed border-primary/30 rounded-lg p-4 space-y-3 bg-gradient-to-r from-primary/5 to-secondary/5">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="party-order"
+                checked={isPartyOrder}
+                onChange={(e) => setIsPartyOrder(e.target.checked)}
+                className="w-4 h-4 rounded"
+              />
+              <label htmlFor="party-order" className="text-sm font-semibold flex items-center gap-2">
+                🎉 This is a Party Order Package
+              </label>
+            </div>
+            
+            {isPartyOrder && (
+              <div className="space-y-3 pt-2 border-t border-border">
+                <p className="text-xs text-foreground-muted">Set prices for different party sizes:</p>
+                
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium">25 People</label>
+                    <Input
+                      type="number"
+                      value={partyPackage25}
+                      onChange={(e) => setPartyPackage25(e.target.value)}
+                      placeholder="₹2000"
+                      className="h-10"
+                    />
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium">50 People</label>
+                    <Input
+                      type="number"
+                      value={partyPackage50}
+                      onChange={(e) => setPartyPackage50(e.target.value)}
+                      placeholder="₹3500"
+                      className="h-10"
+                    />
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium">75 People</label>
+                    <Input
+                      type="number"
+                      value={partyPackage75}
+                      onChange={(e) => setPartyPackage75(e.target.value)}
+                      placeholder="₹5000"
+                      className="h-10"
+                    />
+                  </div>
+                </div>
+                
+                <p className="text-xs text-green-700 bg-green-50 p-2 rounded">
+                  💡 Party orders appear in a special section on the home page!
+                </p>
+              </div>
+            )}
+          </div>
+
           <div className="space-y-2">
             <label className="text-sm font-medium">Delivery Options</label>
             <div className="space-y-2">
