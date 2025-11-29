@@ -73,7 +73,9 @@ const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/auth/google?origin=${window.location.origin}/login`;
+    // Redirect to Emergent Auth with main app as redirect_url (not login page)
+    const redirectUrl = `${window.location.origin}/`;
+    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
   };
 
   return (
