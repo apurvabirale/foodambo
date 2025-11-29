@@ -279,5 +279,5 @@
 
 **Current State:** Fully functional hyperlocal marketplace MVP with core features working. Ready for testing with real users. Several enhancements and business rules need implementation for production launch.
 
-**Test URL:** https://fresh-neighborhood.preview.emergentagent.com
+**Test URL:** https://foodambo-market.preview.emergentagent.com
 **Login:** Any phone + OTP `123456`
