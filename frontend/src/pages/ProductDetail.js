@@ -108,7 +108,14 @@ const ProductDetail = () => {
     return <div className="flex items-center justify-center min-h-screen">Product not found</div>;
   }
 
-  const totalPrice = (product.price * quantity) + (deliveryMethod === 'delivery' ? 30 : 0);
+  // Calculate total price based on party order or regular order
+  let totalPrice = 0;
+  if (product.is_party_order && selectedPartyPackage) {
+    totalPrice = (product.party_packages?.[selectedPartyPackage] || 0) + (deliveryMethod === 'delivery' ? 30 : 0);
+  } else {
+    totalPrice = (product.price * quantity) + (deliveryMethod === 'delivery' ? 30 : 0);
+  }
+  
   const selectedDateObj = scheduledDate ? new Date(scheduledDate) : null;
   const dayName = selectedDateObj ? selectedDateObj.toLocaleDateString('en-IN', { weekday: 'long' }) : '';
 
