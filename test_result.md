@@ -457,9 +457,9 @@ frontend:
 
   - task: "Create Listing with AI Generator & Enhanced Fields"
     implemented: true
-    working: false
+    working: true
     file: "frontend/src/pages/CreateListing.js"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
@@ -469,6 +469,9 @@ frontend:
         - working: false
           agent: "testing"
           comment: "Create listing form working correctly with all enhanced fields present. CRITICAL ISSUE: AI Description Generator button found and functional (shows 'Generating...' state when clicked), but description is not populated in the textarea. Backend logs show successful AI API calls (200 OK) and LiteLLM completion, but there's a serialization error with ObjectId in the response. The AI generation works but response handling fails. All other form fields working: category selection, title input, price, party packages, veg/non-veg toggle, availability settings."
+        - working: true
+          agent: "testing"
+          comment: "✅ AI Description Generator is now working perfectly! Successfully tested complete flow: Login with 9876543210/123456 → Navigate to Create Listing → Fill form (Category: Fresh Food, Title: Test Paneer Tikka, Veg: Yes, Spice: Medium) → Click AI Generate button → Generated authentic description: 'Test Paneer Tikka features cubes of fresh, succulent paneer marinated in hung yogurt, ginger‑garlic, Kashmiri chili, garam masala and a whisper of kasuri methi for aroma, then threaded with bell peppers and onions. Char‑grilled until edges are smoky and lightly crisp, it delivers a creamy, tangy bite with a balanced, medium heat that's quintessentially tandoor‑style and utterly irresistible with mint chutney.' The ObjectId serialization issue has been resolved. All form fields and AI integration working correctly."
 
   - task: "Product Detail Page with Party Packages & Delivery Charges"
     implemented: true
