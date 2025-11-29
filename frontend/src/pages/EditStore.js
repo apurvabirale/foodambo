@@ -148,6 +148,25 @@ const EditStore = () => {
             </div>
           </div>
 
+          <div className="space-y-2 bg-green-50 border border-green-200 rounded-lg p-4">
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isPureVeg}
+                onChange={(e) => setIsPureVeg(e.target.checked)}
+                className="w-5 h-5 rounded text-green-600 focus:ring-green-500"
+              />
+              <div className="flex-1">
+                <span className="text-sm font-medium text-green-900 flex items-center gap-2">
+                  🟢 Pure Vegetarian Store
+                </span>
+                <p className="text-xs text-green-700 mt-1">
+                  Check this if your store serves only vegetarian food
+                </p>
+              </div>
+            </label>
+          </div>
+
           <Button
             onClick={handleSave}
             disabled={saving}
