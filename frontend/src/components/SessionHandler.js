@@ -33,12 +33,15 @@ const SessionHandler = ({ children }) => {
           });
 
           if (!response.ok) {
+            console.error('SessionHandler: Emergent API failed:', response.status, await response.text());
             throw new Error('Failed to get session data');
           }
 
           const data = await response.json();
+          console.log('SessionHandler: Got user data:', data.email);
           
           // Send session data to our backend to create user and get token
+          console.log('SessionHandler: Calling backend auth endpoint...');
           const backendResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google`, {
             method: 'POST',
             headers: {
@@ -48,6 +51,8 @@ const SessionHandler = ({ children }) => {
               session_id: sessionId
             })
           });
+          
+          console.log('SessionHandler: Backend response status:', backendResponse.status);
 
           if (!backendResponse.ok) {
             throw new Error('Backend authentication failed');
