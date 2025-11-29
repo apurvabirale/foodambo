@@ -3,93 +3,62 @@ The user wants to build a hyperlocal marketplace app called Foodambo for home-ba
 
 **Core Concept:** A platform for sellers to offer homemade food, organic produce, snacks, art, and handmade products to buyers within a 2 km radius.
 
-**Key Features Requested:**
-- **Seller Onboarding:** Low one-time activation fee (₹199) and a monthly subscription (₹499). No commission on sales.
-- **Authentication:** Mobile OTP, Google Login, and Facebook Login.
-- **Payments:** Direct Buyer-to-Seller UPI payments. App wallet is only for subscription/service fees.
-- **Core App Flow:** Location detection, category-based filtering, product listings, detailed product pages, order placement, and order management.
-- **Seller Features:** Store profile, listing management, order acceptance/rejection (7 AM - 9 PM window, 1-hour expiry), and a dashboard.
-- **Product Details:** veg/non-veg, spice level, availability (days/time), ingredients, qty per unit.
-- **Discovery:** Home page feed with listings, search, and filters.
-- **Communication:** Direct chat between buyers and sellers.
-- **Reviews:** Buyers can rate and review stores.
-- **FSSAI:** Assistance service and verification system.
-- **Admin Panel:** For backend management.
-
-**Subsequent User Requests:**
-- Enhance Create Listing form with fields: veg/non-veg, spice level, availability, and qty per unit.
-- Remove Emergent branding.
-- Redesign login page to be vibrant orange with a collage of Indian food images.
-- Ensure the logo is present on all pages (top-left).
-- Implement an AI-powered description generator for product listings.
-- Add date/time confirmation pop-up for orders.
-- Collect buyer's contact details/address for delivery orders.
-- Implement party order packages (25, 50, 75 people) with a separate section on the home page.
-- Fix minimum quantity validation for orders.
-- Redesign home page: make category selection smaller, simplify Start Selling Today into a single button.
-- Show a default delivery charge of ₹50.
-- Fix Google login intermittent failures.
-- Resolve deployment build errors.
+**PRODUCT REQUIREMENTS:**
+-   **Seller Onboarding:** No activation fee. A monthly subscription of ₹299 (due at month-end) or a yearly plan of ₹2000. An upfront activation fee of ₹99 was discussed. A 14-day grace period for failed payments, after which the store is deactivated.
+-   **Payments:** Use Razorpay for subscriptions. Direct Buyer-to-Seller UPI payments for orders.
+-   **Authentication:** Google Login will be the primary method. (Mobile OTP was requested and then removed).
+-   **Core App Flow:** Mandatory location detection on signup. Category-based filtering. Product listings, detailed product pages with store name prominently displayed. Self-listings should be visible but not orderable. Order placement and management.
+-   **Seller Features:** Store profile (editable), listing management, order acceptance/rejection. An option to mark a store as Pure Veg. FSSAI certificate upload within 15 days, with an option to request an FSSAI assistance service for ₹999.
+-   **Product Details & Categories:** The Create Listing form must be dynamic based on the selected category:
+    -   **Categories:** Fresh Food, Pickles, Vegetables & Farm Products, Art, and Party Packages.
+    -   **Fields for Fresh Food/Pickles:** Standard fields (spice level, availability, etc.).
+    -   **Fields for Veg/Farm:** Name, Photo, Weight, Price, Organic (Y/N).
+    -   **Fields for Art:** Name, Photo, Price per Unit, Size/Weight.
+-   **Communication:** Order-specific chat between buyers and sellers, which expires 4 hours after the order is delivered.
+-   **Reviews & Sharing:** Buyers can rate/review stores and dishes after an order. Reviews should appear on store and product pages. A share button (Link, WhatsApp, Instagram, Facebook) for products and stores.
+-   **UI/UX:** Remove Emergent branding from the login page and theme the OAuth callback page. Remove the floating add listing button from the home page. The user and store profiles should be editable.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack application (React frontend, FastAPI backend, MongoDB) with several core features implemented. This includes user authentication (mocked OTP, and a newly robust Google Auth flow), product/store creation, and a home page with category filtering. Major new features completed in this session include a dedicated Party Orders section, an AI-powered description generator for listings, and a complete visual redesign of the login page. The agent also fixed a critical home page loading bug and implemented the seller order management (Accept/Reject) flow. The application is feature-rich but is currently failing to build for deployment.
+The application is a feature-rich full-stack app (React/FastAPI/MongoDB). The previous agent fixed critical deployment blockers and resolved an ObjectId serialization error in the AI description generator. A significant number of new features were added based on user requests, including a mandatory location setup flow, a dynamic Create Listing form that changes based on category, editable user/store profiles, order-specific chat, and a review/share system. The login process was simplified to Google-only, and UI/UX issues were addressed. The agent began implementing the FSSAI certificate feature and started setting up the backend for Razorpay subscriptions before being paused by the user.
 
 **Last working item**:
--   **Last item agent was working:** The agent was tasked with fixing deployment build errors. It used the , which identified several critical issues, including missing  files in the build context and hardcoded URLs/API keys. The agent started fixing these by removing a hardcoded API key from  and moving a hardcoded auth URL to an environment variable.
+-   **Last item agent was working:** Implementing the FSSAI certificate management feature. This includes allowing sellers to upload their certificate or request an assistance service for a fee. The agent created the backend models and API endpoints (, ) and the frontend page ().
 -   **Status:** IN PROGRESS
 -   **Agent Testing Done:** N
--   **Which testing method agent to use?** After fixing the issues, the  should be called again to verify the build passes.
+-   **Which testing method agent to use?** Frontend testing agent to test the complete user flow: navigating from the profile, seeing the FSSAI status, uploading a certificate, and requesting assistance.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1:** The application build is failing during deployment. (Priority: P0 - BLOCKER)
--   **Issue 2:** Google Authentication has been intermittently failing. The agent has implemented a robust fix with UUID validation and retries, which was validated by testing agents, but it needs final verification from the user in the live environment. (Priority: P1)
+-   **Issue 1:** Own listings are not visible to the seller on the home page. (Priority: P0 - BLOCKER)
 
 Issues Detail:
--   **Issue 1: Deployment Build Failure**
-    -   **Attempted fixes:** The agent ran the  which analyzed the build logs. The agent then started implementing the suggested fixes:
-        1.  Removed a hardcoded fallback API key from .
-        2.  Moved a hardcoded  to an environment variable in .
+-   **Issue 1: Own listings not visible**
+    -   **Attempted fixes:** The agent identified and removed the  parameter from the  API call in . The agent performed this action twice, indicating a potential issue with the edit saving or a misunderstanding of the root cause. The frontend service was restarted after the last attempt.
     -   **Next debug checklist:**
-        1.  Continue with the deployment agent's report.
-        2.  The report stated that  files are missing from the build context. The agent needs to ensure that all required environment variables are correctly configured for the production build, especially  in the frontend and ,  in the backend.
-        3.  Address the performance warnings (N+1 queries, lack of pagination) mentioned by the deployment agent as a post-deployment optimization task.
-        4.  Run the  again after fixes are applied to confirm the build succeeds.
-    -   **Why fix this issue and what will be achieved with the fix?** This is a critical blocker preventing the application from being deployed to a production environment. Fixing it will make the app deployable.
+        1.  Verify the  parameter is truly gone from all API calls fetching products in .
+        2.  Check the backend  endpoint logic in  to ensure there isn't another filter removing the seller's own products.
+        3.  Use the frontend testing agent to log in as a seller, create a product, and check the home page to definitively reproduce the issue.
+    -   **Why fix this issue and what will be achieved with the fix?** Sellers need to see their own listings on the home page to confirm they are live and see how they appear to customers. This is a critical user experience issue.
     -   **Status:** IN PROGRESS
     -   **Is recurring issue?** Y
-    -   **Should Test frontend/backend/both after fix?** both (via deployment agent)
-    -   **Blocked on other issue:** None
-
--   **Issue 2: Intermittent Google Authentication Failure**
-    -   **Attempted fixes:** The agent performed a deep-dive root cause analysis and found the issue was due to malformed  from the URL hash and quick expiration. The fix involved:
-        -   **Backend:** Added strict UUID validation for the  in .
-        -   **Frontend:** Rewrote  to be more robust, correctly parse the  from the URL hash, handle race conditions, and implement a retry mechanism with user-friendly error messages. The fix was successfully tested by both backend and frontend testing agents.
-    -   **Next debug checklist:**
-        -   Ask the user to perform the Google login flow again now that the robust fix is in place.
-        -   Monitor backend logs for any new errors during the user's test.
-    -   **Why fix this issue and what will be achieved with the fix?** This is a core authentication feature. A reliable fix is crucial for user trust and experience.
-    -   **Status:** USER VERIFICATION PENDING
-    -   **Is recurring issue?** Y
-    -   **Should Test frontend/backend/both after fix?** both (User testing)
+    -   **Should Test frontend/backend/both after fix?** both
     -   **Blocked on other issue:** None
 
 **In progress Task List**:
-- **Task 1: Resolve Deployment Blockers** (Priority: P0)
-    - **Where to resume**: The agent just started applying fixes based on the 's report. The next step is to ensure all necessary environment variables are available during the production build, particularly by adding  to .
-    - **What will be achieved with this?** A successful production deployment of the application.
-    - **Status:** IN PROGRESS
-    - **Should Test frontend/backend/both after fix?** both (via deployment agent)
-    - **Blocked on something:** None
+-   **Task 1: Complete FSSAI Certificate Feature** (Priority: P0)
+    -   **Where to resume**: Connect the frontend components to the backend. In , implement the API calls for file upload to  and for requesting assistance to . Ensure the user's FSSAI status is updated and reflected on the  page.
+    -   **What will be achieved with this?** A fully functional FSSAI compliance workflow for sellers.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** both
+    -   **Blocked on something:** None
 
 **Upcoming and Future Tasks**
 **Upcoming Tasks:**
--   **P1:** After deployment, address the performance optimizations flagged by the deployment agent (N+1 queries, pagination).
--   **P2:** Ensure the order confirmation includes date, day, and time, and this detail is passed to the seller.
--   **P2:** Verify that buyer details (address, phone) are correctly collected and saved for delivery orders.
--   **P2:** Implement buyer cancellation charges logic.
+-   **P0: Implement Razorpay Subscription System:** The user has provided detailed requirements (₹99 activation, ₹299/month or ₹2000/year, 14-day grace period). The  library is installed, and backend models/endpoints have been created in . The next agent needs to build the frontend payment pages and integrate them with the backend.
+-   **P1: Resolve Emergent Auth White Page Issue:** The user is unhappy with the white-label Emergent-hosted OAuth page. The agent must confirm with the user if they want to switch to a direct Google OAuth implementation, which would require the user to provide their own Google Cloud OAuth credentials.
+-   **P2: Performance Optimizations:** Address N+1 query patterns and implement pagination on high-traffic endpoints like  as previously recommended by the deployment agent.
 
 **Future Tasks:**
 -   Admin Panel for backend management.
@@ -100,102 +69,96 @@ Issues Detail:
 
 **Completed work in this session**
 - **Recently completed:**
-  - **Party Orders Feature (DONE):** Implemented a full-featured party package system, including backend models, a dedicated API endpoint (), a new section on the home page, and a custom product detail view for selecting packages.
-  - **AI Product Description Generator (DONE):** Integrated  with an  to provide AI-powered descriptions in the Create Listing form.
-  - **Login Page Redesign (DONE):** Completely revamped the login page with a vibrant orange gradient and a collage of Indian cuisine images, as requested by the user.
-  - **Google Auth Robust Fix (DONE & TESTED):** Diagnosed and fixed intermittent Google login failures by implementing strict backend validation and a resilient frontend . Verified with both backend and frontend testing agents.
-  - **Home Page Loading Bug (FIXED):** Resolved a critical bug where the home page would get stuck in a loading state if browser location was unavailable.
-  - **Home Page UI/UX Improvements (DONE):**
-      - Redesigned categories into compact pills to make product listings visible on first load.
-      - Simplified the Start Selling section into a single button that opens a detailed modal.
-  - **Seller Order Management (VERIFIED):** Confirmed the Accept/Reject functionality for sellers is working correctly.
-  - **Search Functionality (VERIFIED):** Confirmed that the product search feature is working as expected.
-  - **Product & Order Enhancements (DONE):** Added  to products,  and  to orders, and ensured a default delivery fee of ₹50 is displayed.
-  - **Deployment Readiness Analysis (DONE):** Used the deployment agent to identify and start fixing build-breaking issues.
+  - **Deployment & Bug Fixes (DONE):** Fixed deployment build errors and resolved a critical  serialization bug in the AI Description Generator.
+  - **Mandatory Location on Signup (DONE):** Implemented a flow that forces new users to set their location via a map () before accessing the app.
+  - **Dynamic 'Create Listing' Form (DONE):** Refactored  to conditionally display form fields based on the selected product category (Fresh Food, Art, Party Packages, etc.).
+  - **Review and Share Features (DONE):** Implemented a  component for products and stores with options for Link, WhatsApp, Instagram, and Facebook. Added a reviews section to product pages.
+  - **Profile & Store Editing (DONE):** Created  and updated  to allow users and sellers to edit their details, including an integrated .
+  - **Order-specific Chat (DONE):** Implemented backend endpoints and a frontend  page for buyers and sellers to communicate about a specific order, with a 4-hour expiry post-delivery.
+  -**Self-Order Prevention (DONE):** The Place Order button on  is now disabled for sellers viewing their own products.
+  - **Authentication & Branding (DONE):** Removed the Mobile OTP login from , making Google Login the sole method. Themed the  loading screen to better match the app's design.
+  - **Pure Veg Store Option (DONE):** Added a Pure Veg checkbox to store creation/editing and a badge that displays on the store profile.
+  - **UI/UX Fixes (DONE):** Removed the floating 'add' button from  and added the store name to product cards for better visibility.
 
 **Earlier issues found/mentioned but not fixed**
--   **Issue 1: Performance Optimizations**
-    -   **Debug checklist:** The deployment agent recommended addressing N+1 query patterns and implementing pagination on high-traffic endpoints like .
-    -   **Why to solve this issue and what will be achieved with this?** To ensure the application remains fast and scalable under production load.
-    -   **Should Test frontend/backend/both after fix:** backend
+-   **Issue 1: Emergent Auth White Page**
+    -   **Debug checklist:** This is not a bug but a feature of Emergent's managed OAuth. The user was presented with two options: 1) Implement direct Google OAuth (requires user credentials), or 2) Keep the current flow. Awaiting user decision.
+    -   **Why to solve this issue and what will be achieved with this?** To provide a fully-branded user experience without showing third-party (Emergent) pages during login.
+    -   **Should Test frontend/backend/both after fix:** both
+    -   **Is recurring issue?** Y
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork:** Home page loading failure, Google Authentication failure.
--   **Recurrence count:** 2
--   **Status:** RESOLVED (Home page), USER VERIFICATION PENDING (Google Auth)
+-   **Issue recurrence in previous fork:** Own dish not yet visible (related to home page product loading).
+-   **Recurrence count:** 3+
+-   **Status:** IN PROGRESS (The last fix attempt needs verification).
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Frontend:** React, React Router, Tailwind CSS, Shadcn/UI
--   **Backend:** FastAPI (Python), Pydantic
--   **Database:** MongoDB (accessed via  async driver)
--   **Authentication:** JWT-based, mocked OTP, Emergent-managed Google OAuth2.
--   **AI:**  library for OpenAI text generation.
--   **Deployment:** Services managed by .
+-   **Frontend:** React, React Router, Tailwind CSS, Shadcn/UI, Axios
+-   **Backend:** FastAPI (Python), Pydantic, Motor
+-   **Database:** MongoDB
+-   **Authentication:** Emergent-managed Google OAuth2
+-   **Integrations:**  (for AI), Razorpay (planned)
 
 **key DB schema**
 -   **users:** 
 -   **stores:** 
 -   **products:** 
 -   **orders:** 
+-   **messages:** 
 
 **changes in tech stack**
--   Added  python library for AI feature integration.
+-   Installed  Python library in the backend.
 
 **All files**
--   : Major updates to add party order logic, AI description endpoint, and robust Google Auth handling. Removed hardcoded keys.
--   : Major UI overhaul for categories and Start Selling CTA. Added a new section for Party Orders.
--   : Complete visual redesign and updated Google login logic to use Emergent's managed auth URL.
--   : Added UI for , party packages, and an AI Generate button for descriptions.
--   : Updated to handle both regular products (quantity) and party orders (package selection), and display delivery charges.
--   : New file created to handle the Google Auth callback, parse the session ID, and securely fetch the JWT token from the backend. This was rewritten multiple times to achieve a robust solution.
--   : Updated to add .
--   : Updated to add  and .
+-   : Heavily modified to add models and endpoints for user profile updates, subscriptions (Razorpay), chat, FSSAI management, and order delivery tracking.
+-   : Major refactor to support dynamic form fields based on product category.
+-   : Modified to add store names to product cards, remove the floating action button, and attempt to fix the self-listing visibility bug.
+-   : Modified to remove OTP login and improve branding.
+-   : Updated to handle the mandatory location check for new users.
+-   : Updated with new routes for , , , , and .
+-   **New Files Created:** , , , , , , .
 
 **Areas that need refactoring**:
-- The backend API endpoints (, ) should be paginated to prevent performance degradation as data volume grows. This was highlighted by the deployment agent.
+-   The  file is now over 1000 lines long and contains all models, API routes, and business logic. It should be broken down into a more scalable structure (e.g., , , ).
 
 **key api endpoints**
--   : Handles Google Auth callback with a .
--   : Generates product description using AI.
--   : Fetches products that are flagged as party orders.
--   : Update an order's status (accept/reject/complete).
--   : Create a new order (updated to handle party packages).
+-   : Updates user profile information, including location.
+-   : Fetches chat messages for a specific order.
+-   : Sends a new chat message for an order.
+-   : Updated to track  time for completed orders.
+-   : (Newly added) Handles FSSAI certificate file upload.
+-   : (Newly added) Handles requests for FSSAI assistance service.
 
 **Critical Info for New Agent**
-- **Deployment is Blocked:** The immediate priority is to fix the deployment build failures identified by the . Continue with the agent's report, focusing on ensuring all necessary environment variables are set for the build.
-- **Google Auth Flow:** The correct authentication flow is: User clicks login -> Redirect to Emergent Auth -> Redirect back to app with  in URL ->  grabs the  ->  sends the  to the app's backend () -> Backend validates it with Emergent's API and returns a JWT. The frontend **must not** call the Emergent API directly.
-- **Environment Variables:** The application now relies on several new environment variables for production:  on the frontend, and  and  on the backend. These are critical for deployment.
+-   **Recurring Visibility Bug:** The top priority is to definitively solve the own listings not visible bug. The user has reported this multiple times, and previous fixes have not stuck. Verify the last fix on  and be prepared for a deeper investigation into backend logic or frontend state management.
+-   **Paused Razorpay Task:** The user requested a full subscription system with Razorpay but then asked to pause its implementation. The backend setup is partially done. This is the next major feature to tackle after fixing current issues.
+-   **FSSAI Feature is In-Progress:** The backend is ready, but the frontend () needs to be connected to the APIs and tested.
+-   **Google Auth Decision:** You must follow up with the user about the white page during login. They need to choose between keeping the simple but branded Emergent Auth or switching to a direct Google OAuth implementation (which requires them to provide credentials).
 
 **documents created in this job**
-- None
+-   : A markdown file created to show the user where the Edit Profile button is located.
 
 **Last 5 User Messages and any pending user messages**
-1.  **User Message:** Reports  on Google Login, providing network logs showing a CORS error. (Status: Addressed)
-2.  **User Message:** Reports intermittent Google login failures. (Status: Addressed)
-3.  **User Message:** Asks agent to solve the login issue properly. (Status: Addressed)
-4.  **User Message:** Initiates deployment and provides build error logs. (Status: IN PROGRESS)
-5.  **User Message:** Initiates deployment again after some fixes. (Status: IN PROGRESS)
+1.  **User Message:** Asks if all users can share dish/store links via one click. (Status: Addressed and Implemented)
+2.  **User Message:** Specifies that the share options should be Link, WhatsApp, Instagram, and Facebook. (Status: Addressed and Implemented)
+3.  **User Message:** Reports that their own dish is still not visible. (Status: IN PROGRESS)
+4.  **User Message:** Reports they cannot see the FSSAI certificate provisioning and requests it, along with a paid assistance service. (Status: IN PROGRESS)
+5.  **User Message:** (Previous session) User asks to test the location feature first, pausing the Razorpay implementation. (Status: Completed, now un-paused by subsequent requests)
 
 **Project Health Check:**
--   **Broken:**
-    -   The production build is failing, blocking deployment.
--   **Mocked:**
-    -   Phone OTP authentication is mocked ().
--   **Needs Verification:**
-    -   Google Authentication flow needs final user confirmation in a live environment.
+-   **Broken:** The product visibility on the home page for the item's own seller is unreliable and a recurring issue.
+-   **Mocked:** Phone OTP authentication has been completely removed.
+-   **Needs Verification:** The fix for the own listings not visible bug needs immediate user or test agent verification.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES. Both backend and frontend testing agents were used to validate and fix the Google Authentication flow.
--   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** Test cases were generated and run by the testing agents, but no permanent test files were saved in .
--   **Known regressions:** None.
+-   **Testing agent used after significant changes:** YES, for location features and verifying fixes.
+-   **Troubleshoot agent used after agent stuck in loop:** YES, to diagnose a frontend/backend data mismatch.
+-   **Test files created:** None saved permanently.
+-   **Known regressions:** The visibility of a seller's own listings on the home page.
 
 **Credentials to test flow:**
--   **Phone Number:** Any 10-digit number (e.g., 9876543210).
--   **OTP Code:** .
-
-**What agent forgot to execute**
-- The agent was in the middle of applying fixes suggested by the . It updated two files but needs to complete the remaining steps, most importantly ensuring the new environment variables (, ) are correctly configured and available to the production build process.</analysis>
+-   **Phone Number:** N/A (OTP login removed)
+-   **Authentication:** Use the Google Login flow.</analysis>

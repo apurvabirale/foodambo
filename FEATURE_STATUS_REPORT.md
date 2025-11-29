@@ -279,5 +279,5 @@
 
 **Current State:** Fully functional hyperlocal marketplace MVP with core features working. Ready for testing with real users. Several enhancements and business rules need implementation for production launch.
 
-**Test URL:** https://homechef-hub-8.preview.emergentagent.com
+**Test URL:** https://local-foodie.preview.emergentagent.com
 **Login:** Any phone + OTP `123456`
