@@ -20,6 +20,7 @@ import Inbox from './pages/Inbox';
 import Profile from './pages/Profile';
 import Wallet from './pages/Wallet';
 import LocationSetup from './pages/LocationSetup';
+import EditProfile from './pages/EditProfile';
 import BottomNav from './components/BottomNav';
 import './App.css';
 
@@ -97,6 +98,11 @@ function AppContent() {
         <Route path="/profile" element={
           <PrivateRoute>
             <Profile />
+          </PrivateRoute>
+        } />
+        <Route path="/edit-profile" element={
+          <PrivateRoute>
+            <EditProfile />
           </PrivateRoute>
         } />
         <Route path="/wallet" element={
