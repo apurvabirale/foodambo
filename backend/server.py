@@ -1188,6 +1188,265 @@ async def get_subscription_history(current_user: User = Depends(get_current_user
     ).sort("created_at", -1).to_list(1000)
     return subscriptions
 
+# ==================== ADMIN ENDPOINTS ====================
+
+@api_router.get("/admin/analytics")
+async def get_admin_analytics(admin: User = Depends(get_admin_user)):
+    """Get dashboard analytics for admin"""
+    
+    # Total users
+    total_users = await db.users.count_documents({})
+    
+    # Active sellers (users with stores)
+    active_sellers = await db.stores.count_documents({})
+    
+    # Total active listings
+    active_listings = await db.products.count_documents({"active": True})
+    
+    # Orders statistics
+    total_orders = await db.orders.count_documents({})
+    pending_orders = await db.orders.count_documents({"status": "pending"})
+    completed_orders = await db.orders.count_documents({"status": "completed"})
+    
+    # Revenue calculation (subscriptions)
+    subscriptions = await db.subscriptions.find(
+        {"status": "success"},
+        {"_id": 0, "amount": 1}
+    ).to_list(10000)
+    total_revenue = sum(sub.get("amount", 0) for sub in subscriptions)
+    
+    # Top stores by rating
+    top_stores = await db.stores.find(
+        {"rating": {"$gt": 0}},
+        {"_id": 0, "store_name": 1, "rating": 1, "total_reviews": 1}
+    ).sort("rating", -1).limit(5).to_list(5)
+    
+    # Recent users (last 7 days)
+    seven_days_ago = datetime.now(timezone.utc) - timedelta(days=7)
+    new_users_week = await db.users.count_documents(
+        {"created_at": {"$gte": seven_days_ago}}
+    )
+    
+    # Users by subscription status
+    active_subscriptions = await db.users.count_documents(
+        {"subscription_status": "active"}
+    )
+    grace_period_subscriptions = await db.users.count_documents(
+        {"subscription_status": "grace_period"}
+    )
+    expired_subscriptions = await db.users.count_documents(
+        {"subscription_status": "expired"}
+    )
+    
+    return {
+        "total_users": total_users,
+        "active_sellers": active_sellers,
+        "active_listings": active_listings,
+        "total_orders": total_orders,
+        "pending_orders": pending_orders,
+        "completed_orders": completed_orders,
+        "total_revenue": total_revenue,
+        "top_stores": top_stores,
+        "new_users_this_week": new_users_week,
+        "subscription_stats": {
+            "active": active_subscriptions,
+            "grace_period": grace_period_subscriptions,
+            "expired": expired_subscriptions
+        }
+    }
+
+@api_router.get("/admin/users")
+async def get_all_users(
+    admin: User = Depends(get_admin_user),
+    search: Optional[str] = None,
+    page: int = 1,
+    limit: int = 50
+):
+    """Get all users with pagination and search"""
+    query = {}
+    
+    if search:
+        query["$or"] = [
+            {"name": {"$regex": search, "$options": "i"}},
+            {"email": {"$regex": search, "$options": "i"}},
+            {"phone": {"$regex": search, "$options": "i"}}
+        ]
+    
+    skip = (page - 1) * limit
+    users = await db.users.find(query, {"_id": 0}).skip(skip).limit(limit).to_list(limit)
+    total = await db.users.count_documents(query)
+    
+    return {
+        "users": users,
+        "total": total,
+        "page": page,
+        "pages": (total + limit - 1) // limit
+    }
+
+@api_router.get("/admin/stores")
+async def get_all_stores(
+    admin: User = Depends(get_admin_user),
+    search: Optional[str] = None,
+    fssai_pending: Optional[bool] = None,
+    page: int = 1,
+    limit: int = 50
+):
+    """Get all stores with filters"""
+    query = {}
+    
+    if search:
+        query["store_name"] = {"$regex": search, "$options": "i"}
+    
+    if fssai_pending:
+        query["fssai_submitted_at"] = {"$ne": None}
+        query["fssai_verified"] = False
+    
+    skip = (page - 1) * limit
+    stores = await db.stores.find(query, {"_id": 0}).skip(skip).limit(limit).to_list(limit)
+    
+    # Enrich with user info
+    for store in stores:
+        user = await db.users.find_one({"id": store["user_id"]}, {"_id": 0, "name": 1, "email": 1, "phone": 1, "subscription_status": 1})
+        if user:
+            store["user"] = user
+    
+    total = await db.stores.count_documents(query)
+    
+    return {
+        "stores": stores,
+        "total": total,
+        "page": page,
+        "pages": (total + limit - 1) // limit
+    }
+
+@api_router.get("/admin/products")
+async def get_all_products(
+    admin: User = Depends(get_admin_user),
+    search: Optional[str] = None,
+    category: Optional[str] = None,
+    page: int = 1,
+    limit: int = 50
+):
+    """Get all products with filters"""
+    query = {}
+    
+    if search:
+        query["$or"] = [
+            {"title": {"$regex": search, "$options": "i"}},
+            {"description": {"$regex": search, "$options": "i"}}
+        ]
+    
+    if category:
+        query["category"] = category
+    
+    skip = (page - 1) * limit
+    products = await db.products.find(query, {"_id": 0}).skip(skip).limit(limit).to_list(limit)
+    
+    # Enrich with store info
+    for product in products:
+        store = await db.stores.find_one({"id": product["store_id"]}, {"_id": 0, "store_name": 1})
+        if store:
+            product["store_name"] = store.get("store_name")
+    
+    total = await db.products.count_documents(query)
+    
+    return {
+        "products": products,
+        "total": total,
+        "page": page,
+        "pages": (total + limit - 1) // limit
+    }
+
+@api_router.get("/admin/orders")
+async def get_all_orders(
+    admin: User = Depends(get_admin_user),
+    status: Optional[str] = None,
+    page: int = 1,
+    limit: int = 50
+):
+    """Get all orders with filters"""
+    query = {}
+    
+    if status:
+        query["status"] = status
+    
+    skip = (page - 1) * limit
+    orders = await db.orders.find(query, {"_id": 0}).skip(skip).limit(limit).sort("created_at", -1).to_list(limit)
+    
+    # Enrich with buyer, seller, and product info
+    for order in orders:
+        buyer = await db.users.find_one({"id": order["buyer_id"]}, {"_id": 0, "name": 1, "email": 1})
+        seller = await db.users.find_one({"id": order["seller_id"]}, {"_id": 0, "name": 1, "email": 1})
+        product = await db.products.find_one({"id": order["product_id"]}, {"_id": 0, "title": 1})
+        
+        if buyer:
+            order["buyer_name"] = buyer.get("name")
+        if seller:
+            order["seller_name"] = seller.get("name")
+        if product:
+            order["product_title"] = product.get("title")
+    
+    total = await db.orders.count_documents(query)
+    
+    return {
+        "orders": orders,
+        "total": total,
+        "page": page,
+        "pages": (total + limit - 1) // limit
+    }
+
+@api_router.put("/admin/users/{user_id}/toggle-active")
+async def toggle_user_active(
+    user_id: str,
+    admin: User = Depends(get_admin_user)
+):
+    """Activate or deactivate a user"""
+    user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Toggle seller_active status
+    new_status = not user.get("seller_active", False)
+    await db.users.update_one(
+        {"id": user_id},
+        {"$set": {"seller_active": new_status}}
+    )
+    
+    return {"success": True, "seller_active": new_status}
+
+@api_router.put("/admin/stores/{store_id}/verify-fssai")
+async def verify_fssai(
+    store_id: str,
+    admin: User = Depends(get_admin_user)
+):
+    """Verify FSSAI certificate for a store"""
+    store = await db.stores.find_one({"id": store_id}, {"_id": 0})
+    if not store:
+        raise HTTPException(status_code=404, detail="Store not found")
+    
+    await db.stores.update_one(
+        {"id": store_id},
+        {"$set": {"fssai_verified": True}}
+    )
+    
+    return {"success": True, "message": "FSSAI certificate verified"}
+
+@api_router.delete("/admin/products/{product_id}")
+async def delete_product_admin(
+    product_id: str,
+    admin: User = Depends(get_admin_user)
+):
+    """Delete/deactivate a product listing"""
+    result = await db.products.update_one(
+        {"id": product_id},
+        {"$set": {"active": False}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    return {"success": True, "message": "Product deactivated"}
+
 app.include_router(api_router)
 
 app.add_middleware(
