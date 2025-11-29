@@ -15,8 +15,9 @@ import LocationPicker from '../components/LocationPicker';
 const categories = [
   { value: 'fresh_food', label: 'Fresh Food' },
   { value: 'pickles', label: 'Pickles & Chutneys' },
-  { value: 'organic_veggies', label: 'Organic Vegetables' },
+  { value: 'vegetables', label: 'Vegetables & Farm Products' },
   { value: 'art_handmade', label: 'Art & Handmade' },
+  { value: 'party_package', label: 'Party Package' },
 ];
 
 const spiceLevels = [
