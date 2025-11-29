@@ -45,12 +45,16 @@ const CreateListing = () => {
   const [storeCategories, setStoreCategories] = useState([]);
   const [storeLocation, setStoreLocation] = useState(null);
   
-  // Product form
+  // Product form - Common fields
   const [category, setCategory] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [photos, setPhotos] = useState([]);
+  const [deliveryAvailable, setDeliveryAvailable] = useState(false);
+  const [pickupAvailable, setPickupAvailable] = useState(true);
+  
+  // Fresh Food & Pickles specific fields
   const [productType, setProductType] = useState('fresh_food');
   const [isVeg, setIsVeg] = useState(true);
   const [spiceLevel, setSpiceLevel] = useState('');
@@ -58,13 +62,21 @@ const CreateListing = () => {
   const [timeSlots, setTimeSlots] = useState(['9 AM', '1 PM', '5 PM', '8 PM']);
   const [minQuantity, setMinQuantity] = useState('1');
   const [qtyPerUnit, setQtyPerUnit] = useState('');
+  const [generatingDescription, setGeneratingDescription] = useState(false);
+  
+  // Vegetables & Farm Products specific fields
+  const [weight, setWeight] = useState('');
+  const [isOrganic, setIsOrganic] = useState(false);
+  
+  // Art & Handmade specific fields
+  const [pricePerUnit, setPricePerUnit] = useState('');
+  const [sizeInfo, setSizeInfo] = useState('');
+  
+  // Party Package specific fields
   const [isPartyOrder, setIsPartyOrder] = useState(false);
   const [partyPackage25, setPartyPackage25] = useState('');
   const [partyPackage50, setPartyPackage50] = useState('');
   const [partyPackage75, setPartyPackage75] = useState('');
-  const [deliveryAvailable, setDeliveryAvailable] = useState(false);
-  const [pickupAvailable, setPickupAvailable] = useState(true);
-  const [generatingDescription, setGeneratingDescription] = useState(false);
 
   useEffect(() => {
     checkStore();
