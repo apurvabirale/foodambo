@@ -46,8 +46,14 @@ const ProductDetail = () => {
   };
 
   const handleOrderClick = () => {
-    // Validate minimum quantity
-    if (quantity < (product.min_quantity || 1)) {
+    // For party orders, validate package selection
+    if (product.is_party_order && !selectedPartyPackage) {
+      toast.error('Please select a party package');
+      return;
+    }
+
+    // For regular orders, validate minimum quantity
+    if (!product.is_party_order && quantity < (product.min_quantity || 1)) {
       toast.error(`Minimum order quantity is ${product.min_quantity || 1}`);
       return;
     }
