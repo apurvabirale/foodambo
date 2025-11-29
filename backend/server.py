@@ -579,6 +579,51 @@ async def upload_fssai(data: FSSAIUpload, current_user: User = Depends(get_curre
         logger.error(f"FSSAI verification error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Verification failed: {str(e)}")
 
+@api_router.post("/fssai/upload")
+async def upload_fssai_certificate(data: Dict[str, Any], current_user: User = Depends(get_current_user)):
+    """Upload FSSAI certificate number and document"""
+    store = await db.stores.find_one({"user_id": current_user.id}, {"_id": 0})
+    if not store:
+        raise HTTPException(status_code=404, detail="Store not found")
+    
+    fssai_number = data.get("fssai_number")
+    fssai_certificate_url = data.get("fssai_certificate_url", "")
+    
+    if not fssai_number:
+        raise HTTPException(status_code=400, detail="FSSAI number is required")
+    
+    now = datetime.now(timezone.utc)
+    await db.stores.update_one(
+        {"id": store["id"]},
+        {"$set": {
+            "fssai_license": fssai_number,
+            "fssai_number": fssai_number,
+            "fssai_certificate_url": fssai_certificate_url,
+            "fssai_submitted_at": now.isoformat(),
+            "fssai_verified": False
+        }}
+    )
+    
+    return {"success": True, "message": "FSSAI certificate uploaded successfully. Verification pending."}
+
+@api_router.post("/fssai/request-assistance")
+async def request_fssai_assistance(current_user: User = Depends(get_current_user)):
+    """Request Foodambo's FSSAI assistance service (₹999)"""
+    store = await db.stores.find_one({"user_id": current_user.id}, {"_id": 0})
+    if not store:
+        raise HTTPException(status_code=404, detail="Store not found")
+    
+    await db.stores.update_one(
+        {"user_id": current_user.id},
+        {"$set": {"fssai_assistance_requested": True}}
+    )
+    
+    return {
+        "success": True,
+        "message": "FSSAI assistance request received. Our team will contact you shortly.",
+        "service_fee": 999
+    }
+
 @api_router.post("/products")
 async def create_product(product_data: ProductCreate, current_user: User = Depends(get_current_user)):
     store = await db.stores.find_one({"user_id": current_user.id}, {"_id": 0})
