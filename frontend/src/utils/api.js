@@ -28,6 +28,7 @@ export const authAPI = {
   googleAuth: (session_id) => api.post('/auth/google', { session_id }),
   facebookAuth: (access_token) => api.post('/auth/facebook', { access_token }),
   getMe: () => api.get('/auth/me'),
+  updateProfile: (data) => api.put('/auth/profile', data),
 };
 
 export const storeAPI = {
