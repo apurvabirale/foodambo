@@ -8,10 +8,12 @@ import { Textarea } from '../components/ui/textarea';
 import { toast } from 'sonner';
 import { ArrowLeft, Star, MapPin, Calendar, Clock, Phone, MessageCircle, X, AlertCircle } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
+import { useAuth } from '../context/AuthContext';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [product, setProduct] = useState(null);
   const [store, setStore] = useState(null);
   const [reviews, setReviews] = useState([]);
