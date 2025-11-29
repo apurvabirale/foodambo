@@ -77,7 +77,7 @@ const ProductDetail = () => {
     try {
       const orderData = {
         product_id: id,
-        quantity,
+        quantity: product.is_party_order ? 1 : quantity,
         delivery_method: deliveryMethod,
         scheduled_date: scheduledDate,
         scheduled_time: scheduledTime,
@@ -86,6 +86,10 @@ const ProductDetail = () => {
       if (deliveryMethod === 'delivery') {
         orderData.buyer_address = buyerAddress;
         orderData.buyer_phone = buyerPhone;
+      }
+
+      if (product.is_party_order) {
+        orderData.party_package = selectedPartyPackage;
       }
 
       await orderAPI.create(orderData);
