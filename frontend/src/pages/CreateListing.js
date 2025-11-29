@@ -145,31 +145,64 @@ const CreateListing = () => {
 
     setLoading(true);
     try {
-      const partyPackages = isPartyOrder ? {
-        '25': parseFloat(partyPackage25) || 0,
-        '50': parseFloat(partyPackage50) || 0,
-        '75': parseFloat(partyPackage75) || 0,
-      } : null;
-
-      await productAPI.create({
+      // Base product data
+      const productData = {
         category,
         title,
         description,
         price: parseFloat(price),
         photos,
-        product_type: productType,
-        is_veg: isVeg,
-        spice_level: spiceLevel,
-        details: {},
-        availability_days: availabilityDays,
-        availability_time_slots: timeSlots,
-        min_quantity: parseInt(minQuantity),
-        qty_per_unit: qtyPerUnit,
-        is_party_order: isPartyOrder,
-        party_packages: partyPackages,
         delivery_available: deliveryAvailable,
         pickup_available: pickupAvailable,
-      });
+      };
+
+      // Category-specific fields
+      if (category === 'fresh_food' || category === 'pickles') {
+        // Fresh Food & Pickles fields
+        productData.product_type = category;
+        productData.is_veg = isVeg;
+        productData.spice_level = spiceLevel;
+        productData.availability_days = availabilityDays;
+        productData.availability_time_slots = timeSlots;
+        productData.min_quantity = parseInt(minQuantity);
+        productData.qty_per_unit = qtyPerUnit;
+        productData.is_party_order = false;
+        productData.party_packages = null;
+        productData.details = {};
+      } else if (category === 'vegetables') {
+        // Vegetables & Farm Products fields
+        productData.product_type = 'vegetables';
+        productData.details = {
+          weight: weight,
+          is_organic: isOrganic
+        };
+        productData.is_veg = true; // Vegetables are always veg
+        productData.availability_days = availabilityDays;
+        productData.min_quantity = parseInt(minQuantity) || 1;
+      } else if (category === 'art_handmade') {
+        // Art & Handmade fields
+        productData.product_type = 'art';
+        productData.details = {
+          price_per_unit: pricePerUnit,
+          size_info: sizeInfo
+        };
+        productData.min_quantity = 1;
+      } else if (category === 'party_package') {
+        // Party Package fields
+        productData.product_type = 'party_package';
+        productData.is_party_order = true;
+        productData.party_packages = {
+          'Small (10-15 people)': parseFloat(partyPackage25) || 0,
+          'Medium (15-25 people)': parseFloat(partyPackage50) || 0,
+          'Large (25-40 people)': parseFloat(partyPackage75) || 0,
+        };
+        productData.availability_days = availabilityDays;
+        productData.availability_time_slots = timeSlots;
+        productData.is_veg = isVeg;
+        productData.spice_level = spiceLevel;
+      }
+
+      await productAPI.create(productData);
       toast.success('Product listed successfully!');
       navigate('/my-listings');
     } catch (error) {
