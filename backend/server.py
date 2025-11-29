@@ -108,6 +108,28 @@ class Store(BaseModel):
     acceptance_rate: float = 100.0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class Subscription(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    plan_type: str  # 'activation', 'monthly', 'yearly'
+    amount: int  # in paise
+    status: str  # 'pending', 'paid', 'failed'
+    razorpay_order_id: Optional[str] = None
+    razorpay_payment_id: Optional[str] = None
+    razorpay_signature: Optional[str] = None
+    payment_date: Optional[datetime] = None
+    expires_at: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PaymentOrder(BaseModel):
+    plan_type: str  # 'activation', 'monthly', 'yearly'
+
+class PaymentVerification(BaseModel):
+    razorpay_order_id: str
+    razorpay_payment_id: str
+    razorpay_signature: str
+
 class Product(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
