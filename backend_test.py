@@ -83,19 +83,49 @@ class FoodamboAPITester:
 
     def test_verify_otp(self, phone, code):
         """Test OTP verification and get token"""
-        success, response = self.run_test(
-            "Verify OTP",
-            "POST",
-            "auth/verify-otp",
-            200,
-            data={"phone": phone, "code": code}
-        )
-        if success and 'token' in response:
-            self.token = response['token']
-            self.user_id = response.get('user', {}).get('id')
-            print(f"   Token obtained: {self.token[:20]}...")
-            return True
-        return False
+        # Debug: Try direct request first
+        import requests
+        url = f"{self.base_url}/api/auth/verify-otp"
+        headers = {'Content-Type': 'application/json'}
+        data = {"phone": phone, "code": code}
+        
+        print(f"   Debug: Making direct request to {url}")
+        print(f"   Debug: Data = {data}")
+        
+        try:
+            response = requests.post(url, json=data, headers=headers)
+            print(f"   Debug: Status = {response.status_code}")
+            print(f"   Debug: Response = {response.text[:200]}")
+            
+            if response.status_code == 200:
+                response_data = response.json()
+                if 'token' in response_data:
+                    self.token = response_data['token']
+                    self.user_id = response_data.get('user', {}).get('id')
+                    print(f"   Token obtained: {self.token[:20]}...")
+                    self.tests_run += 1
+                    self.tests_passed += 1
+                    print(f"✅ Passed - Status: {response.status_code}")
+                    return True
+            
+            self.tests_run += 1
+            print(f"❌ Failed - Status: {response.status_code}")
+            self.failed_tests.append({
+                "test": "Verify OTP",
+                "expected": 200,
+                "actual": response.status_code,
+                "response": response.text[:200]
+            })
+            return False
+            
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            self.tests_run += 1
+            self.failed_tests.append({
+                "test": "Verify OTP",
+                "error": str(e)
+            })
+            return False
 
     def test_get_me(self):
         """Test getting current user info"""
