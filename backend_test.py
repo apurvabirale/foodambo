@@ -357,6 +357,222 @@ class FoodamboAPITester:
             
         return success
 
+    def test_ai_description_generator(self):
+        """Test AI Product Description Generator API"""
+        success, response = self.run_test(
+            "AI Description Generator",
+            "POST",
+            "ai/generate-description",
+            200,
+            data={
+                "title": "Chicken Biryani",
+                "category": "fresh_food",
+                "is_veg": False,
+                "spice_level": "medium"
+            }
+        )
+        if success and 'description' in response:
+            print(f"   Generated description: {response['description'][:100]}...")
+            return True
+        return False
+
+    def test_create_party_product(self):
+        """Test creating a party order product"""
+        success, response = self.run_test(
+            "Create Party Product",
+            "POST",
+            "products",
+            200,
+            data={
+                "category": "fresh_food",
+                "title": "Party Biryani Platter",
+                "description": "Large biryani platter perfect for parties",
+                "price": 500.0,
+                "photos": [],
+                "product_type": "fresh_food",
+                "is_veg": False,
+                "spice_level": "medium",
+                "details": {},
+                "availability_days": ["Sat", "Sun"],
+                "availability_time_slots": ["12:00-14:00", "18:00-21:00"],
+                "min_quantity": 1,
+                "is_party_order": True,
+                "party_packages": {
+                    "Small (10-15 people)": 800.0,
+                    "Medium (15-25 people)": 1200.0,
+                    "Large (25-40 people)": 1800.0
+                },
+                "delivery_available": True,
+                "pickup_available": True
+            }
+        )
+        if success and 'id' in response:
+            self.party_product_id = response['id']
+            print(f"   Party product created: {self.party_product_id}")
+            return True
+        return False
+
+    def test_party_orders_api(self):
+        """Test Party Orders Product API"""
+        success, response = self.run_test(
+            "Get Party Orders",
+            "GET",
+            "products",
+            200,
+            data={
+                "party_orders_only": True,
+                "latitude": 28.6139,
+                "longitude": 77.2090
+            }
+        )
+        if success:
+            party_products = [p for p in response if p.get('is_party_order', False)]
+            print(f"   Found {len(party_products)} party products")
+            return True
+        return False
+
+    def test_product_search_filtering(self):
+        """Test Product Search and Category Filtering"""
+        # Test search functionality
+        success1, response1 = self.run_test(
+            "Product Search by Text",
+            "GET",
+            "products",
+            200,
+            data={
+                "search": "biryani",
+                "latitude": 28.6139,
+                "longitude": 77.2090
+            }
+        )
+        
+        # Test category filtering
+        success2, response2 = self.run_test(
+            "Product Filter by Category",
+            "GET",
+            "products",
+            200,
+            data={
+                "categories": "fresh_food",
+                "latitude": 28.6139,
+                "longitude": 77.2090
+            }
+        )
+        
+        return success1 and success2
+
+    def test_order_with_party_package(self):
+        """Test Order Creation with Party Packages"""
+        if not hasattr(self, 'party_product_id') or not self.party_product_id:
+            print("❌ Skipping party order test - no party product ID")
+            return False
+            
+        success, response = self.run_test(
+            "Create Party Order",
+            "POST",
+            "orders",
+            200,
+            data={
+                "product_id": self.party_product_id,
+                "quantity": 1,
+                "delivery_method": "delivery",
+                "scheduled_date": "2025-01-20",
+                "scheduled_time": "19:00",
+                "buyer_address": "123 Party Street, Delhi",
+                "buyer_phone": "+919876543210",
+                "party_package": "Medium (15-25 people)"
+            }
+        )
+        if success and 'id' in response:
+            self.party_order_id = response['id']
+            print(f"   Party order created: {self.party_order_id}")
+            print(f"   Total price: ₹{response.get('total_price', 0)}")
+            return True
+        return False
+
+    def test_seller_order_listing(self):
+        """Test Seller Order Listing"""
+        success, response = self.run_test(
+            "Get Seller Orders",
+            "GET",
+            "orders/seller",
+            200
+        )
+        if success:
+            print(f"   Found {len(response)} seller orders")
+            return True
+        return False
+
+    def test_buyer_order_listing(self):
+        """Test Buyer Order Listing"""
+        success, response = self.run_test(
+            "Get Buyer Orders",
+            "GET",
+            "orders/my",
+            200
+        )
+        if success:
+            print(f"   Found {len(response)} buyer orders")
+            return True
+        return False
+
+    def test_seller_accept_reject_flow(self):
+        """Test Seller Order Accept/Reject Flow"""
+        if not self.order_id:
+            print("❌ Skipping seller flow test - no order ID")
+            return False
+            
+        # Test accepting an order
+        success1, response1 = self.run_test(
+            "Seller Accept Order",
+            "PUT",
+            f"orders/{self.order_id}/status",
+            200,
+            data={"status": "accepted"}
+        )
+        
+        if not success1:
+            return False
+            
+        # Test rejecting an order (create another order first)
+        if hasattr(self, 'party_order_id') and self.party_order_id:
+            success2, response2 = self.run_test(
+                "Seller Reject Order",
+                "PUT",
+                f"orders/{self.party_order_id}/status",
+                200,
+                data={"status": "rejected"}
+            )
+            return success1 and success2
+        
+        return success1
+
+    def test_order_expiry_logic(self):
+        """Test Order Expiry Logic and Time Window Constraints"""
+        # Create an order and check expiry time
+        if not self.product_id:
+            print("❌ Skipping expiry test - no product ID")
+            return False
+            
+        success, response = self.run_test(
+            "Create Order (Check Expiry)",
+            "POST",
+            "orders",
+            200,
+            data={
+                "product_id": self.product_id,
+                "quantity": 1,
+                "delivery_method": "pickup",
+                "scheduled_date": "2025-01-16",
+                "scheduled_time": "20:00"
+            }
+        )
+        
+        if success and 'expires_at' in response:
+            print(f"   Order expires at: {response['expires_at']}")
+            return True
+        return False
+
 def main():
     print("🚀 Starting Foodambo API Testing...")
     print("=" * 50)
