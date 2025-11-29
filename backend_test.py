@@ -533,7 +533,7 @@ class FoodamboAPITester:
             "PUT",
             f"orders/{self.order_id}/status",
             200,
-            data={"status": "accepted"}
+            params={"status": "accepted"}
         )
         
         if not success1:
@@ -546,7 +546,7 @@ class FoodamboAPITester:
                 "PUT",
                 f"orders/{self.party_order_id}/status",
                 200,
-                data={"status": "rejected"}
+                params={"status": "rejected"}
             )
             return success1 and success2
         
