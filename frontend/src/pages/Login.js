@@ -31,42 +31,7 @@ const Login = () => {
     }
   }, [searchParams, login, navigate]);
 
-  const handleSendOTP = async () => {
-    if (!phone || phone.length < 10) {
-      toast.error('Please enter a valid phone number');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await authAPI.sendOTP(phone.startsWith('+') ? phone : `+91${phone}`);
-      setOtpSent(true);
-      toast.success('OTP sent successfully!');
-    } catch (error) {
-      toast.error('Failed to send OTP');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOTP = async () => {
-    if (!otp || otp.length !== 6) {
-      toast.error('Please enter a valid 6-digit OTP');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const response = await authAPI.verifyOTP(phone.startsWith('+') ? phone : `+91${phone}`, otp);
-      await login(response.data.token);
-      toast.success('Login successful!');
-      navigate('/');
-    } catch (error) {
-      toast.error(error.response?.data?.detail || 'Invalid OTP');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Google-only login - OTP functions removed
 
   const handleGoogleLogin = () => {
     // Redirect to Emergent Auth with main app as redirect_url (not login page)
