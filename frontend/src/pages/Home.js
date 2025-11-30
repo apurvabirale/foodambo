@@ -156,10 +156,16 @@ const Home = () => {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stores/search?${new URLSearchParams(params)}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('foodambo_token')}` }
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
       const data = await response.json();
-      setStores(data);
+      setStores(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to fetch stores:', error);
+      setStores([]); // Always set to empty array on error
       toast.error('Failed to load stores');
     } finally {
       setStoresLoading(false);
