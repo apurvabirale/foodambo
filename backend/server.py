@@ -586,6 +586,170 @@ async def update_profile(profile_data: Dict[str, Any], current_user: User = Depe
     updated_user = await db.users.find_one({"id": current_user.id}, {"_id": 0})
     return updated_user
 
+# ====== EMAIL/PASSWORD AUTHENTICATION ======
+
+class EmailSignupRequest(BaseModel):
+    email: str
+    password: str
+    name: str
+
+class EmailLoginRequest(BaseModel):
+    email: str
+    password: str
+
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+class ResetPasswordRequest(BaseModel):
+    email: str
+    otp: str
+    new_password: str
+
+@api_router.post("/auth/email/signup")
+async def email_signup(req: EmailSignupRequest):
+    """Register with email and password"""
+    # Check if user already exists
+    existing_user = await db.users.find_one({"email": req.email}, {"_id": 0})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Hash password
+    password_hash = bcrypt.hashpw(req.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    # Create user
+    user = User(
+        email=req.email,
+        password_hash=password_hash,
+        name=req.name,
+        auth_method="email"
+    )
+    user_dict = user.model_dump()
+    user_dict['created_at'] = user_dict['created_at'].isoformat()
+    if user_dict.get('subscription_expires_at'):
+        user_dict['subscription_expires_at'] = user_dict['subscription_expires_at'].isoformat()
+    
+    await db.users.insert_one(user_dict)
+    
+    # Create JWT token
+    token = create_access_token({"sub": user_dict["id"]})
+    
+    # Remove sensitive data
+    user_dict.pop('password_hash', None)
+    user_dict.pop('reset_otp', None)
+    user_dict.pop('reset_otp_expires', None)
+    
+    return {"success": True, "token": token, "user": user_dict}
+
+@api_router.post("/auth/email/login")
+async def email_login(req: EmailLoginRequest):
+    """Login with email and password"""
+    # Find user
+    user_doc = await db.users.find_one({"email": req.email}, {"_id": 0})
+    if not user_doc:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    
+    # Check if user has password (email auth)
+    if not user_doc.get('password_hash'):
+        raise HTTPException(status_code=400, detail="This email is registered with Google login. Please use Google sign-in.")
+    
+    # Verify password
+    password_match = bcrypt.checkpw(
+        req.password.encode('utf-8'),
+        user_doc['password_hash'].encode('utf-8')
+    )
+    
+    if not password_match:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    
+    # Create JWT token
+    token = create_access_token({"sub": user_doc["id"]})
+    
+    # Remove sensitive data
+    user_doc.pop('password_hash', None)
+    user_doc.pop('reset_otp', None)
+    user_doc.pop('reset_otp_expires', None)
+    
+    return {"success": True, "token": token, "user": user_doc}
+
+@api_router.post("/auth/forgot-password")
+async def forgot_password(req: ForgotPasswordRequest):
+    """Send OTP for password reset"""
+    # Find user
+    user_doc = await db.users.find_one({"email": req.email}, {"_id": 0})
+    if not user_doc:
+        # Don't reveal if email exists or not (security)
+        return {"success": True, "message": "If the email exists, an OTP has been sent"}
+    
+    # Check if user has password auth
+    if not user_doc.get('password_hash'):
+        raise HTTPException(status_code=400, detail="This email is registered with Google login. Use Google sign-in or reset via Google.")
+    
+    # Generate 6-digit OTP
+    import random
+    otp = str(random.randint(100000, 999999))
+    
+    # Set OTP expiry (10 minutes)
+    otp_expires = datetime.now(timezone.utc) + timedelta(minutes=10)
+    
+    # Save OTP to database
+    await db.users.update_one(
+        {"email": req.email},
+        {"$set": {
+            "reset_otp": otp,
+            "reset_otp_expires": otp_expires
+        }}
+    )
+    
+    # In production, send OTP via email
+    # For now, log it (mock email service)
+    logger.info(f"Password Reset OTP for {req.email}: {otp}")
+    print(f"\n{'='*50}")
+    print(f"PASSWORD RESET OTP: {otp}")
+    print(f"Email: {req.email}")
+    print(f"Valid for 10 minutes")
+    print(f"{'='*50}\n")
+    
+    return {"success": True, "message": "OTP sent to your email (check console for demo)"}
+
+@api_router.post("/auth/reset-password")
+async def reset_password(req: ResetPasswordRequest):
+    """Reset password using OTP"""
+    # Find user
+    user_doc = await db.users.find_one({"email": req.email}, {"_id": 0})
+    if not user_doc:
+        raise HTTPException(status_code=400, detail="Invalid request")
+    
+    # Check if OTP exists and is valid
+    if not user_doc.get('reset_otp') or not user_doc.get('reset_otp_expires'):
+        raise HTTPException(status_code=400, detail="No password reset requested. Please request a new OTP.")
+    
+    # Check if OTP is expired
+    if datetime.now(timezone.utc) > user_doc['reset_otp_expires']:
+        raise HTTPException(status_code=400, detail="OTP expired. Please request a new one.")
+    
+    # Verify OTP
+    if user_doc['reset_otp'] != req.otp:
+        raise HTTPException(status_code=400, detail="Invalid OTP")
+    
+    # Hash new password
+    password_hash = bcrypt.hashpw(req.new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    # Update password and clear OTP
+    await db.users.update_one(
+        {"email": req.email},
+        {"$set": {
+            "password_hash": password_hash
+        },
+        "$unset": {
+            "reset_otp": "",
+            "reset_otp_expires": ""
+        }}
+    )
+    
+    return {"success": True, "message": "Password reset successfully. You can now login with your new password."}
+
+# ====== STORE MANAGEMENT ======
+
 @api_router.post("/stores")
 async def create_store(store_data: StoreCreate, current_user: User = Depends(get_current_user)):
     existing_store = await db.stores.find_one({"user_id": current_user.id}, {"_id": 0})
