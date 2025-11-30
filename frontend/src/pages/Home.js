@@ -419,7 +419,7 @@ const Home = () => {
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            \ud83c\udf7d\ufe0f Products
+            🍽️ Products
           </button>
           <button
             onClick={() => setViewMode('stores')}
@@ -429,7 +429,7 @@ const Home = () => {
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            \ud83c\udfea Stores
+            🏪 Stores
           </button>
         </div>
       </div>
