@@ -697,6 +697,42 @@ async def get_products(
     
     return products
 
+@api_router.get("/stores/search")
+async def search_stores(
+    latitude: Optional[float] = None,
+    longitude: Optional[float] = None,
+    search: Optional[str] = None,
+    radius_km: float = 2.0
+):
+    query = {"store_active": True}
+    
+    if search:
+        query["store_name"] = {"$regex": search, "$options": "i"}
+    
+    stores = await db.stores.find(query, {"_id": 0}).to_list(1000)
+    
+    if latitude and longitude:
+        stores_with_distance = []
+        for store in stores:
+            if store.get("location"):
+                distance = calculate_distance(
+                    latitude, longitude,
+                    store["location"]["latitude"],
+                    store["location"]["longitude"]
+                )
+                if distance <= radius_km:
+                    store["distance"] = round(distance, 2)
+                    # Count active products
+                    product_count = await db.products.count_documents({
+                        "store_id": store["id"],
+                        "active": True
+                    })
+                    store["product_count"] = product_count
+                    stores_with_distance.append(store)
+        stores = sorted(stores_with_distance, key=lambda x: x["distance"])
+    
+    return stores
+
 @api_router.get("/products/my")
 async def get_my_products(current_user: User = Depends(get_current_user)):
     products = await db.products.find({"seller_id": current_user.id}, {"_id": 0}).to_list(1000)
