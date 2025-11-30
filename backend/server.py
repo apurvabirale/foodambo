@@ -653,18 +653,6 @@ async def email_signup(req: EmailSignupRequest):
 @api_router.post("/auth/email/login")
 async def email_login(req: EmailLoginRequest):
     """Login with email and password"""
-    def serialize_user(user_dict):
-        """Helper to serialize datetime fields to ISO format"""
-        if user_dict.get('created_at') and isinstance(user_dict['created_at'], datetime):
-            user_dict['created_at'] = user_dict['created_at'].isoformat()
-        if user_dict.get('subscription_started_at') and isinstance(user_dict['subscription_started_at'], datetime):
-            user_dict['subscription_started_at'] = user_dict['subscription_started_at'].isoformat()
-        if user_dict.get('subscription_expires_at') and isinstance(user_dict['subscription_expires_at'], datetime):
-            user_dict['subscription_expires_at'] = user_dict['subscription_expires_at'].isoformat()
-        if user_dict.get('reset_otp_expires') and isinstance(user_dict['reset_otp_expires'], datetime):
-            user_dict['reset_otp_expires'] = user_dict['reset_otp_expires'].isoformat()
-        return user_dict
-    
     # Find user
     user_doc = await db.users.find_one({"email": req.email}, {"_id": 0})
     if not user_doc:
@@ -684,7 +672,7 @@ async def email_login(req: EmailLoginRequest):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     
     # Serialize user data
-    user_doc = serialize_user(user_doc)
+    user_doc = serialize_user_data(user_doc)
     
     # Create JWT token
     token = create_access_token({"sub": user_doc["id"]})
