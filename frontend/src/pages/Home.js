@@ -16,7 +16,7 @@ const categories = [
 ];
 
 const trendingDishes = [
-  { name: 'Biryani', image: 'https://images.unsplash.com/photo-1563379091339-03b2cb0d9179?w=300&q=80' },
+  { name: 'Biryani', image: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=300&q=80' },
   { name: 'Thali', image: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=300&q=80' },
   { name: 'Samosa', image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=300&q=80' },
   { name: 'Dosa', image: 'https://images.unsplash.com/photo-1694171743879-b92b5b97abb5?w=300&q=80' },
