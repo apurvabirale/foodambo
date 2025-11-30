@@ -661,6 +661,8 @@ async def email_login(req: EmailLoginRequest):
             user_dict['subscription_started_at'] = user_dict['subscription_started_at'].isoformat()
         if user_dict.get('subscription_expires_at') and isinstance(user_dict['subscription_expires_at'], datetime):
             user_dict['subscription_expires_at'] = user_dict['subscription_expires_at'].isoformat()
+        if user_dict.get('reset_otp_expires') and isinstance(user_dict['reset_otp_expires'], datetime):
+            user_dict['reset_otp_expires'] = user_dict['reset_otp_expires'].isoformat()
         return user_dict
     
     # Find user
