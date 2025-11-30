@@ -448,6 +448,90 @@ async def google_auth(req: GoogleAuthRequest):
             logger.error(f"Google auth error: {str(e)}")
             raise HTTPException(status_code=400, detail=f"Google authentication failed: {str(e)}")
 
+@api_router.get("/auth/google/login")
+async def google_login():
+    """Initiate Google OAuth flow"""
+    google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
+    redirect_uri = os.environ.get('GOOGLE_REDIRECT_URI')
+    
+    if not google_client_id:
+        raise HTTPException(status_code=500, detail="Google OAuth not configured")
+    
+    auth_url = (
+        f"https://accounts.google.com/o/oauth2/v2/auth?"
+        f"client_id={google_client_id}&"
+        f"redirect_uri={redirect_uri}&"
+        f"response_type=code&"
+        f"scope=openid%20email%20profile&"
+        f"access_type=offline&"
+        f"prompt=consent"
+    )
+    
+    return {"auth_url": auth_url}
+
+@api_router.get("/auth/google/callback")
+async def google_callback(code: str):
+    """Handle Google OAuth callback"""
+    google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
+    google_client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
+    redirect_uri = os.environ.get('GOOGLE_REDIRECT_URI')
+    
+    if not google_client_id or not google_client_secret:
+        raise HTTPException(status_code=500, detail="Google OAuth not configured")
+    
+    # Exchange code for token
+    async with httpx.AsyncClient() as client:
+        token_response = await client.post(
+            "https://oauth2.googleapis.com/token",
+            data={
+                "code": code,
+                "client_id": google_client_id,
+                "client_secret": google_client_secret,
+                "redirect_uri": redirect_uri,
+                "grant_type": "authorization_code"
+            }
+        )
+        
+        if token_response.status_code != 200:
+            raise HTTPException(status_code=400, detail="Failed to exchange code for token")
+        
+        token_data = token_response.json()
+        access_token = token_data.get("access_token")
+        
+        # Get user info
+        user_response = await client.get(
+            "https://www.googleapis.com/oauth2/v2/userinfo",
+            headers={"Authorization": f"Bearer {access_token}"}
+        )
+        
+        if user_response.status_code != 200:
+            raise HTTPException(status_code=400, detail="Failed to get user info")
+        
+        user_data = user_response.json()
+        
+        # Find or create user
+        user_doc = await db.users.find_one({"email": user_data["email"]}, {"_id": 0})
+        if not user_doc:
+            user = User(
+                email=user_data["email"],
+                name=user_data.get("name", "User"),
+                profile_picture=user_data.get("picture"),
+                auth_method="google"
+            )
+            user_dict = user.model_dump()
+            user_dict['created_at'] = user_dict['created_at'].isoformat()
+            if user_dict.get('subscription_expires_at'):
+                user_dict['subscription_expires_at'] = user_dict['subscription_expires_at'].isoformat()
+            await db.users.insert_one(user_dict)
+            user_doc = user_dict
+        
+        # Create JWT token
+        token = create_access_token({"sub": user_doc["id"]})
+        
+        # Redirect to frontend with token
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url=f"https://local-foodie.preview.emergentagent.com/?token={token}")
+
 @api_router.post("/auth/facebook")
 async def facebook_auth(access_token: str):
     async with httpx.AsyncClient() as http_client:
