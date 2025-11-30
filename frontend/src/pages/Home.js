@@ -408,19 +408,53 @@ const Home = () => {
         </div>
       </div>
 
+      {/* View Toggle */}
+      <div className="p-4">
+        <div className="flex gap-2 mb-4">
+          <button
+            onClick={() => setViewMode('products')}
+            className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all ${
+              viewMode === 'products'
+                ? 'bg-primary text-white shadow-md'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            \ud83c\udf7d\ufe0f Products
+          </button>
+          <button
+            onClick={() => setViewMode('stores')}
+            className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all ${
+              viewMode === 'stores'
+                ? 'bg-primary text-white shadow-md'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            \ud83c\udfea Stores
+          </button>
+        </div>
+      </div>
+
       {/* Active Listings */}
       <div className="p-4">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xl font-semibold">Nearby Listings</h2>
-          <span className="text-sm text-foreground-muted">{products.length} found</span>
+          <h2 className="text-xl font-semibold">{viewMode === 'products' ? 'Nearby Listings' : 'Nearby Stores'}</h2>
+          <span className="text-sm text-foreground-muted">{viewMode === 'products' ? products.length : stores.length} found</span>
         </div>
         
         {/* Show location error message if any */}
         {locationError && !location && (
-          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-sm text-yellow-800">
-              📍 Location access denied. Please enable location to see nearby products.
+          <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-sm text-yellow-800 mb-3">
+              📍 Location access denied. Please enable location to see nearby {viewMode}.
             </p>
+            <div className="flex gap-2">
+              <Button onClick={handleRetryLocation} variant="outline" size="sm">
+                Try Again
+              </Button>
+              <Button onClick={() => navigate('/location-setup')} variant="outline" size="sm">
+                Enter Manually
+              </Button>
+            </div>
           </div>
         )}
         
