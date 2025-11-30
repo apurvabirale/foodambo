@@ -31,11 +31,22 @@ const Login = () => {
 
   // Google-only login - OTP functions removed
 
-  const handleGoogleLogin = () => {
-    // Redirect to Emergent Auth with main app as redirect_url (not login page)
-    const redirectUrl = `${window.location.origin}/`;
-    const authUrl = process.env.REACT_APP_AUTH_URL || 'https://auth.emergentagent.com';
-    window.location.href = `${authUrl}/?redirect=${encodeURIComponent(redirectUrl)}`;
+  const handleGoogleLogin = async () => {
+    try {
+      // Get Google OAuth URL from backend
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google/login`);
+      const data = await response.json();
+      
+      if (data.auth_url) {
+        // Redirect to Google OAuth
+        window.location.href = data.auth_url;
+      } else {
+        toast.error('Failed to initiate Google login');
+      }
+    } catch (error) {
+      console.error('Google login error:', error);
+      toast.error('Failed to connect to Google');
+    }
   };
 
   return (
