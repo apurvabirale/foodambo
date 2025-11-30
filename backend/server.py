@@ -103,6 +103,7 @@ class Store(BaseModel):
     location: Dict[str, float]
     categories: List[str] = []
     is_pure_veg: bool = False
+    store_active: bool = True
     fssai_license: Optional[str] = None
     fssai_verified: bool = False
     fssai_number: Optional[str] = None
