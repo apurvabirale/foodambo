@@ -47,42 +47,42 @@ async def debug_objectid():
         
         # Insert into database
         result = await db.users.insert_one(user_dict)
-        print(f\"Insert result: {result.inserted_id}\")
+        print(f"Insert result: {result.inserted_id}")
         
         # Retrieve with different query methods
-        print(\"\\n1. Query with _id: 0 exclusion:\")
-        user_no_id = await db.users.find_one({\"email\": test_email}, {\"_id\": 0})
+        print("\n1. Query with _id: 0 exclusion:")
+        user_no_id = await db.users.find_one({"email": test_email}, {"_id": 0})
         if user_no_id:
-            print(f\"   Keys: {list(user_no_id.keys())}\")
+            print(f"   Keys: {list(user_no_id.keys())}")
             # Check for ObjectId fields
             objectid_fields = []
             for key, value in user_no_id.items():
                 if isinstance(value, ObjectId):
                     objectid_fields.append(key)
-                    print(f\"   ObjectId field found: {key} = {value}\")
+                    print(f"   ObjectId field found: {key} = {value}")
             if not objectid_fields:
-                print(\"   No ObjectId fields found\")
+                print("   No ObjectId fields found")
         
-        print(\"\\n2. Query without _id exclusion:\")
-        user_with_id = await db.users.find_one({\"email\": test_email})
+        print("\n2. Query without _id exclusion:")
+        user_with_id = await db.users.find_one({"email": test_email})
         if user_with_id:
-            print(f\"   Keys: {list(user_with_id.keys())}\")
+            print(f"   Keys: {list(user_with_id.keys())}")
             # Check for ObjectId fields
             objectid_fields = []
             for key, value in user_with_id.items():
                 if isinstance(value, ObjectId):
                     objectid_fields.append(key)
-                    print(f\"   ObjectId field found: {key} = {value}\")
+                    print(f"   ObjectId field found: {key} = {value}")
         
         # Test the exact same flow as our endpoint
-        print(\"\\n3. Testing exact endpoint flow:\")
-        retrieved_user = await db.users.find_one({\"email\": test_email}, {\"_id\": 0})
+        print("\n3. Testing exact endpoint flow:")
+        retrieved_user = await db.users.find_one({"email": test_email}, {"_id": 0})
         if retrieved_user:
             # Serialize again (in case DB returned datetime objects)
             retrieved_user = serialize_user(retrieved_user)
             
             # Create token
-            token = create_access_token({\"sub\": retrieved_user[\"id\"]})
+            token = create_access_token({"sub": retrieved_user["id"]})
             
             # Remove sensitive data
             retrieved_user.pop('password_hash', None)
@@ -90,38 +90,38 @@ async def debug_objectid():
             retrieved_user.pop('reset_otp_expires', None)
             
             # Test response structure
-            response_data = {\"success\": True, \"token\": token, \"user\": retrieved_user}
+            response_data = {"success": True, "token": token, "user": retrieved_user}
             
             # Check each part for ObjectId
-            print(\"   Checking response parts for ObjectId:\")
+            print("   Checking response parts for ObjectId:")
             for key, value in response_data.items():
                 if isinstance(value, ObjectId):
-                    print(f\"   ObjectId in response root: {key} = {value}\")
+                    print(f"   ObjectId in response root: {key} = {value}")
                 elif isinstance(value, dict):
                     for subkey, subvalue in value.items():
                         if isinstance(subvalue, ObjectId):
-                            print(f\"   ObjectId in {key}.{subkey}: {subvalue}\")
+                            print(f"   ObjectId in {key}.{subkey}: {subvalue}")
             
             # Try JSON serialization
             try:
                 json_str = json.dumps(response_data)
-                print(\"   JSON serialization successful\")
+                print("   JSON serialization successful")
             except Exception as e:
-                print(f\"   JSON serialization failed: {e}\")
+                print(f"   JSON serialization failed: {e}")
                 # Find the problematic field
                 for key, value in response_data.items():
                     try:
                         json.dumps({key: value})
                     except Exception as field_error:
-                        print(f\"   Problematic field: {key} - {field_error}\")
+                        print(f"   Problematic field: {key} - {field_error}")
                         if isinstance(value, dict):
                             for subkey, subvalue in value.items():
                                 try:
                                     json.dumps({subkey: subvalue})
                                 except Exception as subfield_error:
-                                    print(f\"     Problematic subfield: {subkey} = {subvalue} ({type(subvalue)}) - {subfield_error}\")
+                                    print(f"     Problematic subfield: {subkey} = {subvalue} ({type(subvalue)}) - {subfield_error}")
         
-        print(\"\\n✅ ObjectId debug completed!\")
+        print("\n✅ ObjectId debug completed!")
         
     except Exception as e:
         print(f\"\\n❌ Error during debug: {e}\")
