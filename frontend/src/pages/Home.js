@@ -656,14 +656,14 @@ const Home = () => {
                         <h3 className="font-bold text-lg text-foreground">{store.store_name}</h3>
                         {store.is_pure_veg && (
                           <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-semibold">
-                            \ud83c\udf3f Pure Veg
+                            🌿 Pure Veg
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-foreground-muted mb-2">\ud83d\udccd {store.address}</p>
+                      <p className="text-sm text-foreground-muted mb-2">📍 {store.address}</p>
                       <div className="flex items-center gap-4 text-sm">
                         {store.distance !== undefined && (
-                          <span className="text-foreground-muted">\ud83d\udccd {store.distance} km away</span>
+                          <span className="text-foreground-muted">📍 {store.distance} km away</span>
                         )}
                         {store.rating > 0 && (
                           <span className="flex items-center gap-1">
