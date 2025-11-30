@@ -678,7 +678,7 @@ async def get_products(
         products_with_distance = []
         for product in products:
             store = await db.stores.find_one({"id": product["store_id"]}, {"_id": 0})
-            if store and store.get("location"):
+            if store and store.get("location") and store.get("store_active", True):
                 distance = calculate_distance(
                     latitude, longitude,
                     store["location"]["latitude"],
