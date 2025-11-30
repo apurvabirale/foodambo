@@ -638,17 +638,26 @@ async def email_signup(req: EmailSignupRequest):
     user_dict = user.model_dump()
     user_dict = serialize_user_data(user_dict)
     
+    # Insert into database (this may modify user_dict by adding _id)
     await db.users.insert_one(user_dict)
     
+    # Retrieve the user from database to ensure clean data
+    user_doc = await db.users.find_one({"id": user_dict["id"]}, {"_id": 0})
+    if not user_doc:
+        raise HTTPException(status_code=500, detail="Failed to create user")
+    
+    # Serialize again in case DB returned datetime objects
+    user_doc = serialize_user_data(user_doc)
+    
     # Create JWT token
-    token = create_access_token({"sub": user_dict["id"]})
+    token = create_access_token({"sub": user_doc["id"]})
     
     # Remove sensitive data
-    user_dict.pop('password_hash', None)
-    user_dict.pop('reset_otp', None)
-    user_dict.pop('reset_otp_expires', None)
+    user_doc.pop('password_hash', None)
+    user_doc.pop('reset_otp', None)
+    user_doc.pop('reset_otp_expires', None)
     
-    return {"success": True, "token": token, "user": user_dict}
+    return {"success": True, "token": token, "user": user_doc}
 
 @api_router.post("/auth/email/login")
 async def email_login(req: EmailLoginRequest):
