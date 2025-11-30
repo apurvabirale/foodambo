@@ -71,12 +71,15 @@ class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     phone: Optional[str] = None
     email: Optional[str] = None
+    password_hash: Optional[str] = None
     name: str
     profile_picture: Optional[str] = None
     auth_method: str
     is_seller: bool = False
     seller_active: bool = False
     is_admin: bool = False
+    reset_otp: Optional[str] = None
+    reset_otp_expires: Optional[datetime] = None
     subscription_plan: Optional[str] = None  # 'monthly' or 'yearly'
     subscription_status: str = "inactive"  # inactive, active, grace_period, expired
     subscription_started_at: Optional[datetime] = None
