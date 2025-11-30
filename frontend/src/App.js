@@ -185,6 +185,8 @@ function AppContent() {
             <AdminOrders />
           </PrivateRoute>
         } />
+        <Route path="/email-login" element={<EmailLogin />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
       {isAuthenticated && <BottomNav />}
       <Toaster />
