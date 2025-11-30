@@ -749,6 +749,9 @@ async def reset_password(req: ResetPasswordRequest):
     reset_otp_expires = user_doc['reset_otp_expires']
     if isinstance(reset_otp_expires, str):
         reset_otp_expires = datetime.fromisoformat(reset_otp_expires.replace('Z', '+00:00'))
+    elif isinstance(reset_otp_expires, datetime) and reset_otp_expires.tzinfo is None:
+        # Handle naive datetime from MongoDB - assume UTC
+        reset_otp_expires = reset_otp_expires.replace(tzinfo=timezone.utc)
     
     if datetime.now(timezone.utc) > reset_otp_expires:
         raise HTTPException(status_code=400, detail="OTP expired. Please request a new one.")
