@@ -17,8 +17,10 @@ async def test_email_auth():
     """Test email authentication flow"""
     print("Testing Email Authentication Endpoints...")
     
-    # Test data
-    test_email = "test@example.com"
+    # Test data with timestamp to ensure uniqueness
+    import time
+    timestamp = str(int(time.time()))
+    test_email = f"test{timestamp}@example.com"
     test_password = "testpass123"
     test_name = "Test User"
     
