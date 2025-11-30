@@ -546,7 +546,8 @@ async def google_callback(code: str):
         
         # Redirect to frontend with token
         from fastapi.responses import RedirectResponse
-        return RedirectResponse(url=f"https://local-foodie.preview.emergentagent.com/?token={token}")
+        frontend_url = os.environ.get('FRONTEND_URL', 'https://local-foodie.preview.emergentagent.com')
+        return RedirectResponse(url=f"{frontend_url}/?token={token}")
 
 @api_router.post("/auth/facebook")
 async def facebook_auth(access_token: str):
