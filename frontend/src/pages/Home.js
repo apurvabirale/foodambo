@@ -34,6 +34,10 @@ const Home = () => {
   const [hasStore, setHasStore] = useState(false);
   const [fetchError, setFetchError] = useState(null);
   const [showSellerModal, setShowSellerModal] = useState(false);
+  const [viewMode, setViewMode] = useState('products');
+  const [stores, setStores] = useState([]);
+  const [storesLoading, setStoresLoading] = useState(false);
+  const [showLocationModal, setShowLocationModal] = useState(false);
 
   useEffect(() => {
     checkStore();
