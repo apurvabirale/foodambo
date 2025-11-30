@@ -46,14 +46,18 @@ const Home = () => {
   useEffect(() => {
     // If location is available, fetch products
     if (location) {
-      fetchProducts();
-      fetchPartyOrders();
+      if (viewMode === 'products') {
+        fetchProducts();
+        fetchPartyOrders();
+      } else {
+        fetchStores();
+      }
     } else if (!locationLoading && locationError) {
       // Location failed - still fetch products but without location filtering
       setLoading(false);
-      setFetchError('Location access denied. Showing all products nearby.');
+      setFetchError('Location access denied. Please enable location or enter manually.');
     }
-  }, [location, selectedCategories, locationLoading]);
+  }, [location, selectedCategories, locationLoading, viewMode]);
 
   useEffect(() => {
     if (location || (!locationLoading && locationError)) {
