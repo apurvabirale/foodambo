@@ -620,18 +620,6 @@ class ResetPasswordRequest(BaseModel):
 @api_router.post("/auth/email/signup")
 async def email_signup(req: EmailSignupRequest):
     """Register with email and password"""
-    def serialize_user(user_dict):
-        """Helper to serialize datetime fields to ISO format"""
-        if user_dict.get('created_at') and isinstance(user_dict['created_at'], datetime):
-            user_dict['created_at'] = user_dict['created_at'].isoformat()
-        if user_dict.get('subscription_started_at') and isinstance(user_dict['subscription_started_at'], datetime):
-            user_dict['subscription_started_at'] = user_dict['subscription_started_at'].isoformat()
-        if user_dict.get('subscription_expires_at') and isinstance(user_dict['subscription_expires_at'], datetime):
-            user_dict['subscription_expires_at'] = user_dict['subscription_expires_at'].isoformat()
-        if user_dict.get('reset_otp_expires') and isinstance(user_dict['reset_otp_expires'], datetime):
-            user_dict['reset_otp_expires'] = user_dict['reset_otp_expires'].isoformat()
-        return user_dict
-    
     # Check if user already exists
     existing_user = await db.users.find_one({"email": req.email}, {"_id": 0})
     if existing_user:
@@ -648,7 +636,7 @@ async def email_signup(req: EmailSignupRequest):
         auth_method="email"
     )
     user_dict = user.model_dump()
-    user_dict = serialize_user(user_dict)
+    user_dict = serialize_user_data(user_dict)
     
     await db.users.insert_one(user_dict)
     
