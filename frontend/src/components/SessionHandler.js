@@ -19,7 +19,32 @@ const SessionHandler = ({ children }) => {
         return;
       }
       
-      // Check for session_id in URL hash
+      // Check for token in URL query params (direct OAuth)
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+      
+      if (token) {
+        console.log('SessionHandler: Found token in query params');
+        isProcessing = true;
+        setProcessing(true);
+        
+        try {
+          login(token);
+          toast.success('Login successful!');
+          
+          // Clean URL and redirect
+          window.history.replaceState({}, document.title, '/');
+          navigate('/', { replace: true });
+        } catch (error) {
+          console.error('Token login error:', error);
+          toast.error('Login failed');
+        } finally {
+          setProcessing(false);
+        }
+        return;
+      }
+      
+      // Check for session_id in URL hash (Emergent Auth)
       const hash = window.location.hash;
       console.log('SessionHandler: Checking hash:', hash);
       
