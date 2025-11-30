@@ -37,7 +37,6 @@ const Home = () => {
   const [viewMode, setViewMode] = useState('products');
   const [stores, setStores] = useState([]);
   const [storesLoading, setStoresLoading] = useState(false);
-  const [showLocationModal, setShowLocationModal] = useState(false);
 
   useEffect(() => {
     checkStore();
