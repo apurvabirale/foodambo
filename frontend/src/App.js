@@ -29,6 +29,8 @@ import AdminUsers from './pages/AdminUsers';
 import AdminStores from './pages/AdminStores';
 import AdminProducts from './pages/AdminProducts';
 import AdminOrders from './pages/AdminOrders';
+import EmailLogin from './pages/EmailLogin';
+import ForgotPassword from './pages/ForgotPassword';
 import BottomNav from './components/BottomNav';
 import './App.css';
 
