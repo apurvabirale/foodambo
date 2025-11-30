@@ -17,6 +17,7 @@ import math
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 import base64
 import razorpay
+import bcrypt
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
