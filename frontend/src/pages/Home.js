@@ -16,10 +16,10 @@ const categories = [
 ];
 
 const trendingDishes = [
-  { name: 'Biryani', image: 'https://images.unsplash.com/photo-1563379091339-03b2cb0d9179?w=300' },
-  { name: 'Thali', image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=300' },
-  { name: 'Samosa', image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=300' },
-  { name: 'Dosa', image: 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=300' },
+  { name: 'Biryani', image: 'https://images.unsplash.com/photo-1563379091339-03b2cb0d9179?w=300&q=80' },
+  { name: 'Thali', image: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=300&q=80' },
+  { name: 'Samosa', image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=300&q=80' },
+  { name: 'Dosa', image: 'https://images.unsplash.com/photo-1694171743879-b92b5b97abb5?w=300&q=80' },
 ];
 
 const Home = () => {
