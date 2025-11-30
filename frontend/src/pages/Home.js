@@ -620,6 +620,69 @@ const Home = () => {
             ))}
           </div>
         )}
+
+        {/* Stores View */}
+        {viewMode === 'stores' && (
+          storesLoading ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-2"></div>
+              <p className="text-foreground-muted">Loading stores...</p>
+            </div>
+          ) : stores.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-foreground-muted mb-4">
+                {location ? 'No stores found nearby' : 'Enable location to discover stores near you'}
+              </p>
+              <Button onClick={fetchStores} variant="outline">Refresh</Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {stores.map((store) => (
+                <Card
+                  key={store.id}
+                  className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
+                  onClick={() => navigate(`/store/${store.id}`)}
+                >
+                  <div className="flex gap-4">
+                    {store.store_photo && (
+                      <img
+                        src={store.store_photo}
+                        alt={store.store_name}
+                        className="w-24 h-24 rounded-lg object-cover"
+                      />
+                    )}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="font-bold text-lg text-foreground">{store.store_name}</h3>
+                        {store.is_pure_veg && (
+                          <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-semibold">
+                            \ud83c\udf3f Pure Veg
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-foreground-muted mb-2">\ud83d\udccd {store.address}</p>
+                      <div className="flex items-center gap-4 text-sm">
+                        {store.distance !== undefined && (
+                          <span className="text-foreground-muted">\ud83d\udccd {store.distance} km away</span>
+                        )}
+                        {store.rating > 0 && (
+                          <span className="flex items-center gap-1">
+                            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                            <span className="font-semibold">{store.rating.toFixed(1)}</span>
+                            <span className="text-foreground-muted">({store.total_reviews})</span>
+                          </span>
+                        )}
+                        {store.product_count !== undefined && (
+                          <span className="text-foreground-muted">{store.product_count} products</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )
+        )}
       </div>
 
     </div>
