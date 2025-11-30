@@ -539,7 +539,7 @@ async def update_my_store(store_data: Dict[str, Any], current_user: User = Depen
     if not store:
         raise HTTPException(status_code=404, detail="Store not found")
     
-    allowed_fields = ["store_photo", "address", "categories", "location"]
+    allowed_fields = ["store_photo", "address", "categories", "location", "store_active", "is_pure_veg", "store_name"]
     update_data = {k: v for k, v in store_data.items() if k in allowed_fields}
     
     if update_data:
