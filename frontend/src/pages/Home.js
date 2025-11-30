@@ -62,11 +62,15 @@ const Home = () => {
   useEffect(() => {
     if (location || (!locationLoading && locationError)) {
       const timeoutId = setTimeout(() => {
-        fetchProducts();
+        if (viewMode === 'products') {
+          fetchProducts();
+        } else {
+          fetchStores();
+        }
       }, 500);
       return () => clearTimeout(timeoutId);
     }
-  }, [searchQuery]);
+  }, [searchQuery, viewMode]);
 
   const checkStore = async () => {
     try {
