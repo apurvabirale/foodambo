@@ -133,6 +133,36 @@ const Home = () => {
     }
   };
 
+  const fetchStores = async () => {
+    setStoresLoading(true);
+    try {
+      const params = {
+        search: searchQuery,
+      };
+      
+      if (location) {
+        params.latitude = location.latitude;
+        params.longitude = location.longitude;
+        params.radius_km = 2;
+      }
+      
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/stores/search?${new URLSearchParams(params)}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('foodambo_token')}` }
+      });
+      const data = await response.json();
+      setStores(data);
+    } catch (error) {
+      console.error('Failed to fetch stores:', error);
+      toast.error('Failed to load stores');
+    } finally {
+      setStoresLoading(false);
+    }
+  };
+
+  const handleRetryLocation = () => {
+    window.location.reload();
+  };
+
   const toggleCategory = (categoryId) => {
     setSelectedCategories(prev => 
       prev.includes(categoryId) 
