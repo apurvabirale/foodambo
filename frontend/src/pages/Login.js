@@ -130,6 +130,23 @@ const Login = () => {
               Continue with Google
             </Button>
 
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-gray-300" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-white px-2 text-gray-500">Or</span>
+              </div>
+            </div>
+
+            <Button
+              onClick={() => navigate('/email-login')}
+              variant="outline"
+              className="w-full h-14 border-2 border-orange-300 text-orange-700 hover:bg-orange-50 flex items-center justify-center gap-3 text-base font-semibold rounded-xl"
+            >
+              📧 Continue with Email
+            </Button>
+
             <div className="mt-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
               <p className="text-xs text-center text-orange-800">
                 🏠 Connect with local home chefs and discover authentic homemade food
