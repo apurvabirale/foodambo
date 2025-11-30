@@ -746,7 +746,11 @@ async def reset_password(req: ResetPasswordRequest):
         raise HTTPException(status_code=400, detail="No password reset requested. Please request a new OTP.")
     
     # Check if OTP is expired
-    if datetime.now(timezone.utc) > user_doc['reset_otp_expires']:
+    reset_otp_expires = user_doc['reset_otp_expires']
+    if isinstance(reset_otp_expires, str):
+        reset_otp_expires = datetime.fromisoformat(reset_otp_expires.replace('Z', '+00:00'))
+    
+    if datetime.now(timezone.utc) > reset_otp_expires:
         raise HTTPException(status_code=400, detail="OTP expired. Please request a new one.")
     
     # Verify OTP
