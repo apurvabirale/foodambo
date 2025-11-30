@@ -303,6 +303,18 @@ def create_access_token(data: dict):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
+def serialize_user_data(user_dict):
+    """Global helper to serialize datetime fields to ISO format"""
+    if user_dict.get('created_at') and isinstance(user_dict['created_at'], datetime):
+        user_dict['created_at'] = user_dict['created_at'].isoformat()
+    if user_dict.get('subscription_started_at') and isinstance(user_dict['subscription_started_at'], datetime):
+        user_dict['subscription_started_at'] = user_dict['subscription_started_at'].isoformat()
+    if user_dict.get('subscription_expires_at') and isinstance(user_dict['subscription_expires_at'], datetime):
+        user_dict['subscription_expires_at'] = user_dict['subscription_expires_at'].isoformat()
+    if user_dict.get('reset_otp_expires') and isinstance(user_dict['reset_otp_expires'], datetime):
+        user_dict['reset_otp_expires'] = user_dict['reset_otp_expires'].isoformat()
+    return user_dict
+
 async def get_current_user(authorization: Optional[str] = Header(None), session_token: Optional[str] = Cookie(None)):
     token = None
     if session_token:
